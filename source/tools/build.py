@@ -10,7 +10,6 @@ for d in ('css','js','images'):
     shutil.copytree(os.path.join(SRC,d),os.path.join(DIST,d))
 shutil.copy(os.path.join(SRC,'favicon.svg'),DIST)
 shutil.copytree(os.path.join(SRC,'admin'),os.path.join(DIST,'admin-ephod-entry'))
-shutil.copytree(os.path.join(SRC,'api'),os.path.join(DIST,'api'))
 shutil.copy(os.path.join(SRC,'htaccess.txt'),os.path.join(DIST,'.htaccess'))
 year=str(datetime.date.today().year)
 import hashlib

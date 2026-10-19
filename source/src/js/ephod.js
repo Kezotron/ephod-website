@@ -404,6 +404,42 @@
     });
     return out;
   }
+  // The whole-year plan, fetched once and kept for a day
+  let PLAN = null;
+  async function readingPlan() {
+    if (PLAN) return PLAN;
+    try { const c = JSON.parse(store.get("ephod-plan") || "null"); if (c && Date.now() - c.t < 86400000) { PLAN = c.plan; return PLAN; } } catch (e) {}
+    const j = await api("export_reading_plan.php");
+    PLAN = j.readingPlan.map((r) => ({ id: +r.id, am: { book: r.fbook, c1: +r.fchapter, v1: +r.fverse, c2: +r.lchapter, v2: +r.lverse, lbook: r.lbook }, pm: { book: r.pmfbook, c1: +r.pmfchapter, v1: +r.pmfverse, c2: +r.pmlchapter, v2: +r.pmlverse, lbook: r.pmlbook } }));
+    store.set("ephod-plan", JSON.stringify({ t: Date.now(), plan: PLAN }));
+    return PLAN;
+  }
+  function normBook(s) {
+    return String(s).toLowerCase().trim().replace(/^(1st|first|i)\s+/, "1 ").replace(/^(2nd|second|ii)\s+/, "2 ").replace(/^(3rd|third|iii)\s+/, "3 ").replace(/^psalm$/, "psalms").replace(/^song of songs$/, "song of solomon").replace(/\s+/g, " ");
+  }
+  async function bookIdFor(name) {
+    const books = await bookNames(); const want = normBook(name);
+    for (const id in books) if (normBook(books[id]) === want) return id;
+    return null;
+  }
+  // A verse (chapter, verse) is inside the part's range?
+  function inRange(p, ch, v) {
+    if (ch < p.c1 || ch > p.c2) return false;
+    if (ch === p.c1 && v < p.v1) return false;
+    if (ch === p.c2 && p.v2 > 0 && v > p.v2) return false;
+    return true;
+  }
+  // Which plan readings (am/pm) touch this part of the reference
+  function daysCovering(plan, bookId, p) {
+    const hits = [];
+    plan.forEach((d) => ["am", "pm"].forEach((k) => {
+      const r = d[k];
+      if (r.book !== bookId || r.lbook !== bookId) return;
+      if (r.c2 < p.c1 || r.c1 > p.c2) return;
+      hits.push({ day: d.id, which: k });
+    }));
+    return hits;
+  }
   async function loadPassage(reading) {
     const panel = $("#passage-panel"), out = $("#passage"), cp = $("#passage-copyright");
     const parts = parseReading(reading);
@@ -413,17 +449,31 @@
     $("#passage-title").textContent = "Read " + reading;
     out.innerHTML = `<p class="loading">Loading the passage…</p>`;
     try {
-      const results = await Promise.all(parts.map((p) => fetch("api/passage.php?" + new URLSearchParams({ book: p.book, c1: p.c1, v1: p.v1, c2: p.c2, v2: p.v2, version: ver })).then((r) => r.json())));
-      let html = "", info = null;
-      results.forEach((j, i) => {
-        if (!j.success) { html += `<p class="muted">${esc(parts[i].label)}: ${esc(j.error || "not available")}</p>`; return; }
-        info = info || (Array.isArray(j.versionInfo) ? null : j.versionInfo);
-        j.chapters.forEach((ch) => { html += `<h3>${esc(j.book)} ${ch.number}</h3>` + versesHTML(ch.verses); });
-      });
-      out.innerHTML = html || `<p class="muted">This passage isn't available in that version.</p>`;
-      cp.innerHTML = copyrightLine(ver, info);
+      const [plan, books] = await Promise.all([readingPlan(), bookNames()]);
+      let html = "", info = null, total = 0;
+      for (const p of parts) {
+        const bookId = await bookIdFor(p.book);
+        const hits = bookId ? daysCovering(plan, bookId, p) : [];
+        if (!hits.length) { html += `<p class="muted">${esc(p.label)} isn't part of the daily plan, so it can't be shown here.</p>`; continue; }
+        const days = await Promise.all(hits.map((h) => api(h.which === "am" ? "am_bible_reading.php" : "pm_bible_reading.php", { day: h.day, version: ver }).catch(() => null)));
+        const chapters = {}; // chapter -> {verse -> text}
+        days.forEach((j) => {
+          if (!j) return;
+          if (!info && j.versionInfo && !Array.isArray(j.versionInfo)) info = j.versionInfo;
+          (j.chapters || []).forEach((ch) => ch.verses.forEach((v) => { if (inRange(p, +ch.number, +v.number)) { (chapters[+ch.number] = chapters[+ch.number] || {})[+v.number] = v.text; } }));
+        });
+        const chNums = Object.keys(chapters).map(Number).sort((a, b) => a - b);
+        if (!chNums.length) { html += `<p class="muted">${esc(p.label)} couldn't be loaded right now.</p>`; continue; }
+        chNums.forEach((n) => {
+          const vs = Object.keys(chapters[n]).map(Number).sort((a, b) => a - b).map((k) => ({ number: k, text: chapters[n][k] }));
+          total += vs.length;
+          html += `<h3>${esc(books[bookId] || p.book)} ${n}</h3>` + versesHTML(vs);
+        });
+      }
+      out.innerHTML = html || `<p class="muted">This passage isn't available right now.</p>`;
+      cp.innerHTML = total ? copyrightLine(ver, info) : "";
     } catch (e) {
-      out.innerHTML = `<p class="muted">The passage couldn't be loaded right now.</p>`;
+      out.innerHTML = `<p class="muted">The passage couldn't be loaded right now. Check your connection and try again.</p>`;
     }
   }
 

@@ -3,7 +3,7 @@
 import json, random
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
-BOOKS=[("GEN","Genesis"),("EXO","Exodus"),("ISA","Isaiah"),("MAT","Matthew"),("1TI","1st Timothy"),("PSA","Psalms")]
+BOOKS=[("GEN","Genesis"),("EXO","Exodus"),("ISA","Isaiah"),("MAT","Matthew"),("1TI","1st Timothy"),("2TI","2nd Timothy"),("PSA","Psalms"),("LUK","Luke")]
 VI={"abbreviation":"ASV","language":"english","version":"American Standard Version","info_url":"","publisher":"","copyright":"Public Domain"}
 def verses(n,start=1): return [{"number":start+i,"text":"Lorem ipsum verse text %d, the word of the Lord endureth for ever and ever amen."%(start+i)} for i in range(n)]
 class H(BaseHTTPRequestHandler):
@@ -11,6 +11,13 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         u=urlparse(self.path); q={k:v[0] for k,v in parse_qs(u.query).items()}; p=u.path.rsplit('/',1)[-1]
         day=int(q.get('day',289)); ver=q.get('version','t_asv')
+        # a realistic slice of the plan around mid-October (Isaiah AM, 1 Timothy PM)
+        ISA={285:(33,34),286:(35,37),287:(38,39),288:(40,41),289:(44,45),290:(46,47),291:(48,49),292:(50,51),293:(52,53)}
+        def amrange(d): return ISA.get(d,(d%60+1,d%60+2))
+        if p in('am_bible_reading.php','pm_bible_reading.php') and p=='am_bible_reading.php':
+            c1,c2=amrange(day); chs=[{"number":c,"verses":verses(22 if c==38 else 30)} for c in range(c1,c2+1)]
+            out={"success":True,"day":day,"version":ver,"reference":"Isaiah %d-%d"%(c1,c2),"bookName":"Isaiah","chapters":chs,"versionInfo":[]}
+            b=json.dumps(out).encode(); self.send_response(200); self.send_header('Content-Type','application/json'); self.send_header('Access-Control-Allow-Origin','*'); self.send_header('Content-Length',str(len(b))); self.end_headers(); self.wfile.write(b); return
         if p=='get_daily_reading_plan.php': out={"success":True,"amReading":"Isaiah %d-%d"%(day%60,day%60+1),"pmReading":"1st Timothy %d"%(day%6+1),"dayOfYear":day}
         elif p in('am_bible_reading.php','pm_bible_reading.php'): out={"success":True,"day":day,"version":ver,"reference":"Isaiah 44-45","bookName":"Isaiah","chapters":[{"number":44,"verses":verses(28)},{"number":45,"verses":verses(25)}],"versionInfo":[]}
         elif p=='get_memory_verse.php': out={"success":True,"dateRange":"October 12 to October 18, 2026","reference":"Isaiah 41:10 (American Standard Version)","version":"American Standard Version","verses":[{"verseNumber":"10","text":"fear thou not, for I am with thee; be not dismayed, for I am thy God; I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness."}]}
@@ -20,7 +27,9 @@ class H(BaseHTTPRequestHandler):
         elif p=='get_bible_books.php': out={"success":True,"language":"English","count":len(BOOKS),"books":[{"id":i,"number":n+1,"name":nm} for n,(i,nm) in enumerate(BOOKS)]}
         elif p=='export_reading_plan.php':
             rp=[]
-            for d in range(1,367): rp.append({"id":d,"fbook":"GEN","fchapter":d,"fverse":1,"lbook":"GEN","lchapter":d+1,"lverse":0,"pmfbook":"MAT","pmfchapter":d%28+1,"pmfverse":1 if d%3 else 5,"pmlbook":"MAT","pmlchapter":d%28+1,"pmlverse":0 if d%3 else 20})
+            for d in range(1,367):
+                c1,c2=amrange(d); bk="ISA" if d in ISA else "GEN"
+                rp.append({"id":d,"fbook":bk,"fchapter":c1,"fverse":1,"lbook":bk,"lchapter":c2,"lverse":0,"pmfbook":"MAT","pmfchapter":d%28+1,"pmfverse":1 if d%3 else 5,"pmlbook":"MAT","pmlchapter":d%28+1,"pmlverse":0 if d%3 else 20})
             out={"success":True,"planDays":366,"bookCount":66,"readingPlan":rp}
         else: out={"success":False,"error":"unknown endpoint "+p}
         b=json.dumps(out).encode()
