@@ -26,6 +26,7 @@
   --primary: #8a2a8c;       /* EPHOD purple: buttons, highlights */
   --primary-ink: #ffffff;
   --primary-soft: #f1e3f1;
+  --band: #e6dff0;          /* tinted band behind alternating home sections: soft purple */
   --secondary: #2f6fb5;     /* sky blue: links, AM/PM markers */
   --secondary-soft: #dfeaf6;
   --accent: #028566;        /* green of the cross: Gold Nugget, rules */
@@ -58,6 +59,7 @@
   --primary: #c66cc8;
   --primary-ink: #1a0b1b;
   --primary-soft: #3a2240;
+  --band: #1b2235;
   --secondary: #87b9dc;
   --secondary-soft: #1f3550;
   --accent: #4fc39f;
@@ -88,6 +90,7 @@
   --primary: #2f5d50;
   --primary-ink: #ffffff;
   --primary-soft: #dfe9e3;
+  --band: #e6ede4;
   --secondary: #2f6fb5;
   --secondary-soft: #dfeaf6;
   --accent: #b08a3e;
@@ -118,6 +121,7 @@
   --primary: #1f3a5f;
   --primary-ink: #ffffff;
   --primary-soft: #dde5ee;
+  --band: #e3e9f0;
   --secondary: #2f6fb5;
   --secondary-soft: #dfeaf6;
   --accent: #c0943f;
@@ -148,6 +152,7 @@
   --primary: #5b2a3c;
   --primary-ink: #ffffff;
   --primary-soft: #efdfe4;
+  --band: #efe6e0;
   --secondary: #6f7a3a;
   --secondary-soft: #e9ecd8;
   --accent: #b08a3e;

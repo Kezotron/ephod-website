@@ -328,7 +328,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .photo-split { display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: 1fr; align-items: center; }
 @media (min-width: 56rem) { .photo-split { grid-template-columns: 1fr 1fr; } .photo-split.rev > :first-child { order: 2; } }
 .photo-split img { border-radius: var(--radius-lg); box-shadow: var(--shadow); width: 100%; }
-.band-color { background: var(--primary-soft); }
+.band-color { background: var(--band); }
 .apps-photo { border-radius: var(--radius-lg); box-shadow: var(--shadow); width: 100%; max-width: 13.5rem; }
 
 /* ---------- misc ---------- */
