@@ -12,11 +12,11 @@
 [data-theme="classic"] {
   color-scheme: light;
   /* surfaces */
-  --bg: #f3f5f8;            /* the banner's cool light grey */
+  --bg: #e4e9ef;            /* the banner's cool grey, a shade deeper so cards stand out */
   --banner-bg: #e4e9ed;     /* matches the banner image's own background */
   --surface: #ffffff;
-  --surface-2: #e6ebf2;
-  --line: #d4dbe5;
+  --surface-2: #d9e0e9;
+  --line: #cbd3de;
   /* text */
   --ink: #1b2432;
   --ink-2: #4a5566;

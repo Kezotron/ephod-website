@@ -141,6 +141,10 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .photo-card p { color: var(--ink-2); margin: 0; }
 .photo-card .more { display: inline-block; margin-top: .6rem; color: var(--secondary); font-weight: 600; }
 .photo-card .body > * + * { margin-top: .5rem; }
+.photo-card .body h3 + * { margin-top: .15rem; }
+.photo-card .body p { margin: 0 0 .35rem; line-height: 1.35; }
+.photo-card .body .meta { margin: 0 0 .2rem; }
+.photo-card .verse-foot { text-align: right; }
 .photo-card .small-verse { font-size: 1.1rem; line-height: 1.45; margin: .25rem 0; }
 .photo-card .small-verse sup { font-size: .6em; color: var(--accent); font-family: var(--sans); font-weight: 600; margin-right: .15em; }
 .photo-card .verse-ref { margin: 0; }
