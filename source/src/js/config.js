@@ -39,6 +39,9 @@ window.EPHOD_CONFIG = {
     t_niv: "Scripture taken from the Holy Bible, NEW INTERNATIONAL VERSION®, NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.® Used by permission. All rights reserved worldwide."
   },
 
+  // The Papua New Guinea app (EPHOD PNG) has its own website
+  PNG_SITE: "https://ephod4png.com",
+
   // App store links
   STORES: {
     // ph.link is the OneLink address the printed QR code points to (sends phones to the right store)
