@@ -313,6 +313,9 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 @media (min-width: 56rem) { .photo-split { grid-template-columns: 1fr 1fr; } .photo-split.rev > :first-child { order: 2; } }
 .photo-split img { border-radius: var(--radius-lg); box-shadow: var(--shadow); width: 100%; }
 .band-color { background: var(--primary-soft); }
+.apps-photo { border-radius: var(--radius-lg); box-shadow: var(--shadow); width: 100%; }
+.band-color .split { align-items: center; }
+.band-color .stack > h2 { margin-bottom: 0; }
 
 /* ---------- misc ---------- */
 .notice { padding: .9rem 1.1rem; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--line); font-size: .95rem; }
