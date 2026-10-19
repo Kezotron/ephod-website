@@ -158,6 +158,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .photo-card .devo-teaser { display: grid; grid-template-columns: 6rem 1fr; gap: .75rem; align-items: start; text-decoration: none; color: inherit; }
 .photo-card .devo-teaser > span { display: grid; gap: .15rem; }
 .photo-card .devo-teaser:hover .devo-title { text-decoration: underline; }
+.photo-card .read-more { font-weight: 600; white-space: nowrap; }
 .photo-card .devo-thumb { width: 6rem; height: 4.5rem; object-fit: cover; border-radius: var(--radius); }
 .photo-card .devo-title { font-family: var(--sans); font-weight: 600; font-size: 1.15rem; line-height: 1.2; text-decoration: none; color: var(--heading); }
 .photo-card .reading { color: var(--primary); font-weight: 600; font-size: .9rem; margin: 0; }
