@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="morning">
+<html lang="en" data-theme="classic">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/site.css">
   <script src="js/config.js"></script>
-  <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+  <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme-v2")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
   <meta property="og:site_name" content="EPHOD">
   <meta property="og:title" content="Morning Bible reading | EPHOD">
   <meta property="og:description" content="Today's morning Old Testament reading from the EPHOD one-year plan.">
@@ -20,21 +20,23 @@
 <body data-page="reading" data-reading="am">
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
-  <div class="wrap">
-    <a class="brand" href="index.html" aria-label="EPHOD home">
-      <span class="brand-mark"><span>EPHO</span><span>D</span></span>
-      <span class="brand-tag">Every Person, Household, Oikos — Discipled</span>
-    </a>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
-    <nav class="nav" id="site-nav" aria-label="Main">
-      <a href="index.html">Today</a>
-      <a href="reading-plan.html">Reading plan</a>
-      <a href="devotions.html">Devotions</a>
-      <a href="apps.html">Apps</a>
-      <a href="seminars.html">Seminars</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+  <a class="banner-wrap" href="index.html" aria-label="EPHOD — Every Person Household Oikos Discipled">
+    <img src="images/ephod-banner.webp" srcset="images/ephod-banner-1200.webp 1200w, images/ephod-banner.webp 2400w" sizes="(max-width: 72rem) 100vw, 72rem" width="2400" height="600" alt="EPHOD — Every Person, Household, Oikos, Discipled" fetchpriority="high">
+  </a>
+  <div class="navbar">
+    <div class="wrap">
+      <a class="brand-small" href="index.html">EPHOD</a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav class="nav" id="site-nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="reading-plan.html">Reading plan</a>
+        <a href="devotions.html">Devotions</a>
+        <a href="apps.html">Apps</a>
+        <a href="seminars.html">Seminars</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
   </div>
 </header>
 
@@ -99,9 +101,9 @@
         <div class="theme-pick">
           <label for="theme-pick" class="small">Appearance</label>
           <select id="theme-pick">
+            <option value="classic">EPHOD classic</option>
+            <option value="evening">Evening (dark)</option>
             <option value="morning">Morning</option>
-            <option value="evening">Evening</option>
-            <option value="heritage">Heritage</option>
             <option value="harbor">Harbor</option>
             <option value="vineyard">Vineyard</option>
           </select>

@@ -20,17 +20,17 @@
   /* ---------- theme ---------- */
   function initTheme() {
     const fromUrl = new URLSearchParams(location.search).get("theme");
-    const saved = store.get("ephod-theme");
+    const saved = store.get("ephod-theme-v2");
     const theme = fromUrl || saved || C.DEFAULT_THEME;
     document.documentElement.setAttribute("data-theme", theme);
-    if (fromUrl) store.set("ephod-theme", fromUrl);
+    if (fromUrl) store.set("ephod-theme-v2", fromUrl);
     const pick = $("#theme-pick");
     if (pick) {
       if (!C.SHOW_THEME_PICKER) { pick.closest(".theme-pick").hidden = true; return; }
       pick.value = theme;
       pick.addEventListener("change", () => {
         document.documentElement.setAttribute("data-theme", pick.value);
-        store.set("ephod-theme", pick.value);
+        store.set("ephod-theme-v2", pick.value);
       });
     }
   }
@@ -139,7 +139,7 @@
   function verseCard(opts) {
     // opts: kicker, title, verses, reference, versionTable, versionInfo, foot
     return `
-      <div class="verse-card">
+      <div class="verse-card ${opts.cls || ""}">
         ${opts.kicker ? `<p class="verse-kicker">${esc(opts.kicker)}</p>` : ""}
         ${opts.title ? `<h2>${esc(opts.title)}</h2>` : ""}
         <div class="verse-text">${opts.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join(" ")}</div>
@@ -210,7 +210,7 @@
     // memory verse
     const mv = $("#memory-verse");
     api("get_memory_verse.php", { version: ver }).then((j) => {
-      mv.innerHTML = verseCard({ kicker: "This week's memory verse · " + j.dateRange, verses: j.verses, reference: j.reference.replace(/\s*\(.*\)$/, ""), versionTable: ver, versionInfo: { version: j.version }, foot: `<a href="memory-verse.html">Past memory verses</a>` });
+      mv.innerHTML = verseCard({ cls: "mv", kicker: "This week's memory verse · " + j.dateRange, verses: j.verses, reference: j.reference.replace(/\s*\(.*\)$/, ""), versionTable: ver, versionInfo: { version: j.version }, foot: `<a href="memory-verse.html">Past memory verses</a>` });
     }).catch(() => fail(mv, "The memory verse couldn't be loaded."));
 
     // gold nugget

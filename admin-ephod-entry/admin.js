@@ -4,7 +4,7 @@
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ephod-theme") || "morning"); } catch (e) {}
+  try { document.documentElement.setAttribute("data-theme", localStorage.getItem("ephod-theme-v2") || "classic"); } catch (e) {}
 
   async function api(action, params, post) {
     const url = new URL("api.php", location.href); url.searchParams.set("action", action);

@@ -5,9 +5,9 @@ window.EPHOD_CONFIG = {
   // Where the Bible API lives (same endpoints the apps use)
   API_BASE: "https://www.uneashippinglimited.com/api/",
 
-  // Look of the site. Options: morning, evening, heritage, harbor, vineyard
+  // Look of the site. Options: classic, evening, morning, harbor, vineyard
   // (defined in css/themes.css). Visitors can switch in the footer; this is the default.
-  DEFAULT_THEME: "morning",
+  DEFAULT_THEME: "classic",
   SHOW_THEME_PICKER: true,
 
   // Bible version shown when a visitor hasn't chosen one

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="morning">
+<html lang="en" data-theme="classic">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/site.css">
   <script src="js/config.js"></script>
-  <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+  <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme-v2")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
   <meta property="og:site_name" content="EPHOD">
   <meta property="og:title" content="EPHOD Seminars | EPHOD">
   <meta property="og:description" content="The EPHOD Church Strengthening Seminars: thirteen seminars on being a disciple and a disciple maker of Jesus Christ. Online course coming soon.">
@@ -20,21 +20,23 @@
 <body data-page="seminars">
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
-  <div class="wrap">
-    <a class="brand" href="index.html" aria-label="EPHOD home">
-      <span class="brand-mark"><span>EPHO</span><span>D</span></span>
-      <span class="brand-tag">Every Person, Household, Oikos — Discipled</span>
-    </a>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
-    <nav class="nav" id="site-nav" aria-label="Main">
-      <a href="index.html">Today</a>
-      <a href="reading-plan.html">Reading plan</a>
-      <a href="devotions.html">Devotions</a>
-      <a href="apps.html">Apps</a>
-      <a href="seminars.html">Seminars</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+  <a class="banner-wrap" href="index.html" aria-label="EPHOD — Every Person Household Oikos Discipled">
+    <img src="images/ephod-banner.webp" srcset="images/ephod-banner-1200.webp 1200w, images/ephod-banner.webp 2400w" sizes="(max-width: 72rem) 100vw, 72rem" width="2400" height="600" alt="EPHOD — Every Person, Household, Oikos, Discipled" fetchpriority="high">
+  </a>
+  <div class="navbar">
+    <div class="wrap">
+      <a class="brand-small" href="index.html">EPHOD</a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav class="nav" id="site-nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="reading-plan.html">Reading plan</a>
+        <a href="devotions.html">Devotions</a>
+        <a href="apps.html">Apps</a>
+        <a href="seminars.html">Seminars</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
   </div>
 </header>
 
@@ -48,10 +50,13 @@
       <p>Herb and Karen Johnson spent more than ten years developing EPHOD, and the result is an extensive, practical course covering almost all of the foundational principles of the Christian life. The seminars have been presented in churches across Cambodia, the Philippines and Papua New Guinea, and on DVD and online.</p>
       <p>A new online version of the full course is being prepared for this site, with every session on video. If you would like to know when it opens, or you want to bring the seminars to your church now, <a href="contact.html">get in touch</a>.</p>
     </div>
-    <div class="card stack">
+    <div class="stack">
+      <img src="images/ephoders.webp" width="610" height="350" alt="" style="border-radius: var(--radius-lg); box-shadow: var(--shadow)">
+      <div class="card">
       <h3>Meanwhile</h3>
       <p class="muted">Start where every seminar starts: the daily reading and the 10 Point Plan.</p>
       <div class="btn-row"><a class="btn btn-primary" href="am-reading.html">Today's reading</a><a class="btn btn-quiet" href="index.html#main">The 10 Point Plan</a></div>
+      </div>
     </div>
   </div>
 </section>
@@ -92,9 +97,9 @@
         <div class="theme-pick">
           <label for="theme-pick" class="small">Appearance</label>
           <select id="theme-pick">
+            <option value="classic">EPHOD classic</option>
+            <option value="evening">Evening (dark)</option>
             <option value="morning">Morning</option>
-            <option value="evening">Evening</option>
-            <option value="heritage">Heritage</option>
             <option value="harbor">Harbor</option>
             <option value="vineyard">Vineyard</option>
           </select>
