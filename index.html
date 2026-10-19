@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/themes.css?v=b4f8a987">
-  <link rel="stylesheet" href="css/site.css?v=02c2695b">
+  <link rel="stylesheet" href="css/site.css?v=6bda569d">
   <script src="js/config.js?v=d9caf6d3"></script>
   <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme-v2")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
   <meta property="og:site_name" content="EPHOD">
@@ -41,17 +41,39 @@
 </header>
 
 <main id="main">
-<section class="hero">
+<section class="section">
   <div class="wrap">
-    <div class="stack">
-      <p class="today-date" id="today-date">Today</p>
-      <h1>Today's Bible reading</h1>
-      <p>A morning passage from the Old Testament and an evening passage from the New Testament. Follow both each day and you will read the whole Bible in a year. <a href="catch-up.html">Missed a day?</a></p>
-    </div>
-    <div class="stack">
-      <div class="reading-list" id="today-readings"><p class="loading" style="color:#e2ebf6">Loading today's readings…</p></div>
-      <div class="inline-controls">
-        <div class="field"><label for="version-home">Bible version</label><select id="version-home" class="version-select"></select></div>
+    <div class="photo-cards">
+      <div class="photo-card">
+        <img src="images/card-memory-verse.webp" width="750" height="350" alt="">
+        <div class="body">
+          <h3>Weekly Memory Verse</h3>
+          <div id="memory-verse"><p class="loading">Loading this week's verse…</p></div>
+          <a class="more" href="memory-verse.html">Past memory verses</a>
+        </div>
+      </div>
+      <div class="photo-card">
+        <img src="images/card-daily-bible.webp" width="750" height="350" alt="">
+        <div class="body">
+          <h3>Daily Bible Reading</h3>
+          <p>Read the entire Bible through in one year by joining us each day. You can start anytime.</p>
+          <p class="today-date meta" id="today-date">Today</p>
+          <div class="reading-list" id="today-readings"><p class="loading">Loading today's readings…</p></div>
+          <div class="card-links">
+            <a href="catch-up.html">Miss a day? Catch up here</a>
+            <a href="reading-plan.html">The one-year plan</a>
+          </div>
+          <div class="field" style="margin-top:.75rem"><label for="version-home" class="small">Bible version</label><select id="version-home" class="version-select"></select></div>
+        </div>
+      </div>
+      <div class="photo-card">
+        <img src="images/card-devotions.webp" width="750" height="350" alt="">
+        <div class="body">
+          <h3>Devotions for Spiritual Growth</h3>
+          <p>A short reflection each week on the passages you are reading.</p>
+          <div id="latest-devotion"><p class="loading">Loading…</p></div>
+          <a class="more" href="devotions.html">All devotions</a>
+        </div>
       </div>
     </div>
   </div>
@@ -59,26 +81,6 @@
 
 <section class="section">
   <div class="wrap">
-    <div class="photo-cards">
-      <a class="photo-card" href="memory-verse.html">
-        <img src="images/card-memory-verse.webp" width="750" height="350" alt="">
-        <div class="body"><h3>Weekly Memory Verse</h3><p>One verse a week to hide in your heart, chosen for the whole EPHOD family.</p><span class="more">This week's verse</span></div>
-      </a>
-      <a class="photo-card" href="am-reading.html">
-        <img src="images/card-daily-bible.webp" width="750" height="350" alt="">
-        <div class="body"><h3>Daily Bible Reading</h3><p>Read the entire Bible through in one year by joining us each day. You can start anytime.</p><span class="more">Open today's reading</span></div>
-      </a>
-      <a class="photo-card" href="devotions.html">
-        <img src="images/card-devotions.webp" width="750" height="350" alt="">
-        <div class="body"><h3>Devotions for Spiritual Growth</h3><p>A short reflection each week on the passages you are reading.</p><span class="more">Read this week's devotion</span></div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap grid grid-2">
-    <div id="memory-verse"><p class="loading">Loading this week's memory verse…</p></div>
     <div id="gold-nugget"><p class="loading">Loading today's Gold Nugget…</p></div>
   </div>
 </section>
@@ -145,15 +147,7 @@
   </div>
 </section>
 
-<section class="section band">
-  <div class="wrap">
-    <div class="reading-head">
-      <h2>Devotions</h2>
-      <a href="devotions.html">All devotions</a>
-    </div>
-    <div class="grid grid-3" id="latest-devotions"></div>
-  </div>
-</section>
+
 
 <section class="section">
   <div class="wrap photo-split">
@@ -232,6 +226,6 @@
     </div>
   </div>
 </footer>
-<script src="js/ephod.js?v=e27325b2"></script>
+<script src="js/ephod.js?v=96fadcd4"></script>
 </body>
 </html>

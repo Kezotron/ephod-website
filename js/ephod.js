@@ -197,20 +197,23 @@
   pages.home = async function () {
     const day = dayOfYear(new Date());
     const ver = initVersionSelects(() => pages.home());
-    $("#today-date").textContent = fmtDate(new Date());
+    const td = $("#today-date"); if (td) td.textContent = fmtDate(new Date());
 
-    // readings
+    // today's readings, as links under the Daily Bible Reading card
     const rl = $("#today-readings");
     api("get_daily_reading_plan.php", { day }).then((j) => {
       rl.innerHTML = `
-        <a class="reading-item" href="am-reading.html"><span class="ampm">AM</span><span><span class="ref">${esc(j.amReading)}</span><br><span class="sub">Morning reading · Old Testament</span></span></a>
-        <a class="reading-item" href="pm-reading.html"><span class="ampm">PM</span><span><span class="ref">${esc(j.pmReading)}</span><br><span class="sub">Evening reading · New Testament</span></span></a>`;
-    }).catch(() => fail(rl, "Today's readings couldn't be loaded. Please try again in a moment."));
+        <a class="reading-item" href="am-reading.html"><span class="ampm">AM</span><span><span class="ref">${esc(j.amReading)}</span><br><span class="sub">Morning reading</span></span></a>
+        <a class="reading-item" href="pm-reading.html"><span class="ampm">PM</span><span><span class="ref">${esc(j.pmReading)}</span><br><span class="sub">Evening reading</span></span></a>`;
+    }).catch(() => { rl.innerHTML = `<a class="reading-item" href="am-reading.html"><span class="ampm">AM</span><span class="ref">Morning reading</span></a><a class="reading-item" href="pm-reading.html"><span class="ampm">PM</span><span class="ref">Evening reading</span></a>`; });
 
-    // memory verse
+    // memory verse, visible inside its card
     const mv = $("#memory-verse");
     api("get_memory_verse.php", { version: ver }).then((j) => {
-      mv.innerHTML = verseCard({ cls: "mv", kicker: "This week's memory verse · " + j.dateRange, verses: j.verses, reference: j.reference.replace(/\s*\(.*\)$/, ""), versionTable: ver, versionInfo: { version: j.version }, foot: `<a href="memory-verse.html">Past memory verses</a>` });
+      mv.innerHTML = `<p class="meta">${esc(j.dateRange)}</p>
+        <p class="verse-ref">${esc(j.reference.replace(/\s*\(.*\)$/, ""))}</p>
+        <div class="verse-text small-verse">${j.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join(" ")}</div>
+        <p class="verse-foot">${esc(j.version)}</p>`;
     }).catch(() => fail(mv, "The memory verse couldn't be loaded."));
 
     // gold nugget
@@ -219,11 +222,15 @@
       gn.innerHTML = verseCard({ kicker: "Today's Gold Nugget", verses: j.verses, reference: j.reference, versionTable: j.version, versionInfo: j.versionInfo, foot: `<a href="gold-nugget.html">Past Gold Nuggets</a>` });
     }).catch(() => fail(gn, "Today's Gold Nugget couldn't be loaded."));
 
-    // latest devotions
-    const dl = $("#latest-devotions");
-    if (dl) getJSON(C.DEVOTIONS_INDEX).then((idx) => {
-      dl.innerHTML = idx.slice(0, 3).map(devoCard).join("");
-    }).catch(() => { dl.innerHTML = ""; });
+    // latest devotion, inside its card
+    const ld = $("#latest-devotion");
+    if (ld) getJSON(C.DEVOTIONS_INDEX).then((idx) => {
+      const d = idx[0]; if (!d) { ld.innerHTML = ""; return; }
+      ld.innerHTML = `<p class="meta">${fmtDate(new Date(d.date + "T12:00:00"), { month: "long", day: "numeric", year: "numeric" })}</p>
+        <p><a class="devo-title" href="${devoURL(d)}">${esc(d.title)}</a></p>
+        ${d.reading ? `<p class="reading">Read ${esc(d.reading)}</p>` : ""}
+        <p class="muted small">${esc(d.excerpt || "")}</p>`;
+    }).catch(() => { ld.innerHTML = ""; });
   };
 
   /* ---------- AM / PM reading ---------- */

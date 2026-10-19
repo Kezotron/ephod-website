@@ -139,6 +139,20 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .photo-card h3 { margin: 0 0 .3rem; }
 .photo-card p { color: var(--ink-2); margin: 0; }
 .photo-card .more { display: inline-block; margin-top: .6rem; color: var(--secondary); font-weight: 600; }
+.photo-card .body > * + * { margin-top: .5rem; }
+.photo-card .small-verse { font-size: 1.1rem; line-height: 1.45; margin: .25rem 0; }
+.photo-card .small-verse sup { font-size: .6em; color: var(--accent); font-family: var(--sans); font-weight: 600; margin-right: .15em; }
+.photo-card .verse-ref { margin: 0; }
+.photo-card .verse-foot { font-size: .82rem; color: var(--ink-3); margin: 0; }
+.photo-card .reading-list { gap: .5rem; }
+.photo-card .reading-item { padding: .6rem .75rem; grid-template-columns: 2.6rem 1fr; }
+.photo-card .reading-item .ref { font-size: 1.1rem; }
+.photo-card .reading-item .sub { font-size: .82rem; }
+.photo-card .card-links { display: flex; flex-direction: column; gap: .25rem; }
+.photo-card .card-links a { font-weight: 600; text-decoration: none; }
+.photo-card .devo-title { font-family: var(--sans); font-weight: 600; font-size: 1.15rem; text-decoration: none; color: var(--heading); }
+.photo-card .reading { color: var(--primary); font-weight: 600; font-size: .9rem; margin: 0; }
+.photo-card .today-date { font-family: var(--sans); font-size: .9rem; }
 
 /* ---------- today panel (home hero) ---------- */
 .today { display: grid; gap: clamp(1.25rem, 3vw, 2rem); grid-template-columns: 1fr; }
