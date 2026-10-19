@@ -206,7 +206,7 @@
   /* ---------- home ---------- */
   // sun and moon icons shown beside the AM and PM passages
   const ICON_SUN = '<svg class="daymark sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></g></svg>';
-  const ICON_MOON = '<svg class="daymark moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.6 8.6 0 0 1 8.9 3.8a8.6 8.6 0 1 0 11.3 11.3z"/><path class="star" d="M17.5 3.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7z"/></svg>';
+  const ICON_MOON = '<svg class="daymark moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.6 8.6 0 0 1 8.9 3.8a8.6 8.6 0 1 0 11.3 11.3z"/></svg>';
   pages.home = async function () {
     const day = dayOfYear(new Date());
     const ver = initVersionSelects(() => pages.home());
