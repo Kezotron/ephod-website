@@ -215,10 +215,10 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .reading-item .ref { font-family: var(--serif); font-size: 1.25rem; color: var(--ink); }
 .reading-item .sub { color: var(--ink-3); font-size: .9rem; }
 .reading-item .daymark { width: 1.9rem; height: 1.9rem; flex: none; justify-self: end; }
-.reading-item .daymark.sun { fill: #e8a317; stroke: #e8a317; stroke-width: 1.8; }
+.reading-item .daymark { color: var(--secondary); fill: currentColor; stroke: currentColor; }
+.reading-item .daymark.sun { stroke-width: 1.8; }
 .reading-item .daymark.sun circle { stroke: none; }
-.reading-item .daymark.moon { fill: var(--heading); }
-.reading-item .daymark.moon .star { fill: #e8a317; }
+.reading-item .daymark.moon { stroke: none; }
 .reading-item:has(.daymark) { grid-template-columns: 3.2rem 1fr auto; }
 .photo-card .reading-item:has(.daymark) { grid-template-columns: 2.6rem 1fr auto; }
 
