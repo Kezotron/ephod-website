@@ -66,7 +66,7 @@ small, .small { font-size: .9rem; }
 .wrap { width: min(100% - 2 * var(--gutter), var(--wide)); margin-inline: auto; }
 .section { padding-block: clamp(2.5rem, 6vw, 4.5rem); }
 .section + .section { padding-top: 0; }
-main > .section:first-child { padding-top: .9rem; }
+main > .section:first-child { padding-top: 0; }
 .band { background: var(--surface-2); }
 .band.section + .section { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
 .grid { display: grid; gap: clamp(1.25rem, 3vw, 2rem); }
