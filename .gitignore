@@ -1,5 +1,0 @@
-# secrets and server-written files never go to Git
-admin-ephod-entry/config.local.php
-*/config.local.php
-.DS_Store
-Thumbs.db
