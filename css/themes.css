@@ -1,0 +1,120 @@
+/* ============================================================
+   EPHOD — theme tokens
+   ------------------------------------------------------------
+   Every colour on the site comes from the variables below.
+   To change the look, edit a theme block or add a new one:
+
+     [data-theme="mytheme"] { --bg: ...; --ink: ...; ... }
+
+   then set DEFAULT_THEME in js/config.js, or try it live with
+   ?theme=mytheme on any page. Nothing else needs to change.
+   ============================================================ */
+
+:root,
+[data-theme="morning"] {
+  color-scheme: light;
+  /* surfaces */
+  --bg: #f4f6f1;          /* page background: pale sage-white */
+  --surface: #ffffff;     /* cards, panels */
+  --surface-2: #e9eee6;   /* subtle bands, hover */
+  --line: #d3dbd1;        /* hairlines, borders */
+  /* text */
+  --ink: #1d2823;         /* main text */
+  --ink-2: #4f5d55;       /* secondary text */
+  --ink-3: #7b877f;       /* captions, metadata */
+  /* brand */
+  --primary: #2f5d50;     /* eucalyptus green: links, buttons, headings */
+  --primary-ink: #ffffff; /* text on primary */
+  --primary-soft: #dfe9e3;/* tinted backgrounds */
+  --accent: #b08a3e;      /* brass: Gold Nugget, rules, small flourishes */
+  --accent-soft: #f3ead6;
+  /* scripture block */
+  --verse-bg: #fbfaf5;
+  --verse-ink: #1d2823;
+  --focus: #b08a3e;
+  --shadow: 0 1px 2px rgba(29, 40, 35, .06), 0 8px 24px -16px rgba(29, 40, 35, .25);
+}
+
+/* A quiet dark theme for evening reading */
+[data-theme="evening"] {
+  color-scheme: dark;
+  --bg: #141b18;
+  --surface: #1c2521;
+  --surface-2: #232e29;
+  --line: #2f3b35;
+  --ink: #e6ebe7;
+  --ink-2: #b4bfb8;
+  --ink-3: #87938c;
+  --primary: #8fc2ad;
+  --primary-ink: #10201a;
+  --primary-soft: #203029;
+  --accent: #d6b25c;
+  --accent-soft: #2f2a1c;
+  --verse-bg: #1a221e;
+  --verse-ink: #eef2ee;
+  --focus: #d6b25c;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -16px rgba(0, 0, 0, .6);
+}
+
+/* Heritage: the purple and blue of the original EPHOD banner, calmed down */
+[data-theme="heritage"] {
+  color-scheme: light;
+  --bg: #f5f3f8;
+  --surface: #ffffff;
+  --surface-2: #ebe7f1;
+  --line: #d8d2e2;
+  --ink: #241c2e;
+  --ink-2: #554a63;
+  --ink-3: #807591;
+  --primary: #5e2d7a;
+  --primary-ink: #ffffff;
+  --primary-soft: #e8def0;
+  --accent: #2f6fa8;
+  --accent-soft: #dde9f4;
+  --verse-bg: #faf8fc;
+  --verse-ink: #241c2e;
+  --focus: #2f6fa8;
+  --shadow: 0 1px 2px rgba(36, 28, 46, .06), 0 8px 24px -16px rgba(36, 28, 46, .25);
+}
+
+/* Harbor: navy and sand, for a cooler, more formal feel */
+[data-theme="harbor"] {
+  color-scheme: light;
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --surface-2: #e7ebef;
+  --line: #d0d7de;
+  --ink: #16212c;
+  --ink-2: #4a5663;
+  --ink-3: #76828e;
+  --primary: #1f3a5f;
+  --primary-ink: #ffffff;
+  --primary-soft: #dde5ee;
+  --accent: #c0943f;
+  --accent-soft: #f5ecd9;
+  --verse-bg: #fbfaf7;
+  --verse-ink: #16212c;
+  --focus: #c0943f;
+  --shadow: 0 1px 2px rgba(22, 33, 44, .06), 0 8px 24px -16px rgba(22, 33, 44, .25);
+}
+
+/* Vineyard: warm paper and deep plum */
+[data-theme="vineyard"] {
+  color-scheme: light;
+  --bg: #f8f4ee;
+  --surface: #fffdf9;
+  --surface-2: #efe8df;
+  --line: #ddd3c6;
+  --ink: #2b1f22;
+  --ink-2: #5d4f53;
+  --ink-3: #887a7e;
+  --primary: #5b2a3c;
+  --primary-ink: #ffffff;
+  --primary-soft: #efdfe4;
+  --accent: #6f7a3a;
+  --accent-soft: #e9ecd8;
+  --verse-bg: #fdfaf4;
+  --verse-ink: #2b1f22;
+  --focus: #6f7a3a;
+  --shadow: 0 1px 2px rgba(43, 31, 34, .06), 0 8px 24px -16px rgba(43, 31, 34, .25);
+}

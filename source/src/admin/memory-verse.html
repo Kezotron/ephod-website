@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" data-theme="morning">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+<title>Memory verse — EPHOD entry page</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/themes.css"><link rel="stylesheet" href="../css/site.css"><link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-wrap">
+  <div class="admin-head">
+    <h1>Weekly memory verse</h1>
+    <nav><a href="gold-nugget.html">Gold Nugget</a><a href="devotions.html">Devotions</a><a href="../index.html">View website</a></nav>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div class="field"><label for="week">Week of the year</label><select id="week"></select></div>
+      <div id="range" class="muted"></div>
+    </div>
+    <div id="current" class="current" style="margin-top:1rem">Loading…</div>
+  </div>
+
+  <div class="panel">
+    <h2>Set the verse for this week</h2>
+    <form id="form">
+      <div class="row">
+        <div class="field grow"><label>Book</label><select name="book"></select></div>
+        <div class="field"><label>Chapter</label><select name="chapter"></select></div>
+        <div class="field"><label>First verse</label><select name="verse"></select></div>
+        <div class="field"><label>Last verse</label><select name="lastverse"></select></div>
+        <div class="field grow"><label>Version</label><select name="version"></select></div>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button type="button" class="btn btn-quiet" id="preview-btn">Preview in every version</button>
+        <button type="submit" class="btn btn-primary">Update memory verse</button>
+      </div>
+      <div id="status" class="status"></div>
+      <div id="preview" class="preview"></div>
+    </form>
+  </div>
+
+  <div class="panel help">
+    <h2>How it works</h2>
+    <ol>
+      <li>The page opens on <strong>next week</strong>, which is the week you usually set. Change the week at the top if you need to fix the current one.</li>
+      <li>Choose the book, chapter and first verse. If the verse runs over several verses, choose the last verse too; leave it at "single verse" otherwise.</li>
+      <li>Preview if you like, then press <strong>Update memory verse</strong>. The box at the top shows what the website and the apps will display.</li>
+    </ol>
+    <p>Example: John 3:16 → John, 3, 16, single verse. Psalms 103:11–12 → Psalms, 103, 11, 12.</p>
+  </div>
+</div>
+<script src="admin.js"></script>
+<script>
+(async () => {
+  const A = window.EPHOD_ADMIN, { $, esc, api, status } = A;
+  const weekSel = $("#week"), range = $("#range"), current = $("#current"), st = $("#status");
+  let picker;
+  async function load() {
+    current.textContent = "Loading…";
+    try {
+      const j = await api("mv_get", weekSel.value ? { week: weekSel.value } : {});
+      if (!weekSel.options.length) {
+        weekSel.innerHTML = Array.from({ length: 53 }, (_, i) => `<option value="${i + 1}">Week ${i + 1}${i + 1 === j.currentWeek ? " (this week)" : i + 1 === j.week ? " (next week)" : ""}</option>`).join("");
+        weekSel.value = j.week;
+      }
+      range.textContent = j.range;
+      if (j.exists) {
+        const e = j.entry, ref = `${e.bookName || e.book} ${e.chapter}:${e.verse}${+e.lastverse ? "–" + e.lastverse : ""}`;
+        current.innerHTML = (j.verses ? A.versesHTML(j.verses) : "<em>Text not available in that version</em>") + `<span class="ref">${esc(ref)} · ${esc(j.versionLabel || e.version)}</span>`;
+        if (picker) await picker.set(e);
+      } else {
+        current.innerHTML = `<em>No memory verse set for this week yet.</em>`;
+      }
+    } catch (err) { current.innerHTML = `<span class="danger">${esc(err.message)}</span>`; }
+  }
+  weekSel.addEventListener("change", load);
+  await load();
+  picker = await A.makePicker($("#form"));
+  await load();
+  $("#preview-btn").addEventListener("click", () => picker.preview($("#preview")));
+  $("#form").addEventListener("submit", async (ev) => {
+    ev.preventDefault(); status(st, "busy", "Saving…");
+    try { const j = await api("mv_save", null, Object.assign({ week: weekSel.value }, picker.values())); status(st, "ok", j.message + "."); await load(); }
+    catch (err) { status(st, "err", err.message); }
+  });
+})();
+</script>
+</body>
+</html>

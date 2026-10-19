@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en" data-theme="morning">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+<title>Devotions — EPHOD entry page</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/themes.css"><link rel="stylesheet" href="../css/site.css"><link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-wrap">
+  <div class="admin-head">
+    <h1>Devotions</h1>
+    <nav><a href="memory-verse.html">Memory verse</a><a href="gold-nugget.html">Gold Nugget</a><a href="../devotions.html">View on website</a></nav>
+  </div>
+
+  <div class="panel" id="editor-panel">
+    <h2 id="editor-title">New devotion</h2>
+    <form id="form">
+      <div class="row">
+        <div class="field grow"><label for="f-title">Title</label><input id="f-title" name="title" required maxlength="255" placeholder="Checkmate"></div>
+        <div class="field"><label for="f-date">Date</label><input id="f-date" name="date" type="date" required></div>
+      </div>
+      <div class="row" style="margin-top:.75rem">
+        <div class="field grow"><label for="f-reading">Reading (the passage this devotion goes with)</label><input id="f-reading" name="reading" maxlength="255" placeholder="Isaiah 36:1 through 38:22"></div>
+      </div>
+      <div class="field" style="margin-top:.75rem">
+        <label for="f-body">Text</label>
+        <div class="toolbar" role="toolbar" aria-label="Formatting">
+          <button type="button" data-cmd="bold"><strong>Bold</strong></button>
+          <button type="button" data-cmd="italic"><em>Italic</em></button>
+          <button type="button" data-cmd="verse">Scripture quote</button>
+          <button type="button" data-cmd="clear">Clear formatting</button>
+        </div>
+        <div id="f-body" class="editor" contenteditable="true" aria-label="Devotion text"></div>
+        <p class="help">Paste the devotion in. Press Enter for a new paragraph. Select the Scripture quotation and press <strong>Scripture quote</strong> to set it off. The "Read …" line and the Gospel Publishing House copyright are added by the website automatically — don't type them.</p>
+      </div>
+      <div class="row" style="margin-top:.75rem">
+        <div class="field"><label for="f-image">Photo (optional, JPG or PNG)</label><input id="f-image" name="image" type="file" accept="image/jpeg,image/png,image/webp"></div>
+        <div class="field"><label><input type="checkbox" id="f-remove"> Remove current photo</label></div>
+        <div class="field"><label><input type="checkbox" id="f-published" checked> Show on the website</label></div>
+      </div>
+      <img id="f-thumb" class="thumb-preview" alt="" hidden>
+      <div class="btn-row" style="margin-top:1rem">
+        <button type="submit" class="btn btn-primary" id="save-btn">Publish</button>
+        <button type="button" class="btn btn-quiet" id="new-btn">Start a new one</button>
+        <button type="button" class="btn btn-quiet danger" id="delete-btn" hidden>Delete this devotion</button>
+      </div>
+      <div id="status" class="status"></div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="row" style="justify-content:space-between">
+      <h2 style="margin:0">Recent devotions</h2>
+      <div class="field"><input id="search" placeholder="Search titles…"></div>
+    </div>
+    <table class="devo-table" style="margin-top:.75rem"><thead><tr><th>Date</th><th>Title</th><th>Reading</th></tr></thead><tbody id="list"></tbody></table>
+  </div>
+
+  <div class="panel help">
+    <h2>Each week</h2>
+    <ol>
+      <li>Type the title and set the date (it starts on the coming Sunday).</li>
+      <li>Type the reading reference, for example <em>Isaiah 36:1 through 38:22</em>.</li>
+      <li>Paste the devotion text. Mark the Scripture quotation with <strong>Scripture quote</strong>.</li>
+      <li>Add a photo if you have one, then press <strong>Publish</strong>. It appears on the website right away.</li>
+    </ol>
+    <p>To fix something later, click the devotion in the list, make the change, and press Publish again.</p>
+  </div>
+</div>
+<script src="admin.js"></script>
+<script>
+(async () => {
+  const A = window.EPHOD_ADMIN, { $, $$, esc, api, status } = A;
+  const form = $("#form"), body = $("#f-body"), list = $("#list"), st = $("#status"), thumb = $("#f-thumb"), delBtn = $("#delete-btn");
+  let id = 0;
+  function nextSunday() { const d = new Date(); d.setDate(d.getDate() + ((7 - d.getDay()) % 7 || 7)); return d.toISOString().slice(0, 10); }
+  function reset() {
+    id = 0; form.reset(); body.innerHTML = ""; $("#f-date").value = nextSunday(); thumb.hidden = true; delBtn.hidden = true;
+    $("#editor-title").textContent = "New devotion"; st.className = "status"; window.scrollTo({ top: 0 });
+  }
+  async function loadList() {
+    const j = await api("devo_list", { q: $("#search").value, limit: 40 });
+    list.innerHTML = j.devotions.map((d) => `<tr><td>${esc(d.post_date)}</td><td><a href="#" data-id="${d.id}">${esc(d.title)}</a>${+d.published ? "" : ' <span class="draft">draft</span>'}</td><td class="muted">${esc(d.reading || "")}</td></tr>`).join("") || `<tr><td colspan="3" class="muted">Nothing yet.</td></tr>`;
+  }
+  async function edit(i) {
+    const j = await api("devo_get", { id: i }); const d = j.devotion; id = d.id;
+    $("#f-title").value = d.title; $("#f-date").value = d.post_date; $("#f-reading").value = d.reading || ""; body.innerHTML = d.body || "";
+    $("#f-published").checked = +d.published === 1; $("#f-remove").checked = false; $("#f-image").value = "";
+    if (d.image) { thumb.src = "../" + d.image + "?v=" + Date.now(); thumb.hidden = false; } else thumb.hidden = true;
+    delBtn.hidden = false; $("#editor-title").textContent = "Editing: " + d.title; st.className = "status"; window.scrollTo({ top: 0 });
+  }
+  $$(".toolbar button").forEach((b) => b.addEventListener("click", () => {
+    body.focus(); const c = b.dataset.cmd;
+    if (c === "bold" || c === "italic") document.execCommand(c);
+    else if (c === "clear") document.execCommand("removeFormat");
+    else if (c === "verse") { document.execCommand("bold"); document.execCommand("italic"); }
+  }));
+  body.addEventListener("paste", (e) => { e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData("text/plain"); const html = t.split(/\n\s*\n/).map((p) => "<p>" + esc(p.trim()).replace(/\n/g, "<br>") + "</p>").join(""); document.execCommand("insertHTML", false, html); });
+  $("#f-image").addEventListener("change", () => { const f = $("#f-image").files[0]; if (f) { thumb.src = URL.createObjectURL(f); thumb.hidden = false; } });
+  list.addEventListener("click", (e) => { const a = e.target.closest("a[data-id]"); if (!a) return; e.preventDefault(); edit(+a.dataset.id); });
+  $("#search").addEventListener("input", () => { clearTimeout(window._t); window._t = setTimeout(loadList, 250); });
+  $("#new-btn").addEventListener("click", reset);
+  form.addEventListener("submit", async (ev) => {
+    ev.preventDefault(); status(st, "busy", "Saving…");
+    const fd = new FormData(); fd.set("id", id); fd.set("title", $("#f-title").value); fd.set("date", $("#f-date").value); fd.set("reading", $("#f-reading").value);
+    let html = body.innerHTML.replace(/<div>/g, "<p>").replace(/<\/div>/g, "</p>"); if (!/<p|<h3|<blockquote/.test(html)) html = "<p>" + html + "</p>";
+    fd.set("body", html); fd.set("published", $("#f-published").checked ? "1" : "0"); fd.set("remove_image", $("#f-remove").checked ? "1" : "0");
+    const f = $("#f-image").files[0]; if (f) fd.set("image", f);
+    try { const j = await api("devo_save", null, fd); id = j.id; status(st, "ok", j.message); delBtn.hidden = false; $("#editor-title").textContent = "Editing: " + $("#f-title").value; await loadList(); }
+    catch (err) { status(st, "err", err.message); }
+  });
+  delBtn.addEventListener("click", async () => {
+    if (!id || !confirm("Delete this devotion from the website? This can't be undone.")) return;
+    try { const j = await api("devo_delete", null, { id }); reset(); status(st, "ok", j.message); await loadList(); } catch (err) { status(st, "err", err.message); }
+  });
+  reset(); await loadList();
+})();
+</script>
+</body>
+</html>

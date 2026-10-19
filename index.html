@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en" data-theme="morning">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EPHOD — Daily Bible reading, memory verses and discipleship</title>
+  <meta name="description" content="Read through the whole Bible in a year with the EPHOD plan: a morning Old Testament passage, an evening New Testament passage, a weekly memory verse and a daily Gold Nugget.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/site.css">
+  <script src="js/config.js"></script>
+  <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+  <meta property="og:site_name" content="EPHOD">
+  <meta property="og:title" content="EPHOD — Daily Bible reading, memory verses and discipleship">
+  <meta property="og:description" content="Read through the whole Bible in a year with the EPHOD plan: a morning Old Testament passage, an evening New Testament passage, a weekly memory verse and a daily Gold Nugget.">
+</head>
+<body data-page="home">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="EPHOD home">
+      <span class="brand-mark"><span>EPHO</span><span>D</span></span>
+      <span class="brand-tag">Every Person, Household, Oikos — Discipled</span>
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="index.html">Today</a>
+      <a href="reading-plan.html">Reading plan</a>
+      <a href="devotions.html">Devotions</a>
+      <a href="apps.html">Apps</a>
+      <a href="seminars.html">Seminars</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section class="section">
+  <div class="wrap">
+    <p class="today-date" id="today-date">Today</p>
+    <h1>Today's reading</h1>
+    <div class="today">
+      <div class="stack">
+        <div class="reading-list" id="today-readings"><p class="loading">Loading today's readings…</p></div>
+        <p class="muted">A morning passage from the Old Testament and an evening passage from the New Testament. Follow both each day and you will read the whole Bible in a year. <a href="catch-up.html">Missed a day?</a></p>
+        <div class="inline-controls">
+          <div class="field"><label for="version-home">Bible version</label><select id="version-home" class="version-select"></select></div>
+        </div>
+      </div>
+      <div class="stack">
+        <div id="memory-verse"><p class="loading">Loading this week's memory verse…</p></div>
+        <div id="gold-nugget"><p class="loading">Loading today's Gold Nugget…</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section band">
+  <div class="wrap split">
+    <div>
+      <h2>Take the plan with you</h2>
+      <p class="lede">EPHOD PH and EPHOD PNG put the daily readings, memory verse, Gold Nugget, a journal and a progress tracker on your phone. Everything works offline once the Bible is downloaded, so a day's reading never costs you data.</p>
+      <p><a href="apps.html">About the apps</a></p>
+    </div>
+    <div class="stack">
+      <div class="card">
+        <h3>EPHOD PH</h3>
+        <p class="muted small">Philippines and worldwide · English, Tagalog, Chinese</p>
+        <div class="btn-row">
+          <a class="btn btn-store" data-store="ph:play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 2.3 13.3 12l-9.7 9.7c-.3-.2-.5-.6-.5-1.1V3.4c0-.5.2-.9.5-1.1zm11.2 11.2 2.9 2.9-11.2 6.4c-.5.3-1 .3-1.4.1l9.7-9.4zm0-3L4.9 1.1c.4-.2.9-.2 1.4.1l11.4 6.4-2.9 2.9zm1.4 1.5 3.3 1.9c1 .6 1 1.6 0 2.2l-3.3 1.9-3.1-3 3.1-3z"/></svg><span class="store-lines"><small>Get it on</small>Google Play</span></a>
+          <a class="btn btn-store" data-store="ph:apple"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.3 1.2 9.7.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.6-1-2.6-3.8zM14 5.4c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.2-.6 2.8-1.4z"/></svg><span class="store-lines"><small>Download on the</small>App Store</span></a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>EPHOD PNG</h3>
+        <p class="muted small">Papua New Guinea · English, Tok Pisin and 200+ PNG languages</p>
+        <div class="btn-row">
+          <a class="btn btn-store" data-store="png:play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 2.3 13.3 12l-9.7 9.7c-.3-.2-.5-.6-.5-1.1V3.4c0-.5.2-.9.5-1.1zm11.2 11.2 2.9 2.9-11.2 6.4c-.5.3-1 .3-1.4.1l9.7-9.4zm0-3L4.9 1.1c.4-.2.9-.2 1.4.1l11.4 6.4-2.9 2.9zm1.4 1.5 3.3 1.9c1 .6 1 1.6 0 2.2l-3.3 1.9-3.1-3 3.1-3z"/></svg><span class="store-lines"><small>Get it on</small>Google Play</span></a>
+          <a class="btn btn-store" data-store="png:apple"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.3 1.2 9.7.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.6-1-2.6-3.8zM14 5.4c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1.1.1 2.2-.6 2.8-1.4z"/></svg><span class="store-lines"><small>Download on the</small>App Store</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2>What EPHOD is</h2>
+    <div class="split">
+      <div class="prose">
+        <p class="lede">EPHOD stands for Every Person, Household, Oikos — Discipled. It is a simple, biblical way of life: putting the promises of God's Word into practice every day, and helping the people around you do the same.</p>
+        <p>"If ye continue in my word, then are ye my disciples indeed; and ye shall know the truth, and the truth shall make you free." <span class="muted">John 8:31–32</span></p>
+        <p>"Therefore go and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit." <span class="muted">Matthew 28:19</span></p>
+        <p>A disciple is both a noun and a verb: someone who continues in the Word, and someone who goes and makes disciples. The EPHOD 10 Point Plan is how that becomes a daily habit.</p>
+        <p><a href="about.html">The story of EPHOD and the people behind it</a></p>
+      </div>
+      <div>
+        <h3>The EPHOD 10 Point Plan</h3>
+        <div class="plan">
+          <details><summary>Daily Bible reading</summary><div class="pt-body"><blockquote>"If ye continue in my word, then are ye my disciples indeed: and ye shall know the truth, and the truth shall make you free." <cite>John 8:31–32 KJV</cite></blockquote><p>Daily Bible reading lets you discover the truths of God's Word and find His plan for your life. Read it every day.</p></div></details>
+          <details><summary>Weekly Scripture memorization</summary><div class="pt-body"><blockquote>"Guard my words as your most precious possession. Write them down, and also keep them within your heart." <cite>Proverbs 7:2–3 TLB</cite></blockquote><p>Memorizing a verse gets God's Word into your heart and mind. When problems come, the Scripture you have memorized can help you overcome fear and comfort you in a time of need.</p></div></details>
+          <details><summary>Sunday school and worship</summary><div class="pt-body"><blockquote>"You should not stay away from the church meetings, as some are doing, but you should meet together and encourage each other." <cite>Hebrews 10:25 NCV</cite></blockquote><p>Attending church helps you and others stay strong in faith. A burning coal burns brightly next to other coals; a coal by itself burns out.</p></div></details>
+          <details><summary>Weekly care cell, small group or Bible study</summary><div class="pt-body"><blockquote>"They read from the Book of the Law of God, making it clear and giving the meaning so that the people could understand what was being read." <cite>Nehemiah 8:8 NIV</cite></blockquote><p>Members share thoughts from their EPHOD journal about the daily reading, notes from the Sunday sermon, the memory verse, and their questions — and get answers from the group.</p></div></details>
+          <details><summary>Devotional journal</summary><div class="pt-body"><blockquote>"Write my answer in large, clear letters on a tablet, so that a runner can read it and tell everyone else." <cite>Habakkuk 2:2 NLT</cite></blockquote><p>A journal is any notebook or device where you record your thoughts. People forget most of a Sunday sermon by Tuesday; writing it down lets you review what you learned, share it with your small group, and remember what God has done for you.</p></div></details>
+          <details><summary>Pray and fast one meal each week</summary><div class="pt-body"><blockquote>"This kind can come forth by nothing, but by prayer and fasting." <cite>Mark 9:29 KJV</cite></blockquote><p>"This kind" refers to the difficult situation that needs increased faith. Fasting and prayer increase your faith and your sensitivity to the Holy Spirit, especially when you need God's guidance in a decision.</p></div></details>
+          <details><summary>Sharing or witnessing Jesus</summary><div class="pt-body"><blockquote>"Go home to your family and tell them how much the Lord has done for you, and how he has had mercy on you." <cite>Mark 5:19 NIV</cite></blockquote><p>Sharing is telling someone what Jesus has done for you. If they ask what Jesus can do for them, and you show them in the Bible, that is witnessing.</p></div></details>
+          <details><summary>Tithes and offerings</summary><div class="pt-body"><blockquote>"Bring to the storehouse a full tenth of what you earn so there will be food in my house. Test me in this, says the Lord All-Powerful." <cite>Malachi 3:10 NCV</cite></blockquote><p>Give tithes and offerings where you worship — God's storehouse for you. As you test this principle, you will watch God multiply what you have left to meet your needs.</p></div></details>
+          <details><summary>Daily prayer and worship time</summary><div class="pt-body"><blockquote>"In the morning, O Lord, you hear my voice; in the morning I lay my requests before you and wait in expectation." <cite>Psalm 5:3 NIV</cite></blockquote><p>Prayer is the expression of your worship, praise and faith. Time set apart for God gives Him room to speak to you, and gives you room to bring Him your requests.</p></div></details>
+          <details><summary>Take notes in services</summary><div class="pt-body"><blockquote>"Write this on a scroll as something to be remembered, and make sure that Joshua hears it." <cite>Exodus 17:14 NIV</cite></blockquote><p>Notes on Sunday's sermon, written in your journal, help you review during the week and share the points with your household, friends and small group.</p></div></details>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section band">
+  <div class="wrap">
+    <div class="reading-head">
+      <h2>Devotions</h2>
+      <a href="devotions.html">All devotions</a>
+    </div>
+    <p class="muted">A short reflection each week on the passages you are reading.</p>
+    <div class="grid grid-3" id="latest-devotions"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap split even">
+    <div class="prose">
+      <h2>EPHOD Church Strengthening Seminars</h2>
+      <p>Thirteen seminars on how to be a true disciple and disciple maker of Jesus Christ, developed over decades of ministry by Herb and Karen Johnson. A new online course is being prepared.</p>
+      <p><a class="btn btn-quiet" href="seminars.html">About the seminars</a></p>
+    </div>
+    <div class="prose">
+      <h2>Small groups</h2>
+      <p>"Then Jesus directed them to have all the people sit down in groups on the green grass." <span class="muted">Mark 6:39</span></p>
+      <p>Small groups are the most effective way to disciple people. Discipleship is a biblical lifestyle: putting the promises of God's Word into practice in daily life. The result is spiritual growth.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Read with us</h4>
+        <ul>
+          <li><a href="am-reading.html">Morning reading</a></li>
+          <li><a href="pm-reading.html">Evening reading</a></li>
+          <li><a href="catch-up.html">Missed a day? Catch up</a></li>
+          <li><a href="memory-verse.html">Memory verses</a></li>
+          <li><a href="gold-nugget.html">Gold Nuggets</a></li>
+          <li><a href="reading-plan.html">The one-year plan</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>EPHOD</h4>
+        <ul>
+          <li><a href="about.html">About EPHOD and the Johnsons</a></li>
+          <li><a href="devotions.html">Devotions</a></li>
+          <li><a href="seminars.html">EPHOD Seminars</a></li>
+          <li><a href="apps.html">EPHOD PH and EPHOD PNG apps</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="privacy-policy.html">Privacy policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="https://www.facebook.com/ephodlifestyle/" rel="noopener">Facebook</a></li>
+          <li><a href="https://www.youtube.com/channel/UCJKO4sIhohnlkeiCB7mFcbQ" rel="noopener">YouTube</a></li>
+        </ul>
+        <div class="theme-pick">
+          <label for="theme-pick" class="small">Appearance</label>
+          <select id="theme-pick">
+            <option value="morning">Morning</option>
+            <option value="evening">Evening</option>
+            <option value="heritage">Heritage</option>
+            <option value="harbor">Harbor</option>
+            <option value="vineyard">Vineyard</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="legal">
+      <p>Full Life Study Bible Reading Plan used by permission of the copyright holder. © Life Publishers International, Springfield, Missouri, United States of America. All rights reserved.</p>
+      <p>Scripture quotations marked NIV are taken from the Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.® Used by permission. All rights reserved worldwide. New International Version® and NIV® are registered trademarks of Biblica, Inc.</p>
+      <p>Devotions © Gospel Publishing House, Springfield, Missouri. Used by permission.</p>
+      <p>© 2017–2026 EPHOD Discipleship. EPHOD is a ministry developed by Rev. Herb and Rev. Karen Johnson.</p>
+    </div>
+  </div>
+</footer>
+<script src="js/ephod.js"></script>
+</body>
+</html>

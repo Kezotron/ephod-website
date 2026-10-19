@@ -1,0 +1,28 @@
+<!-- {"title": "Missed a day? Catch up | EPHOD", "description": "Readings from the past week, and a date picker to open any day of the EPHOD one-year Bible reading plan.", "page": "catchup"} -->
+<section class="section">
+  <div class="wrap">
+    <h1>Missed a day? Catch up here</h1>
+    <p class="lede">Life happens. Pick up where you left off — the plan is the same every year, so a day's reading is never lost.</p>
+    <div class="split">
+      <div>
+        <h2>The past week</h2>
+        <div class="catchup-list" id="catchup-list"></div>
+      </div>
+      <div>
+        <h2>Any date</h2>
+        <form id="pick-form" class="card stack">
+          <div class="inline-controls">
+            <div class="field"><label for="pick-month">Month</label><select id="pick-month"></select></div>
+            <div class="field"><label for="pick-day">Day</label><select id="pick-day"></select></div>
+          </div>
+          <div class="btn-row">
+            <label><input type="radio" name="which" value="am" checked> Morning</label>
+            <label><input type="radio" name="which" value="pm"> Evening</label>
+          </div>
+          <div><button class="btn btn-primary" type="submit">Open reading</button></div>
+        </form>
+        <p class="muted small">Or browse the whole year on the <a href="reading-plan.html">reading plan</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
