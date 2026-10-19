@@ -219,8 +219,8 @@
     // memory verse, visible inside its card
     const mv = $("#memory-verse");
     api("get_memory_verse.php", { version: ver }).then((j) => {
-      mv.innerHTML = `<p class="meta">${esc(j.dateRange)}</p>
-        <p class="verse-ref">${esc(j.reference.replace(/\s*\(.*\)$/, ""))}</p>
+      const md = $("#memory-date"); if (md) md.textContent = j.dateRange;
+      mv.innerHTML = `<p class="verse-ref">${esc(j.reference.replace(/\s*\(.*\)$/, ""))}</p>
         <div class="verse-text small-verse">${j.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join(" ")}</div>
         <p class="verse-foot">${esc(j.version)}</p>`;
     }).catch(() => fail(mv, "The memory verse couldn't be loaded."));
