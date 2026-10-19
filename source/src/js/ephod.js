@@ -229,7 +229,12 @@
     // gold nugget
     const gn = $("#gold-nugget");
     api("get_golden_nugget.php", { day, version: ver }).then((j) => {
-      gn.innerHTML = verseCard({ kicker: "Today's Gold Nugget", verses: j.verses, reference: j.reference, versionTable: j.version, versionInfo: j.versionInfo, foot: `<a href="gold-nugget.html">Past Gold Nuggets</a>` });
+      gn.innerHTML = `<div class="verse-card nugget-card">
+        <h3>Today's Gold Nugget</h3>
+        <div class="verse-text">${j.verses.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join(" ")}</div>
+        <p class="verse-ref">${esc(j.reference)}</p>
+        <div class="verse-footrow"><a class="more" href="gold-nugget.html">Past Gold Nuggets</a><span class="verse-foot">${copyrightLine(j.version, j.versionInfo)}</span></div>
+      </div>`;
     }).catch(() => fail(gn, "Today's Gold Nugget couldn't be loaded."));
 
     // latest devotion, inside its card
