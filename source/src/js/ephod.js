@@ -226,9 +226,14 @@
     const ld = $("#latest-devotion");
     if (ld) getJSON(C.DEVOTIONS_INDEX).then((idx) => {
       const d = idx[0]; if (!d) { ld.innerHTML = ""; return; }
-      ld.innerHTML = `<p class="meta">${fmtDate(new Date(d.date + "T12:00:00"), { month: "long", day: "numeric", year: "numeric" })}</p>
-        <p><a class="devo-title" href="${devoURL(d)}">${esc(d.title)}</a></p>
-        ${d.reading ? `<p class="reading">Read ${esc(d.reading)}</p>` : ""}
+      ld.innerHTML = `<a class="devo-teaser" href="${devoURL(d)}">
+          ${d.image ? `<img class="devo-thumb" src="${esc(d.image)}" alt="" width="96" height="72" onerror="this.remove()">` : ""}
+          <span>
+            <span class="meta">${fmtDate(new Date(d.date + "T12:00:00"), { month: "long", day: "numeric", year: "numeric" })}</span>
+            <span class="devo-title">${esc(d.title)}</span>
+            ${d.reading ? `<span class="reading">Read ${esc(d.reading)}</span>` : ""}
+          </span>
+        </a>
         <p class="muted small">${esc(d.excerpt || "")}</p>`;
     }).catch(() => { ld.innerHTML = ""; });
   };
