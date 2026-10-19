@@ -64,11 +64,14 @@ small, .small { font-size: .9rem; }
 
 /* ---------- layout ---------- */
 .wrap { width: min(100% - 2 * var(--gutter), var(--wide)); margin-inline: auto; }
-.section { padding-block: clamp(2.5rem, 6vw, 4.5rem); }
-.section + .section { padding-top: 0; }
-main > .section:first-child { padding-top: 10px; }
+:root { --gap: 36px; }            /* one spacing value for the whole page */
+.section { padding-block: var(--gap) 0; }
+main > .section:first-child { padding-top: var(--gap); }
+.band, .band-color { padding-block: var(--gap); margin-top: var(--gap); }
 .band { background: var(--surface-2); }
-.band.section + .section { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
+/* no stray paragraph margins at the end of a section, so gaps stay exactly --gap */
+.section .wrap > :last-child, .section .wrap > * > :last-child, .section .prose > :last-child { margin-bottom: 0; }
+.prose > :first-child { margin-top: 0; }
 .grid { display: grid; gap: clamp(1.25rem, 3vw, 2rem); }
 .grid-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
@@ -306,7 +309,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .pill { display: inline-block; padding: .2rem .7rem; border-radius: 999px; background: var(--primary); color: var(--primary-ink); font-size: .85rem; font-weight: 600; }
 
 /* ---------- footer ---------- */
-.site-footer { background: var(--footer-bg); color: var(--footer-ink); margin-top: clamp(2.5rem, 6vw, 4.5rem); padding: 2.5rem 0 2rem; font-size: .92rem; }
+.site-footer { background: var(--footer-bg); color: var(--footer-ink); margin-top: var(--gap); padding: 2.5rem 0 2rem; font-size: .92rem; }
 .site-footer .cols { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
 .site-footer h4 { margin-bottom: .5rem; color: var(--footer-head); }
 .site-footer ul { list-style: none; margin: 0; padding: 0; }
