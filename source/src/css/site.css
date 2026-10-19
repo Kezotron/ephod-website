@@ -176,7 +176,8 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .verse-card { background: var(--verse-bg); color: var(--verse-ink); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.25rem, 3vw, 2rem); position: relative; box-shadow: var(--shadow); }
 .verse-card::before { content: ""; position: absolute; left: clamp(1.25rem, 3vw, 2rem); top: 0; width: 3.5rem; height: 4px; background: var(--accent); border-radius: 0 0 3px 3px; }
 .verse-card.mv::before { background: var(--primary); }
-.nugget-card h3 { margin: .25rem 0 .35rem; }
+.nugget-card { padding-top: calc(clamp(1.25rem, 3vw, 2rem) / 2 + 2px); }
+.nugget-card h3 { margin: 0 0 .35rem; }
 .nugget-card .verse-text { margin: .5rem 0 .4rem; }
 .verse-footrow { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-top: .75rem; }
 .verse-footrow .verse-foot { margin: 0; margin-left: auto; text-align: right; }
