@@ -204,6 +204,9 @@
   const pages = {};
 
   /* ---------- home ---------- */
+  // sun and moon icons shown beside the AM and PM passages
+  const ICON_SUN = '<svg class="daymark sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></g></svg>';
+  const ICON_MOON = '<svg class="daymark moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.6 8.6 0 0 1 8.9 3.8a8.6 8.6 0 1 0 11.3 11.3z"/><path class="star" d="M17.5 3.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7z"/></svg>';
   pages.home = async function () {
     const day = dayOfYear(new Date());
     const ver = initVersionSelects(() => pages.home());
@@ -213,9 +216,9 @@
     const rl = $("#today-readings");
     api("get_daily_reading_plan.php", { day }).then((j) => {
       rl.innerHTML = `
-        <a class="reading-item" href="am-reading.html"><span class="ampm">AM</span><span><span class="ref">${esc(j.amReading)}</span><br><span class="sub">Morning reading</span></span></a>
-        <a class="reading-item" href="pm-reading.html"><span class="ampm">PM</span><span><span class="ref">${esc(j.pmReading)}</span><br><span class="sub">Evening reading</span></span></a>`;
-    }).catch(() => { rl.innerHTML = `<a class="reading-item" href="am-reading.html"><span class="ampm">AM</span><span class="ref">Morning reading</span></a><a class="reading-item" href="pm-reading.html"><span class="ampm">PM</span><span class="ref">Evening reading</span></a>`; });
+        <a class="reading-item" href="am-reading.html"><span class="ampm">AM</span><span><span class="ref">${esc(j.amReading)}</span><br><span class="sub">Morning Passage</span></span>${ICON_SUN}</a>
+        <a class="reading-item" href="pm-reading.html"><span class="ampm">PM</span><span><span class="ref">${esc(j.pmReading)}</span><br><span class="sub">Evening Passage</span></span>${ICON_MOON}</a>`;
+    }).catch(() => { rl.innerHTML = `<a class="reading-item" href="am-reading.html"><span class="ampm">AM</span><span class="ref">Morning Passage</span>${ICON_SUN}</a><a class="reading-item" href="pm-reading.html"><span class="ampm">PM</span><span class="ref">Evening Passage</span>${ICON_MOON}</a>`; });
 
     // memory verse, visible inside its card
     const mv = $("#memory-verse");
