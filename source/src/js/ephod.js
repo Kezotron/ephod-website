@@ -234,7 +234,7 @@
             ${d.reading ? `<span class="reading">Read ${esc(d.reading)}</span>` : ""}
           </span>
         </a>
-        <p class="muted small">${esc((d.excerpt || "").replace(/[…\.]+$/, ""))}… <a class="read-more" href="${devoURL(d)}">Read more</a></p>`;
+        <p class="excerpt">${esc((d.excerpt || "").replace(/[…\.]+$/, ""))}… <a class="read-more" href="${devoURL(d)}">Read more</a></p>`;
     }).catch(() => { ld.innerHTML = ""; });
   };
 
