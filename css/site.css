@@ -176,8 +176,16 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .verse-card { background: var(--verse-bg); color: var(--verse-ink); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(1.25rem, 3vw, 2rem); position: relative; box-shadow: var(--shadow); }
 .verse-card::before { content: ""; position: absolute; left: clamp(1.25rem, 3vw, 2rem); top: 0; width: 3.5rem; height: 4px; background: var(--accent); border-radius: 0 0 3px 3px; }
 .verse-card.mv::before { background: var(--primary); }
-.nugget-card { padding-top: calc(clamp(1.25rem, 3vw, 2rem) / 2 + 2px); }
+.nugget-card { padding: 0; overflow: hidden; display: grid; grid-template-columns: 1fr; border-top: 4px solid var(--accent); }
+.nugget-card::before { display: none; }
+.nugget-card .nugget-photo { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 15 / 7; }
+.nugget-card .nugget-body { padding: 1rem 1.2rem 1.25rem; display: flex; flex-direction: column; }
 .verse-card.nugget-card h3 { margin: 0 0 .35rem; }
+.nugget-card .verse-footrow { margin-top: auto; padding-top: .75rem; }
+@media (min-width: 56rem) {
+  .nugget-card { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+  .nugget-card .nugget-photo { aspect-ratio: auto; min-height: 100%; }
+}
 .nugget-card .verse-text { margin: .5rem 0 .4rem; }
 .verse-footrow { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-top: .75rem; }
 .verse-footrow .verse-foot { margin: 0; margin-left: auto; text-align: right; }

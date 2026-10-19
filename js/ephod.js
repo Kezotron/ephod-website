@@ -230,10 +230,13 @@
     const gn = $("#gold-nugget");
     api("get_golden_nugget.php", { day, version: ver }).then((j) => {
       gn.innerHTML = `<div class="verse-card nugget-card">
+        <img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt="">
+        <div class="nugget-body">
         <h3>Today's Gold Nugget</h3>
         <div class="verse-text">${j.verses.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join(" ")}</div>
         <p class="verse-ref">${esc(j.reference)}</p>
         <div class="verse-footrow"><a class="more" href="gold-nugget.html">Past Gold Nuggets</a><span class="verse-foot">${copyrightLine(j.version, j.versionInfo)}</span></div>
+        </div>
       </div>`;
     }).catch(() => fail(gn, "Today's Gold Nugget couldn't be loaded."));
 
