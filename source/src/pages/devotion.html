@@ -2,6 +2,16 @@
 <section class="section">
   <div class="wrap">
     <p class="meta"><a href="devotions.html">← All devotions</a></p>
-    <article class="article" id="devotion"><p class="loading">Loading…</p></article>
+    <div class="devo-layout">
+      <article class="article" id="devotion"><p class="loading">Loading…</p></article>
+      <aside class="passage-panel" id="passage-panel" hidden>
+        <div class="passage-head">
+          <h2 id="passage-title">This week's reading</h2>
+          <div class="field"><label for="version-devo" class="small">Bible version</label><select id="version-devo" class="version-select"></select></div>
+        </div>
+        <div class="scripture passage-body" id="passage"></div>
+        <p class="copyright-note" id="passage-copyright"></p>
+      </aside>
+    </div>
   </div>
 </section>

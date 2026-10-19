@@ -220,6 +220,18 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .article-nav a { text-decoration: none; max-width: 48%; }
 .article-nav .lbl { display: block; font-size: .85rem; color: var(--ink-3); }
 
+/* ---------- devotion + passage side by side ---------- */
+.devo-layout { display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: 1fr; align-items: start; }
+@media (min-width: 64rem) { .devo-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.passage-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 1.25rem; }
+@media (min-width: 64rem) { .passage-panel { position: sticky; top: 3.6rem; max-height: calc(100vh - 4.5rem); display: flex; flex-direction: column; } .passage-panel .passage-body { overflow: auto; min-height: 0; } }
+.passage-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: .75rem; margin-bottom: .75rem; }
+.passage-head h2 { font-size: 1.25rem; margin: 0; }
+.passage-body { font-size: 1.08rem; line-height: 1.6; }
+.passage-body h3 { font-family: var(--serif); font-weight: 500; font-size: 1.3rem; color: var(--heading); margin: 1rem 0 .4rem; }
+.passage-body h3:first-child { margin-top: 0; }
+.passage-panel .copyright-note { margin-top: 1rem; padding-top: .75rem; }
+
 /* ---------- archive ---------- */
 .archive-year { margin-top: 2rem; }
 .archive-year h2 { font-size: 1.4rem; border-bottom: 1px solid var(--line); padding-bottom: .35rem; }

@@ -120,13 +120,14 @@
     const cur = currentVersion();
     if (versionSelectsReady) return cur;
     versionSelectsReady = true;
+    window._ephodVersionChange = onChange;
     $$("select.version-select").forEach((sel) => {
       sel.innerHTML = C.VERSIONS.map((v) => `<option value="${v.table}">${esc(v.label)}</option>`).join("");
       sel.value = cur;
       sel.addEventListener("change", () => {
         store.set("ephod-version", sel.value);
         $$("select.version-select").forEach((o) => { if (o !== sel) o.value = sel.value; });
-        if (onChange) onChange(sel.value);
+        if (window._ephodVersionChange) window._ephodVersionChange(sel.value);
       });
     });
     return cur;
@@ -387,6 +388,45 @@
     } catch (e) { fail(latest, "Devotions couldn't be loaded right now."); }
   };
 
+  /* ---------- reading references ("Isaiah 36:1 through 38:22; John 21:10–25") ---------- */
+  function parseReading(ref) {
+    const out = [];
+    String(ref || "").split(/\s*;\s*/).forEach((part) => {
+      part = part.trim().replace(/\s+/g, " ").replace(/[–—]/g, "-");
+      let m = part.match(/^(.+?)\s+(\d+):(\d+)\s*(?:through|thru|to|-)\s*(?:(\d+):)?(\d+)$/i);
+      if (m) { out.push({ book: m[1], c1: +m[2], v1: +m[3], c2: m[4] ? +m[4] : +m[2], v2: +m[5], label: part }); return; }
+      m = part.match(/^(.+?)\s+(\d+):(\d+)$/);                       // one verse
+      if (m) { out.push({ book: m[1], c1: +m[2], v1: +m[3], c2: +m[2], v2: +m[3], label: part }); return; }
+      m = part.match(/^(.+?)\s+(\d+)\s*(?:through|thru|to|-)\s*(\d+)$/i); // whole chapters
+      if (m) { out.push({ book: m[1], c1: +m[2], v1: 1, c2: +m[3], v2: 0, label: part }); return; }
+      m = part.match(/^(.+?)\s+(\d+)$/);                               // one chapter
+      if (m) { out.push({ book: m[1], c1: +m[2], v1: 1, c2: +m[2], v2: 0, label: part }); return; }
+    });
+    return out;
+  }
+  async function loadPassage(reading) {
+    const panel = $("#passage-panel"), out = $("#passage"), cp = $("#passage-copyright");
+    const parts = parseReading(reading);
+    if (!panel || !parts.length) return;
+    panel.hidden = false;
+    const ver = initVersionSelects(() => loadPassage(reading));
+    $("#passage-title").textContent = "Read " + reading;
+    out.innerHTML = `<p class="loading">Loading the passage…</p>`;
+    try {
+      const results = await Promise.all(parts.map((p) => fetch("api/passage.php?" + new URLSearchParams({ book: p.book, c1: p.c1, v1: p.v1, c2: p.c2, v2: p.v2, version: ver })).then((r) => r.json())));
+      let html = "", info = null;
+      results.forEach((j, i) => {
+        if (!j.success) { html += `<p class="muted">${esc(parts[i].label)}: ${esc(j.error || "not available")}</p>`; return; }
+        info = info || (Array.isArray(j.versionInfo) ? null : j.versionInfo);
+        j.chapters.forEach((ch) => { html += `<h3>${esc(j.book)} ${ch.number}</h3>` + versesHTML(ch.verses); });
+      });
+      out.innerHTML = html || `<p class="muted">This passage isn't available in that version.</p>`;
+      cp.innerHTML = copyrightLine(ver, info);
+    } catch (e) {
+      out.innerHTML = `<p class="muted">The passage couldn't be loaded right now.</p>`;
+    }
+  }
+
   /* ---------- single devotion ---------- */
   pages.devotion = async function () {
     const slug = (new URLSearchParams(location.search).get("slug") || "").replace(/[^a-z0-9-]/gi, "");
@@ -402,7 +442,7 @@
       const newer = i > 0 ? idx[i - 1] : null, older = i >= 0 && i < idx.length - 1 ? idx[i + 1] : null;
       out.innerHTML = `
         ${d.image ? `<div class="article-hero"><img src="${esc(d.image)}" alt="" onerror="this.parentNode.remove()"></div>` : ""}
-        <p class="meta">${fmtDate(new Date(d.date + "T12:00:00"), { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</p>
+        <p class="meta">Week of ${esc(devoWeekRange(d.date))}</p>
         <h1>${esc(d.title)}</h1>
         ${d.reading ? `<p class="read-line">Read ${esc(d.reading)}</p>` : ""}
         <div class="article-body">${d.body}</div>
@@ -411,6 +451,7 @@
           <span>${older ? `<a href="${devoURL(older)}"><span class="lbl">Older</span>← ${esc(older.title)}</a>` : ""}</span>
           <span>${newer ? `<a href="${devoURL(newer)}" style="text-align:right"><span class="lbl">Newer</span>${esc(newer.title)} →</a>` : ""}</span>
         </nav>`;
+      if (d.reading) loadPassage(d.reading);
     } catch (e) { fail(out, "This devotion couldn't be found. It may have moved — see all devotions on the Devotions page."); }
   };
 
