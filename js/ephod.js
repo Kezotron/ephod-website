@@ -166,6 +166,15 @@
       </div></a>`;
   }
   function devoURL(d) { return "devotion.html?slug=" + encodeURIComponent(d.slug); }
+  // Devotions are posted on Sunday for the week that follows (Monday to Sunday),
+  // the same week the memory verse covers.
+  function devoWeekRange(dateStr) {
+    const d = new Date(dateStr + "T12:00:00");
+    const start = new Date(d); start.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7));
+    const end = new Date(start); end.setDate(start.getDate() + 6);
+    const m = (x) => x.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+    return `${m(start)} to ${m(end)}, ${end.getFullYear()}`;
+  }
 
   /* ---------- reading plan references ---------- */
   let BOOKS = null;
@@ -229,7 +238,7 @@
       ld.innerHTML = `<a class="devo-teaser" href="${devoURL(d)}">
           ${d.image ? `<img class="devo-thumb" src="${esc(d.image)}" alt="" width="96" height="72" onerror="this.remove()">` : ""}
           <span>
-            <span class="meta">${fmtDate(new Date(d.date + "T12:00:00"), { month: "long", day: "numeric", year: "numeric" })}</span>
+            <span class="meta">${esc(devoWeekRange(d.date))}</span>
             <span class="devo-title">${esc(d.title)}</span>
             ${d.reading ? `<span class="reading">Read ${esc(d.reading)}</span>` : ""}
           </span>
