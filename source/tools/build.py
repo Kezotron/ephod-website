@@ -12,6 +12,11 @@ shutil.copy(os.path.join(SRC,'favicon.svg'),DIST)
 shutil.copytree(os.path.join(SRC,'admin'),os.path.join(DIST,'admin-ephod-entry'))
 shutil.copy(os.path.join(SRC,'htaccess.txt'),os.path.join(DIST,'.htaccess'))
 year=str(datetime.date.today().year)
+import hashlib
+def stamp(rel):
+    h=hashlib.md5(open(os.path.join(SRC,rel),'rb').read()).hexdigest()[:8]
+    return rel+'?v='+h
+layout=layout.replace('href="css/themes.css"','href="%s"'%stamp('css/themes.css')).replace('href="css/site.css"','href="%s"'%stamp('css/site.css')).replace('src="js/config.js"','src="%s"'%stamp('js/config.js')).replace('src="js/ephod.js"','src="%s"'%stamp('js/ephod.js'))
 for f in sorted(os.listdir(os.path.join(SRC,'pages'))):
     if not f.endswith('.html'): continue
     s=open(os.path.join(SRC,'pages',f),encoding='utf-8').read()

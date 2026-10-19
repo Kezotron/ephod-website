@@ -8,8 +8,14 @@ AddDefaultCharset UTF-8
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
-  <FilesMatch "\.(css|js|webp|svg|png|jpg)$">
+  <FilesMatch "\.(webp|svg|png|jpg)$">
     Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
   </FilesMatch>
   <FilesMatch "\.json$">
     Header set Cache-Control "no-cache"
