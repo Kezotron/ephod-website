@@ -118,8 +118,8 @@ main > .section:first-child { padding-top: var(--gap); }
 .qr img { width: 11.5rem; height: 11.5rem; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: .35rem; box-sizing: border-box; flex: none; }
 .app-card { max-width: 44rem; }
 .band-color .lede { line-height: 1.33; }
-.inset-photo { margin: 1rem 0 0; }
-.inset-photo img { width: 150px; max-width: 100%; height: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+.inset-photo { margin: 1rem 0 0; text-align: center; }
+.inset-photo img { width: 150px; max-width: 100%; height: auto; display: inline-block; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
 .footnote { margin-top: .75rem; }
 .qr figcaption { color: var(--ink-2); font-size: 1.15rem; line-height: 1.4; max-width: 20rem; flex: 1 1 8rem; min-width: 0; }
 
