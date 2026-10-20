@@ -21,7 +21,7 @@
   const MDAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   function dayOfYear(d) { if (d.getMonth() === 1 && d.getDate() === 29) return 366; let n = 0; for (let i = 0; i < d.getMonth(); i++) n += MDAYS[i]; return n + d.getDate(); }
   function dayLabel(day) { if (day === 366) return "February 29"; let m = 0, d = day; while (d > MDAYS[m]) { d -= MDAYS[m]; m++; } return MONTHS[m] + " " + d; }
-  function versesHTML(vs) { return vs.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join(" "); }
+  function versesHTML(vs) { return vs.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join("<br>"); }   // one verse per line
 
   /* Book / chapter / verse picker shared by memory verse and Gold Nugget */
   async function makePicker(root) {

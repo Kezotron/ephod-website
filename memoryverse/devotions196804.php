@@ -75,7 +75,7 @@
   </aside>
   </div>
 </div>
-<script src="admin.js?v=d1130993"></script>
+<script src="admin.js?v=503bfe39"></script>
 <script>
 (async () => {
   const A = window.EPHOD_ADMIN, { $, $$, esc, api, status } = A;
