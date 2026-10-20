@@ -253,10 +253,17 @@ switch ($action) {
       while (true) { $st = $db->prepare('SELECT id FROM ' . T_DEVOTIONS . ' WHERE slug = ?'); $st->bind_param('s', $slug); $st->execute(); if (!$st->get_result()->fetch_assoc()) break; $slug = $base . '-' . $n++; }
       $image = null;
     }
-    // image upload (optional)
-    if (!empty($_FILES['image']['tmp_name']) && is_uploaded_file($_FILES['image']['tmp_name'])) {
-      $info = @getimagesize($_FILES['image']['tmp_name']); if (!$info) fail('That file is not an image');
-      $src = match ($info[2]) { IMAGETYPE_JPEG => imagecreatefromjpeg($_FILES['image']['tmp_name']), IMAGETYPE_PNG => imagecreatefrompng($_FILES['image']['tmp_name']), IMAGETYPE_WEBP => imagecreatefromwebp($_FILES['image']['tmp_name']), default => null };
+    // image upload (optional) — a file, or image_url for a picture that is already on the web (used when migrating)
+    $tmp = '';
+    if (!empty($_FILES['image']['tmp_name']) && is_uploaded_file($_FILES['image']['tmp_name'])) $tmp = $_FILES['image']['tmp_name'];
+    elseif (($u = trim((string)$q('image_url', ''))) !== '' && preg_match('#^https://#', $u)) {
+      $data = @file_get_contents($u, false, stream_context_create(['http' => ['timeout' => 20]]));
+      if ($data === false) fail('Could not download that image');
+      $tmp = tempnam(sys_get_temp_dir(), 'devo'); file_put_contents($tmp, $data);
+    }
+    if ($tmp !== '') {
+      $info = @getimagesize($tmp); if (!$info) fail('That file is not an image');
+      $src = match ($info[2]) { IMAGETYPE_JPEG => imagecreatefromjpeg($tmp), IMAGETYPE_PNG => imagecreatefrompng($tmp), IMAGETYPE_WEBP => imagecreatefromwebp($tmp), default => null };
       if (!$src) fail('Please use a JPG, PNG or WebP image');
       $w = imagesx($src); $h = imagesy($src); $nw = min(1200, $w); $nh = (int)round($h * $nw / $w);
       $dst = imagecreatetruecolor($nw, $nh); $white = imagecolorallocate($dst, 255, 255, 255); imagefill($dst, 0, 0, $white);

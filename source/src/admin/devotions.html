@@ -112,10 +112,10 @@
   function autoFormat() {
     body.querySelectorAll("p, div").forEach((p) => {
       const t = p.textContent.replace(/\s+/g, " ").trim(); if (!t) return;
-      const m = t.match(/^thought for today\s*:?\s*/i);
+      const m = t.match(/^((?:thought|challenge|prayer|action|question)\s+for\s+today)\s*:?\s*/i);
       if (m) {
         const rest = esc(t.slice(m[0].length).trim());
-        p.innerHTML = "<strong>THOUGHT FOR TODAY:</strong> <strong><em>" + rest + "</em></strong>";
+        p.innerHTML = "<strong>" + m[1].toUpperCase().replace(/\s+/g, " ") + ":</strong> <strong><em>" + rest + "</em></strong>";
       } else if (REF.test(t) && !p.querySelector("strong > em, em > strong")) {
         p.innerHTML = "<strong><em>" + esc(t) + "</em></strong>";
       }
