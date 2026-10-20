@@ -108,9 +108,13 @@ function excerptOf(string $html): string {
 function rebuildDevotionFiles(mysqli $db): int {
   $dir = SITE_ROOT . '/data/devotions';
   if (!is_dir($dir) && !mkdir($dir, 0755, true)) fail('Cannot create data/devotions folder', 500);
-  $r = $db->query('SELECT slug, title, post_date, reading, image, excerpt, body FROM ' . T_DEVOTIONS . ' WHERE published = 1 ORDER BY post_date DESC, id DESC');
-  $index = []; $all = []; $keep = ['index.json' => 1, 'all.json' => 1];
+  $r = $db->query('SELECT slug, title, post_date, reading, image, excerpt, body, (image_data IS NOT NULL) AS has_blob FROM ' . T_DEVOTIONS . ' WHERE published = 1 ORDER BY post_date DESC, id DESC');
+  $index = []; $all = []; $keep = ['index.json' => 1, 'all.json' => 1]; $restored = 0;
   while ($row = $r->fetch_assoc()) {
+    if ($row['image'] && $row['has_blob'] && !is_file(SITE_ROOT . '/' . $row['image'])) {
+      $st = $db->prepare('SELECT image_data FROM ' . T_DEVOTIONS . ' WHERE slug = ?'); $st->bind_param('s', $row['slug']); $st->execute(); $blob = $st->get_result()->fetch_assoc()['image_data'] ?? null;
+      if ($blob) { $idir = dirname(SITE_ROOT . '/' . $row['image']); if (!is_dir($idir)) mkdir($idir, 0755, true); file_put_contents(SITE_ROOT . '/' . $row['image'], $blob); $restored++; }
+    }
     $rec = ['slug' => $row['slug'], 'title' => $row['title'], 'date' => $row['post_date'], 'reading' => $row['reading'], 'image' => $row['image'] ?: null, 'excerpt' => $row['excerpt'], 'body' => $row['body']];
     $index[] = array_diff_key($rec, ['body' => 1]); $all[] = $rec;
     file_put_contents("$dir/{$row['slug']}.json", json_encode($rec, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
@@ -119,9 +123,12 @@ function rebuildDevotionFiles(mysqli $db): int {
   file_put_contents("$dir/index.json", json_encode($index, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
   file_put_contents("$dir/all.json", json_encode($all, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
   foreach (glob("$dir/*.json") as $f) if (!isset($keep[basename($f)])) unlink($f); // unpublished/renamed
+  $GLOBALS['restoredImages'] = $restored;
   return count($index);
 }
 function ensureDevotionsTable(mysqli $db): void {
+  // photos are kept in the database too, so a site deploy (which replaces every file) can be undone by devo_rebuild
+  static $done = false; if ($done) return; $done = true;
   $db->query('CREATE TABLE IF NOT EXISTS ' . T_DEVOTIONS . ' (
     id INT AUTO_INCREMENT PRIMARY KEY,
     slug VARCHAR(190) NOT NULL UNIQUE,
@@ -135,6 +142,8 @@ function ensureDevotionsTable(mysqli $db): void {
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX (post_date)
   ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci');
+  $c = $db->query("SHOW COLUMNS FROM " . T_DEVOTIONS . " LIKE 'image_data'");
+  if ($c && $c->num_rows === 0) $db->query('ALTER TABLE ' . T_DEVOTIONS . ' ADD COLUMN image_data MEDIUMBLOB NULL');
 }
 function isoWeekRange(int $week, ?int $year = null): array {
   $year = $year ?: (int)date('o');
@@ -254,6 +263,7 @@ switch ($action) {
       while (true) { $st = $db->prepare('SELECT id FROM ' . T_DEVOTIONS . ' WHERE slug = ?'); $st->bind_param('s', $slug); $st->execute(); if (!$st->get_result()->fetch_assoc()) break; $slug = $base . '-' . $n++; }
       $image = null;
     }
+    $imageData = false;   // false = leave the stored photo alone
     // image upload (optional) — a file, or image_url for a picture that is already on the web (used when migrating)
     $tmp = '';
     if (!empty($_FILES['image']['tmp_name']) && is_uploaded_file($_FILES['image']['tmp_name'])) $tmp = $_FILES['image']['tmp_name'];
@@ -271,9 +281,9 @@ switch ($action) {
       imagecopyresampled($dst, $src, 0, 0, 0, 0, $nw, $nh, $w, $h);
       $dir = SITE_ROOT . '/images/devotions'; if (!is_dir($dir)) mkdir($dir, 0755, true);
       if (function_exists('imagewebp')) { $file = "$slug.webp"; imagewebp($dst, "$dir/$file", 78); } else { $file = "$slug.jpg"; imagejpeg($dst, "$dir/$file", 82); }
-      $image = "images/devotions/$file";
+      $image = "images/devotions/$file"; $imageData = file_get_contents("$dir/$file");
     }
-    if ((string)$q('remove_image', '0') === '1') $image = null;
+    if ((string)$q('remove_image', '0') === '1') { $image = null; $imageData = null; }
     $excerpt = excerptOf($body);
     if ($id) {
       $st = $db->prepare('UPDATE ' . T_DEVOTIONS . ' SET title=?, post_date=?, reading=?, image=?, excerpt=?, body=?, published=? WHERE id=?');
@@ -282,6 +292,7 @@ switch ($action) {
       $st = $db->prepare('INSERT INTO ' . T_DEVOTIONS . ' (slug, title, post_date, reading, image, excerpt, body, published) VALUES (?,?,?,?,?,?,?,?)');
       $st->bind_param('sssssssi', $slug, $title, $date, $reading, $image, $excerpt, $body, $published); $st->execute(); $id = $db->insert_id;
     }
+    if ($imageData !== false) { $st = $db->prepare('UPDATE ' . T_DEVOTIONS . ' SET image_data = ? WHERE id = ?'); $null = null; $st->bind_param('bi', $null, $id); if ($imageData !== null) $st->send_long_data(0, $imageData); $st->execute(); }
     $n = rebuildDevotionFiles($db);
     out(['success' => true, 'id' => $id, 'slug' => $slug, 'message' => $published ? "Published. The website now shows $n devotions." : 'Saved as a draft (not shown on the website).']);
   }
@@ -293,7 +304,8 @@ switch ($action) {
   }
   case 'devo_rebuild': {
     ensureDevotionsTable($db);
-    out(['success' => true, 'message' => rebuildDevotionFiles($db) . ' devotion files written']);
+    $n = rebuildDevotionFiles($db);
+    out(['success' => true, 'message' => "$n devotion files written, " . ($GLOBALS['restoredImages'] ?? 0) . ' photos restored from the database']);
   }
   case 'devo_import': {
     // One-time import of the WordPress devotions from import/devotions_import.json
