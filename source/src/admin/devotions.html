@@ -14,6 +14,8 @@
     <nav><a href="memory-verse.html">Memory verse</a><a href="../devotions.html">View on website</a></nav>
   </div>
 
+  <div class="admin-cols">
+  <div class="admin-col">
   <div class="panel" id="editor-panel">
     <h2 id="editor-title">New devotion</h2>
     <form id="form">
@@ -43,7 +45,7 @@
       </div>
       <img id="f-thumb" class="thumb-preview" alt="" hidden>
       <div class="btn-row" style="margin-top:1rem">
-        <button type="submit" class="btn btn-primary" id="save-btn">Publish</button>
+        <button type="button" class="btn btn-quiet" id="preview-btn">Preview</button><button type="submit" class="btn btn-primary" id="save-btn">Publish</button>
         <button type="button" class="btn btn-quiet" id="new-btn">Start a new one</button>
         <button type="button" class="btn btn-quiet danger" id="delete-btn" hidden>Delete this devotion</button>
       </div>
@@ -58,12 +60,20 @@
     <ol>
       <li>This page is always for <strong>next week</strong> — the dates at the top. Type the title.</li>
       <li>Type the reading reference, for example <em>Isaiah 36:1 through 38:22</em>.</li>
-      <li>Paste the devotion text. Mark the Scripture quotation with <strong>Scripture quote</strong>.</li>
-      <li>Add a photo if you have one, then press <strong>Publish</strong>. It appears on the website right away.</li>
+      <li>Paste the devotion text. The Scripture quotation and the THOUGHT FOR TODAY line are styled for you.</li>
+      <li>Add a photo if you have one. Press <strong>Preview</strong> to see it on the right exactly as the website will show it, then <strong>Publish</strong>. It appears on the website right away.</li>
     </ol>
     <p>To fix something after publishing, press <strong>Open the latest devotion</strong> under the form, make the change, and press Publish again.</p>
   </div>
   <figure class="admin-photo" id="past-photo" hidden><img alt=""><figcaption></figcaption></figure>
+  </div>
+  <aside class="admin-col preview-col">
+    <div class="panel preview-panel">
+      <p class="muted" style="margin:0 0 .5rem">Preview — how it will look on the website</p>
+      <article class="article" id="preview-article"><p class="muted"><em>Press <strong>Preview</strong> to see the devotion here.</em></p></article>
+    </div>
+  </aside>
+  </div>
 </div>
 <script src="admin.js"></script>
 <script>
@@ -114,6 +124,21 @@
   body.addEventListener("paste", (e) => { e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData("text/plain"); const html = t.split(/\n\s*\n/).map((p) => "<p>" + esc(p.trim()).replace(/\n/g, "<br>") + "</p>").join(""); document.execCommand("insertHTML", false, html); });
   $("#f-image").addEventListener("change", () => { const f = $("#f-image").files[0]; if (f) { thumb.src = URL.createObjectURL(f); thumb.hidden = false; } });
   $("#edit-latest").addEventListener("click", async (e) => { e.preventDefault(); try { const j = await api("devo_list", { limit: 1 }); if (j.devotions[0]) edit(+j.devotions[0].id); } catch (err) { status(st, "err", err.message); } });
+  function preview() {
+    autoFormat();
+    const f = $("#f-image").files[0], img = f ? URL.createObjectURL(f) : (thumb.hidden || $("#f-remove").checked ? "" : thumb.src);
+    const d = $("#f-date").value, dt = new Date(d + "T12:00:00"), a = new Date(dt); a.setDate(dt.getDate() + ((8 - dt.getDay()) % 7 || 7)); const b = new Date(a); b.setDate(a.getDate() + 6);
+    const m = (x) => x.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+    let html = body.innerHTML.replace(/<div>/g, "<p>").replace(/<\/div>/g, "</p>"); if (!/<p|<h3|<blockquote/.test(html)) html = "<p>" + html + "</p>";
+    $("#preview-article").innerHTML = `
+      ${img ? `<div class="article-hero"><img src="${img}" alt=""></div>` : ""}
+      <p class="meta">Week of ${m(a)} to ${m(b)}, ${b.getFullYear()}</p>
+      <h1>${esc($("#f-title").value || "(no title yet)")}</h1>
+      ${$("#f-reading").value ? `<p class="read-line">Read ${esc($("#f-reading").value)}</p>` : ""}
+      <div class="article-body">${html}</div>
+      <p class="copyright-note">© Gospel Publishing House, 1445 N. Boonville Ave., Springfield, Missouri 65802. Used by permission.</p>`;
+  }
+  $("#preview-btn").addEventListener("click", preview);
   $("#new-btn").addEventListener("click", reset);
   form.addEventListener("submit", async (ev) => {
     ev.preventDefault(); status(st, "busy", "Saving…");
@@ -122,7 +147,7 @@
     let html = body.innerHTML.replace(/<div>/g, "<p>").replace(/<\/div>/g, "</p>"); if (!/<p|<h3|<blockquote/.test(html)) html = "<p>" + html + "</p>";
     fd.set("body", html); fd.set("published", $("#f-published").checked ? "1" : "0"); fd.set("remove_image", $("#f-remove").checked ? "1" : "0");
     const f = $("#f-image").files[0]; if (f) fd.set("image", f);
-    try { const j = await api("devo_save", null, fd); id = j.id; status(st, "ok", j.message); delBtn.hidden = false; $("#editor-title").textContent = "Editing: " + $("#f-title").value;  }
+    try { const j = await api("devo_save", null, fd); id = j.id; status(st, "ok", j.message); delBtn.hidden = false; $("#editor-title").textContent = "Editing: " + $("#f-title").value; preview(); }
     catch (err) { status(st, "err", err.message); }
   });
   delBtn.addEventListener("click", async () => {
