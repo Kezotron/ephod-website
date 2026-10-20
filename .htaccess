@@ -27,6 +27,8 @@ AddDefaultCharset UTF-8
 AddType image/webp .webp
 AddType image/svg+xml .svg
 
+ErrorDocument 404 /404.html
+
 RewriteEngine On
 
 # --- old WordPress addresses -> new pages (permanent redirects) ---

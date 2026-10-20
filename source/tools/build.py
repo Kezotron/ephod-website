@@ -64,5 +64,12 @@ for folder in ENTRY:
     s=s.replace('href="../css/themes.css"','href="../%s"'%stamp('css/themes.css')).replace('href="../css/site.css"','href="../%s"'%stamp('css/site.css'))
     s=s.replace('href="admin.css"','href="%s"'%stamp('admin/admin.css').replace('admin/','')).replace('src="admin.js"','src="%s"'%stamp('admin/admin.js').replace('admin/',''))
     open(fp,'w',encoding='utf-8').write(s)
+# robots.txt and sitemap.xml for the live domain
+SITE_URL='https://ephodlifestyle.com'
+open(os.path.join(DIST,'robots.txt'),'w').write("User-agent: *\nDisallow: /memoryverse/\nDisallow: /goldnugget/\nDisallow: /source/\nAllow: /\nSitemap: %s/sitemap.xml\n"%SITE_URL)
+pages=[f for f in sorted(os.listdir(DIST)) if f.endswith('.html') and f not in ('404.html','devotion.html','certificate.html','seminar.html')]
+urls=[SITE_URL+'/']+[SITE_URL+'/'+f for f in pages if f!='index.html']+[SITE_URL+'/'+p['slug']+'/' for p in posts]
+today=datetime.date.today().isoformat()
+open(os.path.join(DIST,'sitemap.xml'),'w',encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join('<url><loc>%s</loc><lastmod>%s</lastmod></url>\n'%(u,today) for u in urls)+'</urlset>\n')
 shutil.copy(os.path.join(SRC,'README-DEPLOY.md'),os.path.join(DIST,'README-DEPLOY.md'))
 print("built",len(posts),"devotions;",len([f for f in os.listdir(DIST) if f.endswith('.html')]),"pages")
