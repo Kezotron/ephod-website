@@ -87,7 +87,7 @@ function fetchVerses(mysqli $db, string $table, string $book, int $ch, int $v1, 
   return $o;
 }
 function slugify(string $s): string {
-  $s = strtolower(trim($s)); $s = str_replace(['\u{2019}', '\u{2018}', "'", '\u{201C}', '\u{201D}', '"'], '', $s);   // apostrophes vanish, as WordPress does
+  $s = strtolower(trim($s)); $s = str_replace(["\u{2019}", "\u{2018}", "'", "\u{201C}", "\u{201D}", '"'], '', $s);   // apostrophes vanish, as WordPress does
   $s = preg_replace('/[^a-z0-9]+/', '-', $s); return trim($s, '-') ?: 'devotion';
 }
 function sanitizeHtml(string $h): string {
