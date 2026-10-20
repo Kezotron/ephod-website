@@ -376,6 +376,13 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .people { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem 2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
 .people li strong { display: block; }
 .people li span { color: var(--ink-2); font-size: .95rem; }
+.intro-wide { max-width: 62rem; }
+.intro-wide .lede { max-width: none; }
+.profile { display: grid; grid-template-columns: minmax(0, 17rem) 1fr; gap: 1.75rem; align-items: center; margin-top: 1.75rem; }
+.profile img { width: 100%; height: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+.profile h3 { margin-top: 0; }
+.profile p:last-child { margin-bottom: 0; }
+@media (max-width: 40rem) { .profile { grid-template-columns: 1fr; } .profile img { max-width: 20rem; } }
 .partner-group h3 { margin-top: 1.5rem; }
 .partner-group h3:first-child { margin-top: 0; }
 .plan-list { padding-left: 1.4rem; margin: 0 0 1rem; columns: 2; column-gap: 1.5rem; }
