@@ -1,6 +1,6 @@
 import asyncio
 from playwright.async_api import async_playwright
-B="http://127.0.0.1:8788/admin-ephod-entry/"
+B="http://127.0.0.1:8788/memoryverse/"
 S="/tmp/claude-0/-home-claude/b602244f-d7b9-522b-95d8-07b2cd469a4b/scratchpad/shots/"
 async def main():
     async with async_playwright() as p:

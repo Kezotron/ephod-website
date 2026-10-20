@@ -11,7 +11,7 @@
 <div class="admin-wrap">
   <div class="admin-head">
     <h1>Weekly memory verse</h1>
-    <nav><a href="devotions.html">Devotions</a><a href="../index.html">View website</a></nav>
+    <nav><a href="devotions196804.php">Devotions</a><a href="../index.html">View website</a></nav>
   </div>
 
   <div class="panel">

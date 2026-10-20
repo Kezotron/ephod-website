@@ -9,7 +9,25 @@ os.makedirs(DIST)
 for d in ('css','js','images'):
     shutil.copytree(os.path.join(SRC,d),os.path.join(DIST,d))
 shutil.copy(os.path.join(SRC,'favicon.svg'),DIST)
-shutil.copytree(os.path.join(SRC,'admin'),os.path.join(DIST,'admin-ephod-entry'))
+# Entry pages live at the hidden URLs Zarah and Herb & Karen already use:
+#   /memoryverse/memoryverse196804.php  (Zarah: memory verse)  + /memoryverse/devotions196804.php
+#   /goldnugget/golden_nugget_admin.html (Herb & Karen)
+ENTRY={'memoryverse':{'memory-verse.html':'memoryverse196804.php','devotions.html':'devotions196804.php'},
+       'goldnugget':{'gold-nugget.html':'golden_nugget_admin.html'}}
+RENAMES={k:v for d in ENTRY.values() for k,v in d.items()}
+adm=os.path.join(SRC,'admin')
+for folder,pages in ENTRY.items():
+    out=os.path.join(DIST,folder); os.makedirs(out)
+    for f in os.listdir(adm):
+        src=os.path.join(adm,f)
+        if f.endswith('.html'):
+            if f in pages:
+                h=open(src,encoding='utf-8').read()
+                for a,b in RENAMES.items(): h=h.replace('href="%s"'%a,'href="%s"'%b)
+                open(os.path.join(out,pages[f]),'w',encoding='utf-8').write(h)
+        elif f=='import':
+            if folder=='memoryverse': shutil.copytree(src,os.path.join(out,'import'))
+        elif os.path.isfile(src): shutil.copy(src,out)
 shutil.copy(os.path.join(SRC,'htaccess.txt'),os.path.join(DIST,'.htaccess'))
 year=str(datetime.date.today().year)
 import hashlib
@@ -38,9 +56,10 @@ for p in posts:
     json.dump(p,open(os.path.join(dd,p['slug']+'.json'),'w',encoding='utf-8'),ensure_ascii=False)
 json.dump(posts,open(os.path.join(dd,'all.json'),'w',encoding='utf-8'),ensure_ascii=False)
 # version-stamp the entry pages' assets too (they are cached for an hour)
-ad=os.path.join(DIST,'admin-ephod-entry')
-for f in os.listdir(ad):
-    if not f.endswith('.html'): continue
+for folder in ENTRY:
+  ad=os.path.join(DIST,folder)
+  for f in os.listdir(ad):
+    if not (f.endswith('.html') or f.endswith('.php')) or f in ('api.php','config.php'): continue
     fp=os.path.join(ad,f); s=open(fp,encoding='utf-8').read()
     s=s.replace('href="../css/themes.css"','href="../%s"'%stamp('css/themes.css')).replace('href="../css/site.css"','href="../%s"'%stamp('css/site.css'))
     s=s.replace('href="admin.css"','href="%s"'%stamp('admin/admin.css').replace('admin/','')).replace('src="admin.js"','src="%s"'%stamp('admin/admin.js').replace('admin/',''))

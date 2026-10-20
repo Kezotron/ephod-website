@@ -14,7 +14,7 @@ AddDefaultCharset UTF-8
   <FilesMatch "\.(css|js)$">
     Header set Cache-Control "public, max-age=3600"
   </FilesMatch>
-  <FilesMatch "\.html$">
+  <FilesMatch "\.(html|php)$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
   <FilesMatch "\.json$">

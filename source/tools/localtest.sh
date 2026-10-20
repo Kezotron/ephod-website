@@ -6,8 +6,8 @@ cd /home/claude/ephod-site && python3 -I tools/build.py >/dev/null
 mkdir -p $S/dist-test && rm -rf $S/dist-test/* && cp -r dist/. $S/dist-test/
 sed -i 's#https://www.uneashippinglimited.com/api/#http://127.0.0.1:8787/#' $S/dist-test/js/config.js
 # local database for the PHP parts
-sed -i "s/define('DB_NAME', 'u663280063_youtube');/define('DB_NAME', 'ephodtest');/; s/define('DB_USER', 'u663280063_youtube');/define('DB_USER', 'root');/" $S/dist-test/admin-ephod-entry/config.php
-printf "<?php define('DB_PASS', '');\n" > $S/dist-test/admin-ephod-entry/config.local.php
+sed -i "s/define('DB_NAME', 'u663280063_youtube');/define('DB_NAME', 'ephodtest');/; s/define('DB_USER', 'u663280063_youtube');/define('DB_USER', 'root');/" $S/dist-test/memoryverse/config.php $S/dist-test/goldnugget/config.php
+printf "<?php define('DB_PASS', '');\n" > $S/dist-test/memoryverse/config.local.php; printf "<?php define('DB_PASS', '');\n" > $S/dist-test/goldnugget/config.local.php
 mysqladmin -uroot ping >/dev/null 2>&1 || (setsid nohup mysqld_safe --user=root >/tmp/mysql.log 2>&1 < /dev/null & sleep 5)
 up() { curl -s -m 2 -o /dev/null "$1"; }
 up "http://127.0.0.1:8787/get_daily_reading_plan.php?day=1" || setsid nohup python3 -I /home/claude/ephod-site/tools/mock_api.py >/tmp/mock.log 2>&1 < /dev/null &

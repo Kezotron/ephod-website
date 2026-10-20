@@ -11,7 +11,7 @@
 <div class="admin-wrap">
   <div class="admin-head">
     <h1>Devotions</h1>
-    <nav><a href="memory-verse.html">Memory verse</a><a href="../devotions.html">View on website</a></nav>
+    <nav><a href="memoryverse196804.php">Memory verse</a><a href="../devotions.html">View on website</a></nav>
   </div>
 
   <div class="admin-cols">

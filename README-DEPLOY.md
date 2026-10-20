@@ -14,7 +14,8 @@ css/        themes.css (colours — the themes live here), site.css (layout)
 js/         config.js (settings: API, default theme, store links), ephod.js
 images/     photos; images/devotions/ one photo per devotion
 data/devotions/   index.json, all.json and one JSON file per devotion (written by the entry page)
-admin-ephod-entry/   the three entry pages + api.php + config.php + a one-time import
+memoryverse/         Zarah's pages: memoryverse196804.php, devotions196804.php (+ api.php, config.php, one-time import)
+goldnugget/          Herb & Karen's page: golden_nugget_admin.html (+ api.php, config.php)
 .htaccess   redirects from the old WordPress addresses; keeps /checkmate/-style links working
 ```
 
@@ -34,10 +35,7 @@ admin-ephod-entry/   the three entry pages + api.php + config.php + a one-time i
 1. **Back up first.** hPanel → Websites → Manage → Backups → generate a full backup
    (files and database). Download it. If anything goes wrong you can restore WordPress.
 
-2. **Rename the entry folder.** Unzip the site on your PC. Rename `admin-ephod-entry`
-   to the secret name you want (letters, numbers and dashes). That name is the "hidden URL"
-   — give it only to Zarah, Herb and Karen. Nothing on the public site links to it.
-
+2. **Entry pages.** They are already at the hidden addresses in use: `/memoryverse/memoryverse196804.php` (Zarah — memory verse), `/memoryverse/devotions196804.php` (Zarah — devotions) and `/goldnugget/golden_nugget_admin.html` (Herb & Karen). Nothing to rename.
 3. **Put the database password in** `…/config.php` (the folder you just renamed).
    It is the same database the API uses. If you rotate the password later (you should),
    change it here and in the API's `config/database.php`.
@@ -109,4 +107,4 @@ Hostinger's GitHub deploy replaces everything in `public_html`, so a `config.loc
 <?php define('DB_PASS', 'the-password');
 ```
 
-`admin-ephod-entry/config.php` looks there first. Check with `/admin-ephod-entry/api.php?action=db_check` — it says whether it connected and which tables it can see.
+`memoryverse/config.php` and `goldnugget/config.php` look there first. Check with `/memoryverse/api.php?action=db_check` — it says whether it connected and which tables it can see.
