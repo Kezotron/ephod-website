@@ -140,7 +140,8 @@
 
   /* ---------- rendering helpers ---------- */
   function versesHTML(verses) {
-    return "<p>" + verses.map((v) => `<span class="v">${v.number ?? v.verseNumber}</span>${esc(v.text).trim()}`).join(" ") + "</p>";
+    // one line per verse (no paragraph gap between them)
+    return '<div class="verses">' + verses.map((v) => `<p class="vl"><span class="v">${v.number ?? v.verseNumber}</span>${esc(v.text).trim()}</p>`).join("") + "</div>";
   }
   function verseCard(opts) {
     // opts: kicker, title, verses, reference, versionTable, versionInfo, foot
@@ -148,7 +149,7 @@
       <div class="verse-card ${opts.cls || ""}">
         ${opts.kicker ? `<p class="verse-kicker">${esc(opts.kicker)}</p>` : ""}
         ${opts.title ? `<h2>${esc(opts.title)}</h2>` : ""}
-        <div class="verse-text">${opts.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join(" ")}</div>
+        <div class="verse-text">${opts.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
         <p class="verse-ref">${esc(opts.reference)}</p>
         <p class="verse-foot">${copyrightLine(opts.versionTable, opts.versionInfo)}${opts.foot ? " " + opts.foot : ""}</p>
       </div>`;
@@ -230,7 +231,7 @@
     api("get_memory_verse.php", { version: ver }).then((j) => {
       const md = $("#memory-date"); if (md) md.textContent = j.dateRange;
       mv.innerHTML = `<p class="verse-ref">${esc(j.reference.replace(/\s*\(.*\)$/, ""))}</p>
-        <div class="verse-text small-verse">${j.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join(" ")}</div>
+        <div class="verse-text small-verse">${j.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
         <p class="verse-foot">${esc(j.version)}</p>`;
     }).catch(() => fail(mv, "The memory verse couldn't be loaded."));
 
@@ -241,7 +242,7 @@
         <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(j.reference)}</span></div>
         <div class="nugget-body">
         <h3>Today's Gold Nugget</h3>
-        <div class="verse-text">${j.verses.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join(" ")}</div>
+        <div class="verse-text">${j.verses.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
         <div class="verse-footrow"><a class="more" href="gold-nugget.html">Past Gold Nuggets</a><span class="verse-foot">${copyrightLine(j.version, j.versionInfo)}</span></div>
         </div>
       </div>`;

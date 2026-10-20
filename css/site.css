@@ -237,6 +237,8 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .scripture h2 { font-size: 1.6rem; margin: 2rem 0 .75rem; color: var(--heading); font-family: var(--serif); font-weight: 500; }
 .scripture h2:first-child { margin-top: 0; }
 .scripture p { margin: 0 0 .85em; }
+.verses p.vl { margin: 0; }          /* each verse on its own line, no gap */
+.verses { margin: 0 0 .85em; }
 .scripture .v { font-family: var(--sans); font-size: .62em; color: var(--accent); font-weight: 700; vertical-align: super; margin-right: .25em; letter-spacing: 0; }
 .reading-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
 .copyright-note { font-size: .85rem; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 2rem; max-width: var(--measure); }
