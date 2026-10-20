@@ -25,6 +25,8 @@ for f in sorted(os.listdir(os.path.join(SRC,'pages'))):
     html=layout
     for k in ('title','description','page'): html=html.replace('{{%s}}'%k,meta.get(k,''))
     html=html.replace('{{body_attrs}}',meta.get('body_attrs','')).replace('{{year}}',year).replace('{{content}}',body)
+    for js in ('js/seminars.js','js/course.js'):
+        html=html.replace('src="%s"'%js,'src="%s"'%stamp(js))
     open(os.path.join(DIST,f),'w',encoding='utf-8').write(html)
 # devotions data
 posts=json.load(open(os.path.join(ROOT,'tools','devotions_full.json'),encoding='utf-8'))
