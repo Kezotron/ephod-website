@@ -271,14 +271,15 @@
     const prev = day === 1 ? 365 : day === 366 ? 59 : day - 1;
     const next = day === 365 ? 1 : day === 366 ? 60 : day + 1;
     $("#daynav").innerHTML = `
-      <a class="btn btn-quiet" href="?day=${prev}">← Previous day</a>
+      <a class="btn btn-quiet" href="?day=${prev}">← Previous</a>
       ${day !== dayOfYear(new Date()) ? `<a class="btn btn-quiet" href="${which}-reading.html">Today</a>` : ""}
-      <a class="btn btn-quiet" href="?day=${next}">Next day →</a>
-      <a class="btn btn-quiet" href="${which === "am" ? "pm" : "am"}-reading.html?day=${day}">${which === "am" ? "Evening" : "Morning"} reading for this day</a>`;
+      <a class="btn btn-quiet" href="?day=${next}">Next →</a>`;
+    const other = $("#other-passage");
+    if (other) other.innerHTML = `<a class="btn btn-primary" href="${which === "am" ? "pm" : "am"}-reading.html?day=${day}">${which === "am" ? "Evening Passage" : "Morning Passage"}</a>`;
     try {
       const j = await api((which === "am" ? "am_bible_reading.php" : "pm_bible_reading.php"), { day, version: ver });
       $("#reading-ref").textContent = j.reference;
-      document.title = `${j.reference} — ${which.toUpperCase()} Bible Reading | EPHOD`;
+      document.title = `${j.reference} — ${which === "am" ? "Morning" : "Evening"} Passage | EPHOD`;
       let html = "";
       if (j.chapters) {
         j.chapters.forEach((ch) => { html += `<h2>${esc(j.bookName)} ${ch.number}</h2>` + versesHTML(ch.verses); });

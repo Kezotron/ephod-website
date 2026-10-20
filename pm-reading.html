@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Evening Bible reading | EPHOD</title>
-  <meta name="description" content="Today's evening New Testament reading from the EPHOD one-year plan.">
+  <title>Evening Passage | EPHOD</title>
+  <meta name="description" content="Today's evening New Testament passage from the EPHOD one-year plan.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/themes.css?v=79637b43">
-  <link rel="stylesheet" href="css/site.css?v=2cc2c32a">
+  <link rel="stylesheet" href="css/site.css?v=7e99574b">
   <script src="js/config.js?v=ee960e18"></script>
   <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme-v2")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
   <meta property="og:site_name" content="EPHOD">
-  <meta property="og:title" content="Evening Bible reading | EPHOD">
-  <meta property="og:description" content="Today's evening New Testament reading from the EPHOD one-year plan.">
+  <meta property="og:title" content="Evening Passage | EPHOD">
+  <meta property="og:description" content="Today's evening New Testament passage from the EPHOD one-year plan.">
 </head>
 <body data-page="reading" data-reading="pm">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -43,24 +43,23 @@
 <main id="main">
 <section class="section">
   <div class="wrap">
-    <div class="reading-head">
-      <div>
+    <div class="reader">
+      <div class="reader-title">
         <p class="today-date" id="reading-date">Today</p>
         <h1>Evening Passage</h1>
-        <p class="lede serif" id="reading-ref">…</p>
       </div>
-      <div class="field"><label for="version-pm">Bible version</label><select id="version-pm" class="version-select"></select></div>
-    </div>
-    <div class="split">
-      <div>
+      <article class="parchment">
+        <div class="reader-head">
+          <p class="reader-ref" id="reading-ref">…</p>
+          <div class="field compact"><label for="version-pm" class="visually-hidden">Bible version</label><select id="version-pm" class="version-select"></select></div>
+        </div>
         <div class="scripture" id="scripture"></div>
         <p class="copyright-note" id="copyright"></p>
+      </article>
+      <div class="reader-foot">
+        <div class="other-passage" id="other-passage"></div>
         <div class="daynav" id="daynav"></div>
       </div>
-      <aside class="stack">
-        <div class="card"><h3>Missed a day?</h3><p class="muted">Readings from the last week are one tap away, and you can jump to any date of the year.</p><a class="btn btn-quiet" href="catch-up.html">Catch up</a></div>
-        <div id="week-devotion"></div>
-      </aside>
     </div>
   </div>
 </section>
@@ -118,6 +117,6 @@
     </div>
   </div>
 </footer>
-<script src="js/ephod.js?v=09f329d7"></script>
+<script src="js/ephod.js?v=5675e556"></script>
 </body>
 </html>
