@@ -1,10 +1,12 @@
-<!-- {"title": "Weekly memory verses | EPHOD", "description": "This week's EPHOD memory verse and the past three months of verses.", "page": "memory"} -->
+<!-- {"title": "Weekly memory verses | EPHOD", "description": "This week's EPHOD memory verse and every memory verse from the past year.", "page": "memory"} -->
 <section class="section">
   <div class="wrap">
     <div class="reading-head">
-      <div><h1>Memory verses</h1><p class="lede">One verse a week, hidden in your heart. Here is this week's, with the last thirteen weeks to review.</p></div>
+      <div><h1>Memory verses</h1><p class="lede">One verse a week, hidden in your heart.</p></div>
       <div class="field"><label for="version-mv">Bible version</label><select id="version-mv" class="version-select"></select></div>
     </div>
-    <div class="grid grid-2" id="memory-list"><p class="loading">Loading…</p></div>
+    <div id="memory-this-week"><p class="loading">Loading this week's verse…</p></div>
+    <h2 class="list-title">Past memory verses <span class="muted small">the last year</span></h2>
+    <ol class="verse-list" id="memory-list"><li class="loading">Loading…</li></ol>
   </div>
 </section>

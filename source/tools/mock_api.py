@@ -22,8 +22,11 @@ class H(BaseHTTPRequestHandler):
         elif p in('am_bible_reading.php','pm_bible_reading.php'): out={"success":True,"day":day,"version":ver,"reference":"Isaiah 44-45","bookName":"Isaiah","chapters":[{"number":44,"verses":verses(28)},{"number":45,"verses":verses(25)}],"versionInfo":[]}
         elif p=='get_memory_verse.php': out={"success":True,"dateRange":"October 12 to October 18, 2026","reference":"Isaiah 41:10 (American Standard Version)","version":"American Standard Version","verses":[{"verseNumber":"10","text":"fear thou not, for I am with thee; be not dismayed, for I am thy God; I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness."}]}
         elif p=='get_golden_nugget.php': out={"success":True,"day":day,"reference":"1st Timothy 2:8","referenceWithVersion":"1st Timothy 2:8 (ASV)","book":"1st Timothy","chapter":2,"verseStart":8,"verseEnd":8,"version":ver,"versionInfo":VI,"verses":[{"number":8,"text":"I desire therefore that the men pray in every place, lifting up holy hands, without wrath and disputing."}]}
-        elif p=='get_past_memory_verses.php': out={"success":True,"currentWeek":42,"count":13,"memoryVerses":[{"week":42-i,"reference":"Isaiah 41:%d"%(10+i),"version":ver,"versionAbbr":"ASV","verses":verses(1,10+i)} for i in range(13)]}
-        elif p=='get_past_golden_nuggets.php': out={"success":True,"currentDay":day,"count":30,"goldenNuggets":[{"day":day-i,"date":"October %d"%(16-i if i<16 else 1),"reference":"Psalms %d:1"%(100+i),"version":ver,"versionAbbr":"ASV","verses":verses(1)} for i in range(30)]}
+        elif p=='get_past_memory_verses.php':
+            n=int(q.get('weeks',13)); out={"success":True,"currentWeek":43,"count":n,"memoryVerses":[{"week":((43-i-1)%52)+1,"reference":"Isaiah 41:%d"%(10+i%20),"version":ver,"versionAbbr":"ASV","verses":verses(1,10+i%20)} for i in range(n)]}
+        elif p=='get_past_golden_nuggets.php':
+            import datetime; n=int(q.get('days',30)); today=datetime.date(2026,1,1)+datetime.timedelta(days=day-1)
+            out={"success":True,"currentDay":day,"count":n,"goldenNuggets":[{"day":((day-i-1)%365)+1,"date":(today-datetime.timedelta(days=i)).strftime("%B %-d"),"reference":"Psalms %d:1"%(100+i%50),"version":ver,"versionAbbr":"ASV","verses":verses(1)} for i in range(n)]}
         elif p=='get_bible_books.php': out={"success":True,"language":"English","count":len(BOOKS),"books":[{"id":i,"number":n+1,"name":nm} for n,(i,nm) in enumerate(BOOKS)]}
         elif p=='export_reading_plan.php':
             rp=[]

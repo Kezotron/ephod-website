@@ -377,23 +377,63 @@
   };
 
   /* ---------- memory verses (current + past) ---------- */
+  // ISO week N of year Y starts on this Monday
+  function isoWeekStart(y, w) {
+    const jan4 = new Date(y, 0, 4);
+    const mon = new Date(jan4); mon.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7));
+    mon.setDate(mon.getDate() + (w - 1) * 7);
+    return mon;
+  }
+  function weekLabel(y, w) {
+    const a = isoWeekStart(y, w), b = new Date(a); b.setDate(a.getDate() + 6);
+    const mo = (x) => x.toLocaleDateString(undefined, { month: "short" });
+    return a.getMonth() === b.getMonth() ? `${mo(a)} ${a.getDate()}–${b.getDate()}` : `${mo(a)} ${a.getDate()}–${mo(b)} ${b.getDate()}`;
+  }
+  const verseLine = (vs) => vs.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join(" ");
+
   pages.memory = async function () {
     const ver = initVersionSelects(() => pages.memory());
-    const out = $("#memory-list");
+    const top = $("#memory-this-week"), out = $("#memory-list");
     try {
-      const j = await api("get_past_memory_verses.php", { version: ver });
-      out.innerHTML = j.memoryVerses.map((m, i) => verseCard({ kicker: i === 0 ? "This week · week " + m.week : "Week " + m.week, verses: m.verses, reference: m.reference, versionTable: m.version, versionInfo: null })).join("");
-    } catch (e) { fail(out, "Memory verses couldn't be loaded right now."); }
+      const j = await api("get_past_memory_verses.php", { version: ver, weeks: 53 });
+      const list = j.memoryVerses;
+      const cur = list[0];
+      const ws = isoWeekStart(new Date().getFullYear(), cur.week), we = new Date(ws); we.setDate(ws.getDate() + 6);
+      const long = (x) => x.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+      top.innerHTML = verseCard({ kicker: `This week · ${long(ws)} to ${long(we)}, ${we.getFullYear()}`, verses: cur.verses, reference: cur.reference, versionTable: cur.version, versionInfo: null, cls: "feature-verse" });
+      // the API gives week numbers only; count the year down each time the week number wraps
+      let year = new Date().getFullYear(), prev = cur.week;
+      out.innerHTML = list.slice(1).map((m) => {
+        if (m.week > prev) year -= 1; prev = m.week;
+        return `<li><time>${esc(weekLabel(year, m.week))}${year !== new Date().getFullYear() ? `, ${year}` : ""}</time><div><strong class="ref">${esc(m.reference)}</strong><span class="txt">${verseLine(m.verses)}</span></div></li>`;
+      }).join("") + `<li class="foot">${copyrightLine(ver, null)}</li>`;
+    } catch (e) { fail(top, "Memory verses couldn't be loaded right now."); out.innerHTML = ""; }
   };
 
-  /* ---------- gold nuggets (current + past) ---------- */
+  /* ---------- gold nuggets (today + the past year) ---------- */
   pages.nuggets = async function () {
     const ver = initVersionSelects(() => pages.nuggets());
-    const out = $("#nugget-list");
+    const top = $("#nugget-today"), out = $("#nugget-list");
     try {
-      const j = await api("get_past_golden_nuggets.php", { version: ver, day: dayOfYear(new Date()) });
-      out.innerHTML = j.goldenNuggets.map((m, i) => verseCard({ kicker: (i === 0 ? "Today · " : "") + m.date, verses: m.verses, reference: m.reference, versionTable: m.version, versionInfo: null })).join("");
-    } catch (e) { fail(out, "Gold Nuggets couldn't be loaded right now."); }
+      const j = await api("get_past_golden_nuggets.php", { version: ver, day: dayOfYear(new Date()), days: 366 });
+      const list = j.goldenNuggets;
+      const cur = list[0];
+      top.innerHTML = `<div class="verse-card nugget-card">
+        <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(cur.reference)}</span></div>
+        <div class="nugget-body">
+        <h3>Today's Gold Nugget</h3>
+        <div class="verse-text">${cur.verses.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
+        <div class="verse-footrow"><span class="muted small">${esc(cur.date)}</span><span class="verse-foot">${copyrightLine(ver, null)}</span></div>
+        </div>
+      </div>`;
+      let year = new Date().getFullYear(), prev = cur.day;
+      out.innerHTML = list.slice(1).map((m) => {
+        if (m.day > prev) year -= 1; prev = m.day;
+        const d = new Date(m.date + " " + year);
+        const label = isNaN(d) ? m.date : d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + (year !== new Date().getFullYear() ? `, ${year}` : "");
+        return `<li><time>${esc(label)}</time><div><strong class="ref">${esc(m.reference)}</strong><span class="txt">${verseLine(m.verses)}</span></div></li>`;
+      }).join("") + `<li class="foot">${copyrightLine(ver, null)}</li>`;
+    } catch (e) { fail(top, "Gold Nuggets couldn't be loaded right now."); out.innerHTML = ""; }
   };
 
   /* ---------- devotions archive ---------- */
