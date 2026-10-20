@@ -177,10 +177,6 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .photo-card .devo-title { font-family: var(--sans); font-weight: 600; font-size: 1.15rem; line-height: 1.2; text-decoration: none; color: var(--heading); }
 .photo-card .reading { color: var(--primary); font-weight: 600; font-size: .9rem; margin: 0; }
 .photo-card .today-date { font-family: var(--sans); font-size: .9rem; }
-/* 10 Point Plan card (home) */
-.plan-card { border-top-color: var(--primary); align-self: start; }
-.plan-card img { aspect-ratio: 15 / 9; }
-.plan-card .body .plan { margin-top: .6rem; }
 
 /* ---------- today panel (home hero) ---------- */
 .today { display: grid; gap: clamp(1.25rem, 3vw, 2rem); grid-template-columns: 1fr; }
