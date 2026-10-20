@@ -44,10 +44,10 @@ RewriteRule ^(category/devotions|blog|devotions)(/.*)?$ /devotions.html [R=301,L
 RewriteRule ^(log-in|register|profile|reset-your-password|demo|demo-home|wp-login\.php|wp-admin.*|feed|comments/feed)/?$ / [R=301,L]
 RewriteRule ^[0-9]{4}/[0-9]{2}/?$ /devotions.html [R=301,L]
 
-# --- devotion permalinks: /checkmate/ keeps working ---
+# --- old devotion permalinks: /checkmate/ -> the devotion page ---
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^([a-z0-9-]+)/?$ devotion.html?slug=$1 [L,QSA]
+RewriteRule ^([a-z0-9-]+)/?$ /devotion.html?slug=$1 [R=301,L]
 
 # --- keep private things private ---
 RewriteRule ^(source|\.git)(/|$) - [F,L]
