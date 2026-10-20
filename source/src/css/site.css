@@ -390,6 +390,13 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 @media (max-width: 40rem) { .verse-list li { grid-template-columns: 1fr; gap: .15rem; } }
 .feature-verse { margin-bottom: 0; }
 
+/* ---------- app screenshots ---------- */
+.screens { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2rem); }
+.screens figure { margin: 0; text-align: center; }
+.screens img { width: 100%; height: auto; border-radius: 18px; border: 1px solid var(--line); box-shadow: var(--shadow); background: #0b2a5e; }
+.screens figcaption { margin-top: .6rem; font-weight: 600; color: var(--heading); }
+@media (max-width: 48rem) { .screens { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 /* ---------- video embeds ---------- */
 .video { margin: 0; }
 .video-frame { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
