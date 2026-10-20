@@ -250,26 +250,36 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .reader-title h1 { margin: 0; }
 .reader-title .today-date { margin-bottom: .2rem; }
 .parchment {
-  --paper: #f7f0df; --paper-ink: #2a2318; --paper-line: #c9b78f;
+  --paper: #f7f0df; --paper-ink: #2a2318; --paper-line: #c9b78f; --paper-head: #1f3657; --paper-num: #8b6b2e;
+  --paper-muted: #6f6250; --paper-rule: rgba(120,90,40,.28); --paper-select: rgba(255,255,255,.75);
   color: var(--paper-ink);
   background-color: var(--paper);
   background-image:
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .42  0 0 0 0 .32  0 0 0 0 .16  0 0 0 .14 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
     radial-gradient(ellipse at 50% 40%, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 55%, rgba(120,90,40,.16) 100%);
   border: 3px double var(--paper-line);
-  outline: 1px solid rgba(201,183,143,.55); outline-offset: -9px;
+  outline: 1px solid var(--paper-line); outline-offset: -9px;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(60,40,10,.12), 0 14px 32px -18px rgba(60,40,10,.5);
   padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) clamp(1.25rem, 3vw, 2rem);
 }
-.reader-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid rgba(120,90,40,.28); padding-bottom: .8rem; margin-bottom: 1.4rem; }
-.reader-ref { margin: 0; font-family: var(--serif); font-size: clamp(1.4rem, 3vw, 1.75rem); color: #1f3657; line-height: 1.2; }
+/* Evening: a very dark sheet with soft white text */
+[data-theme="evening"] .parchment {
+  --paper: #15161b; --paper-ink: #e6e3dc; --paper-line: #4b4a46; --paper-head: #cfdcee; --paper-num: #c9a85c;
+  --paper-muted: #9a968e; --paper-rule: rgba(255,255,255,.14); --paper-select: #22242b;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .9  0 0 0 0 .86  0 0 0 0 .78  0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+    radial-gradient(ellipse at 50% 40%, rgba(255,255,255,.05) 0%, rgba(255,255,255,0) 55%, rgba(0,0,0,.35) 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,.5), 0 16px 36px -18px rgba(0,0,0,.9);
+}
+.reader-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; border-bottom: 1px solid var(--paper-rule); padding-bottom: .8rem; margin-bottom: 1.4rem; }
+.reader-ref { margin: 0; font-family: var(--serif); font-size: clamp(1.4rem, 3vw, 1.75rem); color: var(--paper-head); line-height: 1.2; }
 .field.compact { gap: 0; }
-.parchment select { background: rgba(255,255,255,.75); color: var(--paper-ink); border-color: var(--paper-line); }
+.parchment select { background: var(--paper-select); color: var(--paper-ink); border-color: var(--paper-line); }
 .parchment .scripture { max-width: none; color: var(--paper-ink); }
-.parchment .scripture h2 { text-align: center; color: #1f3657; }
-.parchment .scripture .v { color: #8b6b2e; }
-.parchment .copyright-note { color: #6f6250; border-top-color: rgba(120,90,40,.28); max-width: none; margin-top: 1.25rem; padding-top: .75rem; }
+.parchment .scripture h2 { text-align: center; color: var(--paper-head); }
+.parchment .scripture .v { color: var(--paper-num); }
+.parchment .copyright-note { color: var(--paper-muted); border-top-color: var(--paper-rule); max-width: none; margin-top: 1.25rem; padding-top: .75rem; }
 .reader-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; margin-top: 1.5rem; }
 .reader-foot .other-passage { grid-column: 2; }
 .reader-foot .daynav { grid-column: 3; justify-self: end; margin-top: 0; flex-wrap: nowrap; white-space: nowrap; }
