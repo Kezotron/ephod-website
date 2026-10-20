@@ -33,12 +33,13 @@ try {
   if (($_GET['action'] ?? '') === 'db_check') {
     $msg = $e->getMessage();
     $why = 'unknown';
-    if (!is_file(__DIR__ . '/config.local.php')) $why = 'config.local.php is missing next to api.php';
+    $__outside = dirname(__DIR__, 2) . '/ephod-config.local.php';
+    if (!is_file(__DIR__ . '/config.local.php') && !is_file($__outside)) $why = 'No password file found. Create ' . $__outside . ' (outside public_html) containing: <?php define(\'DB_PASS\', \'the-password\');';
     elseif (DB_PASS === '') $why = 'config.local.php exists but DB_PASS is empty';
     elseif (stripos($msg, 'Access denied') !== false) $why = 'MySQL refused the user/password (Access denied) — wrong password, or this website is on a different hosting plan than the database';
     elseif (stripos($msg, 'Unknown database') !== false) $why = 'MySQL connected but the database name does not exist on this server';
     elseif (stripos($msg, 'refused') !== false || stripos($msg, 'No such file') !== false || stripos($msg, 'getaddrinfo') !== false || stripos($msg, "Can't connect") !== false) $why = 'No MySQL server reachable at DB_HOST from this website — use the Remote MySQL hostname of the plan that owns the database';
-    out(['success' => false, 'connected' => false, 'why' => $why, 'mysql_error' => preg_replace('/\b' . preg_quote(DB_PASS, '/') . '\b/', '***', $msg), 'host' => DB_HOST, 'database' => DB_NAME, 'user' => DB_USER, 'local_config' => is_file(__DIR__ . '/config.local.php'), 'php' => PHP_VERSION]);
+    out(['success' => false, 'connected' => false, 'why' => $why, 'mysql_error' => (DB_PASS === '' ? $msg : str_replace(DB_PASS, '***', $msg)), 'host' => DB_HOST, 'database' => DB_NAME, 'user' => DB_USER, 'password_file' => (is_file($__outside) ? 'ephod-config.local.php (outside public_html)' : (is_file(__DIR__ . '/config.local.php') ? 'config.local.php (inside public_html; deploys may delete it)' : 'none')), 'php' => PHP_VERSION]);
   }
   fail('Database connection failed. Check config.php.', 500);
 }

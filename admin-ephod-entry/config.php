@@ -5,10 +5,14 @@
 // blocked from the web by .htaccess; keep it that way.
 // ============================================================
 
-// The database password lives in config.local.php next to this file, which is
-// NOT in Git. Create it on the server (File Manager → New file) with:
+// The database password lives in a small file that is NOT in Git:
 //   <?php define('DB_PASS', 'the-password');
-if (is_file(__DIR__ . '/config.local.php')) require __DIR__ . '/config.local.php';
+// Put it OUTSIDE public_html so GitHub deploys can't remove it and the web can't read it:
+//   domains/<site>/ephod-config.local.php   (next to public_html)
+// A config.local.php next to this file still works too.
+foreach ([dirname(__DIR__, 2) . '/ephod-config.local.php', __DIR__ . '/config.local.php'] as $__f) {
+  if (is_file($__f)) { require $__f; break; }
+}
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'u663280063_youtube');
 define('DB_USER', 'u663280063_youtube');

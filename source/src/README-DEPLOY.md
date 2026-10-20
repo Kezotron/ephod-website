@@ -99,3 +99,14 @@ To hide the footer picker, set `SHOW_THEME_PICKER: false`.
 The `src/` folder plus `tools/build.py` regenerate everything in `dist/`
 (`python3 tools/build.py`). You only need this if you change the pages themselves;
 devotions, memory verses and Gold Nuggets are all changed through the entry pages.
+
+## Database password (important)
+Hostinger's GitHub deploy replaces everything in `public_html`, so a `config.local.php` inside it gets deleted on the next push. Keep the password file **outside** `public_html` instead:
+
+`domains/<your-site>/ephod-config.local.php` (the folder that contains `public_html`), containing one line:
+
+```php
+<?php define('DB_PASS', 'the-password');
+```
+
+`admin-ephod-entry/config.php` looks there first. Check with `/admin-ephod-entry/api.php?action=db_check` — it says whether it connected and which tables it can see.
