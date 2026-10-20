@@ -28,7 +28,30 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 try {
   $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
   $db->set_charset('utf8mb4');
-} catch (Throwable $e) { fail('Database connection failed. Check config.php.', 500); }
+} catch (Throwable $e) {
+  // ?action=db_check explains the failure without revealing secrets
+  if (($_GET['action'] ?? '') === 'db_check') {
+    $msg = $e->getMessage();
+    $why = 'unknown';
+    if (!is_file(__DIR__ . '/config.local.php')) $why = 'config.local.php is missing next to api.php';
+    elseif (DB_PASS === '') $why = 'config.local.php exists but DB_PASS is empty';
+    elseif (stripos($msg, 'Access denied') !== false) $why = 'MySQL refused the user/password (Access denied) — wrong password, or this website is on a different hosting plan than the database';
+    elseif (stripos($msg, 'Unknown database') !== false) $why = 'MySQL connected but the database name does not exist on this server';
+    elseif (stripos($msg, 'refused') !== false || stripos($msg, 'No such file') !== false || stripos($msg, 'getaddrinfo') !== false || stripos($msg, "Can't connect") !== false) $why = 'No MySQL server reachable at DB_HOST from this website — use the Remote MySQL hostname of the plan that owns the database';
+    out(['success' => false, 'connected' => false, 'why' => $why, 'mysql_error' => preg_replace('/\b' . preg_quote(DB_PASS, '/') . '\b/', '***', $msg), 'host' => DB_HOST, 'database' => DB_NAME, 'user' => DB_USER, 'local_config' => is_file(__DIR__ . '/config.local.php'), 'php' => PHP_VERSION]);
+  }
+  fail('Database connection failed. Check config.php.', 500);
+}
+if (($_GET['action'] ?? '') === 'db_check') {
+  $r = $db->query('SELECT DATABASE() AS d, VERSION() AS v');
+  $row = $r ? $r->fetch_assoc() : [];
+  $tables = [];
+  foreach ([T_MEMORY, T_NUGGET, T_DEVOTIONS, 'biblebooks', 'bible_version_key'] as $t) {
+    $q = $db->query("SHOW TABLES LIKE '" . $db->real_escape_string($t) . "'");
+    $tables[$t] = $q && $q->num_rows > 0;
+  }
+  out(['success' => true, 'connected' => true, 'database' => $row['d'] ?? null, 'mysql' => $row['v'] ?? null, 'tables' => $tables, 'php' => PHP_VERSION]);
+}
 
 $action = $_GET['action'] ?? '';
 $input = [];
