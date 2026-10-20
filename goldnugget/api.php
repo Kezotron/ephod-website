@@ -87,7 +87,8 @@ function fetchVerses(mysqli $db, string $table, string $book, int $ch, int $v1, 
   return $o;
 }
 function slugify(string $s): string {
-  $s = strtolower(trim($s)); $s = preg_replace('/[^a-z0-9]+/', '-', $s); return trim($s, '-') ?: 'devotion';
+  $s = strtolower(trim($s)); $s = str_replace(['\u{2019}', '\u{2018}', "'", '\u{201C}', '\u{201D}', '"'], '', $s);   // apostrophes vanish, as WordPress does
+  $s = preg_replace('/[^a-z0-9]+/', '-', $s); return trim($s, '-') ?: 'devotion';
 }
 function sanitizeHtml(string $h): string {
   $h = strip_tags($h, '<p><br><strong><b><em><i><a><ul><ol><li><h3><blockquote>');
@@ -100,7 +101,7 @@ function sanitizeHtml(string $h): string {
   return trim($h);
 }
 function excerptOf(string $html): string {
-  $t = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags($html), ENT_QUOTES, 'UTF-8')));
+  $t = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags(preg_replace('#</(p|li|h3|blockquote|div)>#i', ' ', $html)), ENT_QUOTES, 'UTF-8')));
   if (mb_strlen($t) <= 200) return $t;
   $t = mb_substr($t, 0, 200); return mb_substr($t, 0, mb_strrpos($t, ' ') ?: 200) . '…';
 }
