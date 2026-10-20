@@ -268,12 +268,9 @@
     const out = $("#scripture");
     out.innerHTML = `<p class="loading">Loading ${which === "am" ? "this morning's" : "this evening's"} reading…</p>`;
     // day navigation
-    const prev = day === 1 ? 365 : day === 366 ? 59 : day - 1;
-    const next = day === 365 ? 1 : day === 366 ? 60 : day + 1;
     $("#daynav").innerHTML = `
-      <a class="btn btn-quiet" href="?day=${prev}">← Previous</a>
-      ${day !== dayOfYear(new Date()) ? `<a class="btn btn-quiet" href="${which}-reading.html">Today</a>` : ""}
-      <a class="btn btn-quiet" href="?day=${next}">Next →</a>`;
+      ${day !== dayOfYear(new Date()) ? `<a class="btn btn-quiet" href="${which}-reading.html">Today's passage</a>` : ""}
+      <a class="btn btn-quiet" href="catch-up.html">Missed a day? Catch up</a>`;
     const other = $("#other-passage");
     if (other) other.innerHTML = `<a class="btn btn-primary" href="${which === "am" ? "pm" : "am"}-reading.html?day=${day}">${which === "am" ? "Evening Passage" : "Morning Passage"}</a>`;
     try {
