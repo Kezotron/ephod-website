@@ -166,7 +166,7 @@
     return `<a class="card devo-card" href="${devoURL(d)}">
       ${devoImage(d)}
       <div class="body">
-        <span class="meta">${fmtDate(new Date(d.date + "T12:00:00"), { month: "long", day: "numeric", year: "numeric" })}</span>
+        <span class="meta">${esc(devoWeekRange(d.date))}</span>
         <h3>${esc(d.title)}</h3>
         ${d.reading ? `<span class="reading">Read ${esc(d.reading)}</span>` : ""}
         <p>${esc(d.excerpt || "")}</p>
@@ -175,12 +175,24 @@
   function devoURL(d) { return "devotion.html?slug=" + encodeURIComponent(d.slug); }
   // Devotions are posted on Sunday for the week that follows (Monday to Sunday),
   // the same week the memory verse covers.
-  function devoWeekRange(dateStr) {
+  function devoWeek(dateStr) {
     const d = new Date(dateStr + "T12:00:00");
     const start = new Date(d); start.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7));
     const end = new Date(start); end.setDate(start.getDate() + 6);
+    return { start, end };
+  }
+  function devoWeekRange(dateStr) {
+    const { start, end } = devoWeek(dateStr);
     const m = (x) => x.toLocaleDateString(undefined, { month: "long", day: "numeric" });
     return `${m(start)} to ${m(end)}, ${end.getFullYear()}`;
+  }
+  // short form for lists: "Oct 19–25" or "Oct 27–Nov 2"
+  function devoWeekShort(dateStr) {
+    const { start, end } = devoWeek(dateStr);
+    const mo = (x) => x.toLocaleDateString(undefined, { month: "short" });
+    return start.getMonth() === end.getMonth()
+      ? `${mo(start)} ${start.getDate()}–${end.getDate()}`
+      : `${mo(start)} ${start.getDate()}–${mo(end)} ${end.getDate()}`;
   }
 
   /* ---------- reading plan references ---------- */
@@ -391,12 +403,12 @@
       const idx = await getJSON(C.DEVOTIONS_INDEX);
       latest.innerHTML = idx.slice(0, 6).map(devoCard).join("");
       const years = {};
-      idx.forEach((d) => { const y = d.date.slice(0, 4), m = +d.date.slice(5, 7); (years[y] = years[y] || {}); (years[y][m] = years[y][m] || []).push(d); });
+      idx.forEach((d) => { const w = devoWeek(d.date).start, y = String(w.getFullYear()), m = w.getMonth() + 1; (years[y] = years[y] || {}); (years[y][m] = years[y][m] || []).push(d); });
       const ys = Object.keys(years).sort().reverse();
       jump.innerHTML = ys.map((y) => `<a href="#y-${y}">${y}</a>`).join("");
       arch.innerHTML = ys.map((y) => `<section class="archive-year" id="y-${y}"><h2>${y}</h2>` +
         Object.keys(years[y]).map(Number).sort((a, b) => b - a).map((m) => `<div class="archive-month"><h3>${MONTHS[m - 1]}</h3><ul class="archive-list">` +
-          years[y][m].map((d) => `<li><time>${MONTHS[m - 1].slice(0, 3)} ${+d.date.slice(8, 10)}</time><a href="${devoURL(d)}">${esc(d.title)}</a>${d.reading ? `<span class="r">${esc(d.reading)}</span>` : ""}</li>`).join("") +
+          years[y][m].map((d) => `<li><time>${esc(devoWeekShort(d.date))}</time><a href="${devoURL(d)}">${esc(d.title)}</a>${d.reading ? `<span class="r">${esc(d.reading)}</span>` : ""}</li>`).join("") +
           `</ul></div>`).join("") + `</section>`).join("");
       $("#devo-count").textContent = idx.length;
     } catch (e) { fail(latest, "Devotions couldn't be loaded right now."); }

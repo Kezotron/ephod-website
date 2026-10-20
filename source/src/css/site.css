@@ -328,7 +328,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .archive-month h3 { font-family: var(--sans); font-weight: 600; font-size: .95rem; color: var(--ink-3); margin: .75rem 0 .35rem; }
 .archive-list { list-style: none; margin: 0; padding: 0; }
 .archive-list li { display: flex; gap: 1rem; padding: .3rem 0; border-bottom: 1px dotted var(--line); }
-.archive-list time { color: var(--ink-3); font-variant-numeric: tabular-nums; flex: none; width: 4rem; font-size: .95rem; white-space: nowrap; }
+.archive-list time { color: var(--ink-3); font-variant-numeric: tabular-nums; flex: none; width: 7.5rem; font-size: .95rem; white-space: nowrap; }
 .archive-list a { text-decoration: none; }
 .archive-list .r { color: var(--ink-3); font-size: .9rem; margin-left: auto; text-align: right; }
 @media (max-width: 40rem) { .archive-list .r { display: none; } }
@@ -376,6 +376,12 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .people li strong { display: block; }
 .people li span { color: var(--ink-2); font-size: .95rem; }
 .partner-group h3 { margin-top: 1.5rem; }
+
+/* ---------- video embeds ---------- */
+.video { margin: 0; }
+.video-frame { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video figcaption { color: var(--ink-3); font-size: .9rem; margin-top: .5rem; }
 
 /* ---------- photo + text bands ---------- */
 .photo-split { display: grid; gap: clamp(1.5rem, 4vw, 3rem); grid-template-columns: 1fr; align-items: center; }
