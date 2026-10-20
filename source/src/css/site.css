@@ -125,6 +125,7 @@ main > .section:first-child { padding-top: var(--gap); }
 @media (max-width: 560px) { .qr { flex-wrap: wrap; } .qr figcaption { max-width: none; flex-basis: 100%; } }
 .qr img { width: 11.5rem; height: 11.5rem; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: .35rem; box-sizing: border-box; flex: none; }
 .app-card { max-width: 44rem; }
+.app-row { margin-top: 1.5rem; }
 .band-color .lede { line-height: 1.33; }
 .inset-photo { margin: 1rem 0 0; text-align: center; }
 .inset-photo img { width: 150px; max-width: 100%; height: auto; display: inline-block; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
