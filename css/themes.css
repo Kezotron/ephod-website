@@ -14,6 +14,8 @@
   /* surfaces */
   --bg: #e4e9ef;            /* the banner's cool grey, a shade deeper so cards stand out */
   --banner-bg: #e4e9ed;     /* matches the banner image's own background */
+  --store-bg: #052f5f;      /* app-store buttons */
+  --store-ink: #ffffff;
   --surface: #ffffff;
   --surface-2: #d9e0e9;
   --line: #cbd3de;
@@ -49,6 +51,9 @@
 [data-theme="evening"] {
   color-scheme: dark;
   --bg: #121a26;
+  --banner-bg: #0e182b;     /* matches images/ephod-banner-dark.webp */
+  --store-bg: #e7ecf3;
+  --store-ink: #0b1220;
   --surface: #1a2433;
   --surface-2: #223044;
   --line: #2f3f55;
@@ -79,6 +84,7 @@
 /* Morning: a softer, greener take */
 [data-theme="morning"] {
   color-scheme: light;
+  --store-bg: var(--heading); --store-ink: #ffffff;
   --bg: #f4f6f1;
   --surface: #ffffff;
   --surface-2: #e9eee6;
@@ -110,6 +116,7 @@
 /* Harbor: navy and sand */
 [data-theme="harbor"] {
   color-scheme: light;
+  --store-bg: var(--heading); --store-ink: #ffffff;
   --bg: #f3f5f7;
   --surface: #ffffff;
   --surface-2: #e7ebef;
@@ -141,6 +148,7 @@
 /* Vineyard: warm paper and deep plum */
 [data-theme="vineyard"] {
   color-scheme: light;
+  --store-bg: var(--heading); --store-ink: #ffffff;
   --bg: #f8f4ee;
   --surface: #fffdf9;
   --surface-2: #efe8df;

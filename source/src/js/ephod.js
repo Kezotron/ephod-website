@@ -22,16 +22,21 @@
     const fromUrl = new URLSearchParams(location.search).get("theme");
     const saved = store.get("ephod-theme-v2");
     const theme = fromUrl || saved || C.DEFAULT_THEME;
-    document.documentElement.setAttribute("data-theme", theme);
-    if (fromUrl) store.set("ephod-theme-v2", fromUrl);
-    const pick = $("#theme-pick");
+    const pick = $("#theme-pick"), toggle = $(".mode-toggle");
+    const apply = (t, save) => {
+      document.documentElement.setAttribute("data-theme", t);
+      if (save) store.set("ephod-theme-v2", t);
+      if (pick) pick.value = t;
+      if (toggle) toggle.setAttribute("aria-label", t === "evening" ? "Switch to light mode" : "Switch to dark mode");
+    };
+    apply(theme, !!fromUrl);
+    // light / dark button in the navigation bar: classic <-> evening
+    if (toggle) toggle.addEventListener("click", () => {
+      apply(document.documentElement.getAttribute("data-theme") === "evening" ? "classic" : "evening", true);
+    });
     if (pick) {
       if (!C.SHOW_THEME_PICKER) { pick.closest(".theme-pick").hidden = true; return; }
-      pick.value = theme;
-      pick.addEventListener("change", () => {
-        document.documentElement.setAttribute("data-theme", pick.value);
-        store.set("ephod-theme-v2", pick.value);
-      });
+      pick.addEventListener("change", () => apply(pick.value, true));
     }
   }
 

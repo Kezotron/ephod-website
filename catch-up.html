@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/themes.css?v=79637b43">
-  <link rel="stylesheet" href="css/site.css?v=7e99574b">
+  <link rel="stylesheet" href="css/themes.css?v=f2332581">
+  <link rel="stylesheet" href="css/site.css?v=64f0848d">
   <script src="js/config.js?v=ee960e18"></script>
   <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme-v2")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
   <meta property="og:site_name" content="EPHOD">
@@ -21,7 +21,7 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <a class="banner-wrap" href="index.html" aria-label="EPHOD — Every Person Household Oikos Discipled">
-    <img src="images/ephod-banner.webp" srcset="images/ephod-banner-1200.webp 1200w, images/ephod-banner.webp 2400w" sizes="(max-width: 72rem) 100vw, 72rem" width="2400" height="600" alt="EPHOD — Every Person, Household, Oikos, Discipled" fetchpriority="high">
+    <span class="banner" aria-hidden="true"></span>
   </a>
   <div class="navbar">
     <div class="wrap">
@@ -36,6 +36,10 @@
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
       </nav>
+      <button class="mode-toggle" type="button" aria-label="Switch to dark mode" title="Light / dark">
+        <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.6 8.6 0 0 1 8.9 3.8a8.6 8.6 0 1 0 11.3 11.3z"/></svg>
+        <svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></g></svg>
+      </button>
     </div>
   </div>
 </header>
@@ -123,6 +127,6 @@
     </div>
   </div>
 </footer>
-<script src="js/ephod.js?v=f7b85307"></script>
+<script src="js/ephod.js?v=d6a18e78"></script>
 </body>
 </html>
