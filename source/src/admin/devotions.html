@@ -7,10 +7,11 @@
 <link rel="stylesheet" href="../css/themes.css"><link rel="stylesheet" href="../css/site.css"><link rel="stylesheet" href="admin.css">
 </head>
 <body>
+<header class="site-header"><a class="banner-wrap" href="../index.html" aria-label="EPHOD — Every Person Household Oikos Discipled"><span class="banner" aria-hidden="true"></span></a></header>
 <div class="admin-wrap">
   <div class="admin-head">
     <h1>Devotions</h1>
-    <nav><a href="memory-verse.html">Memory verse</a><a href="gold-nugget.html">Gold Nugget</a><a href="../devotions.html">View on website</a></nav>
+    <nav><a href="memory-verse.html">Memory verse</a><a href="../devotions.html">View on website</a></nav>
   </div>
 
   <div class="panel" id="editor-panel">
@@ -47,15 +48,9 @@
       </div>
       <div id="status" class="status"></div>
     </form>
+    <p class="help" style="margin-top:.75rem">Need to correct the one you just published? <a href="#" id="edit-latest">Open the latest devotion</a></p>
   </div>
 
-  <div class="panel">
-    <div class="row" style="justify-content:space-between">
-      <h2 style="margin:0">Recent devotions</h2>
-      <div class="field"><input id="search" placeholder="Search titles…"></div>
-    </div>
-    <table class="devo-table" style="margin-top:.75rem"><thead><tr><th>Date</th><th>Title</th><th>Reading</th></tr></thead><tbody id="list"></tbody></table>
-  </div>
 
   <div class="panel help">
     <h2>Each week</h2>
@@ -65,23 +60,20 @@
       <li>Paste the devotion text. Mark the Scripture quotation with <strong>Scripture quote</strong>.</li>
       <li>Add a photo if you have one, then press <strong>Publish</strong>. It appears on the website right away.</li>
     </ol>
-    <p>To fix something later, click the devotion in the list, make the change, and press Publish again.</p>
+    <p>To fix something after publishing, press <strong>Open the latest devotion</strong> under the form, make the change, and press Publish again.</p>
   </div>
+  <figure class="admin-photo" id="past-photo" hidden><img alt=""><figcaption></figcaption></figure>
 </div>
 <script src="admin.js"></script>
 <script>
 (async () => {
   const A = window.EPHOD_ADMIN, { $, $$, esc, api, status } = A;
-  const form = $("#form"), body = $("#f-body"), list = $("#list"), st = $("#status"), thumb = $("#f-thumb"), delBtn = $("#delete-btn");
+  const form = $("#form"), body = $("#f-body"), st = $("#status"), thumb = $("#f-thumb"), delBtn = $("#delete-btn");
   let id = 0;
   function nextSunday() { const d = new Date(); d.setDate(d.getDate() + ((7 - d.getDay()) % 7 || 7)); return d.toISOString().slice(0, 10); }
   function reset() {
     id = 0; form.reset(); body.innerHTML = ""; $("#f-date").value = nextSunday(); thumb.hidden = true; delBtn.hidden = true;
     $("#editor-title").textContent = "New devotion"; st.className = "status"; window.scrollTo({ top: 0 });
-  }
-  async function loadList() {
-    const j = await api("devo_list", { q: $("#search").value, limit: 40 });
-    list.innerHTML = j.devotions.map((d) => `<tr><td>${esc(d.post_date)}</td><td><a href="#" data-id="${d.id}">${esc(d.title)}</a>${+d.published ? "" : ' <span class="draft">draft</span>'}</td><td class="muted">${esc(d.reading || "")}</td></tr>`).join("") || `<tr><td colspan="3" class="muted">Nothing yet.</td></tr>`;
   }
   async function edit(i) {
     const j = await api("devo_get", { id: i }); const d = j.devotion; id = d.id;
@@ -98,8 +90,7 @@
   }));
   body.addEventListener("paste", (e) => { e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData("text/plain"); const html = t.split(/\n\s*\n/).map((p) => "<p>" + esc(p.trim()).replace(/\n/g, "<br>") + "</p>").join(""); document.execCommand("insertHTML", false, html); });
   $("#f-image").addEventListener("change", () => { const f = $("#f-image").files[0]; if (f) { thumb.src = URL.createObjectURL(f); thumb.hidden = false; } });
-  list.addEventListener("click", (e) => { const a = e.target.closest("a[data-id]"); if (!a) return; e.preventDefault(); edit(+a.dataset.id); });
-  $("#search").addEventListener("input", () => { clearTimeout(window._t); window._t = setTimeout(loadList, 250); });
+  $("#edit-latest").addEventListener("click", async (e) => { e.preventDefault(); try { const j = await api("devo_list", { limit: 1 }); if (j.devotions[0]) edit(+j.devotions[0].id); } catch (err) { status(st, "err", err.message); } });
   $("#new-btn").addEventListener("click", reset);
   form.addEventListener("submit", async (ev) => {
     ev.preventDefault(); status(st, "busy", "Saving…");
@@ -107,14 +98,24 @@
     let html = body.innerHTML.replace(/<div>/g, "<p>").replace(/<\/div>/g, "</p>"); if (!/<p|<h3|<blockquote/.test(html)) html = "<p>" + html + "</p>";
     fd.set("body", html); fd.set("published", $("#f-published").checked ? "1" : "0"); fd.set("remove_image", $("#f-remove").checked ? "1" : "0");
     const f = $("#f-image").files[0]; if (f) fd.set("image", f);
-    try { const j = await api("devo_save", null, fd); id = j.id; status(st, "ok", j.message); delBtn.hidden = false; $("#editor-title").textContent = "Editing: " + $("#f-title").value; await loadList(); }
+    try { const j = await api("devo_save", null, fd); id = j.id; status(st, "ok", j.message); delBtn.hidden = false; $("#editor-title").textContent = "Editing: " + $("#f-title").value;  }
     catch (err) { status(st, "err", err.message); }
   });
   delBtn.addEventListener("click", async () => {
     if (!id || !confirm("Delete this devotion from the website? This can't be undone.")) return;
-    try { const j = await api("devo_delete", null, { id }); reset(); status(st, "ok", j.message); await loadList(); } catch (err) { status(st, "err", err.message); }
+    try { const j = await api("devo_delete", null, { id }); reset(); status(st, "ok", j.message);  } catch (err) { status(st, "err", err.message); }
   });
-  reset(); await loadList();
+  reset();
+  // a different past devotion photo each time, just for the look of it
+  try {
+    const idx = await (await fetch("../data/devotions/index.json?x=" + Date.now(), { cache: "no-store" })).json();
+    const withPhoto = idx.filter((d) => d.image);
+    if (withPhoto.length) {
+      const d = withPhoto[Math.floor(Math.random() * withPhoto.length)], fig = $("#past-photo");
+      fig.querySelector("img").src = "../" + d.image; fig.querySelector("figcaption").textContent = d.title + " · " + d.date;
+      fig.querySelector("img").alt = d.title; fig.hidden = false;
+    }
+  } catch (e) {}
 })();
 </script>
 </body>
