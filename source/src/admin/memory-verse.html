@@ -15,10 +15,8 @@
   </div>
 
   <div class="panel">
-    <div class="row">
-      <div class="field"><label for="week">Week of the year</label><select id="week"></select></div>
-      <div id="range" class="muted"></div>
-    </div>
+    <p class="muted" style="margin:0 0 .25rem">Memory verse for next week</p>
+    <h2 id="range" style="margin:0">…</h2>
     <div id="current" class="current" style="margin-top:1rem">Loading…</div>
   </div>
 
@@ -44,7 +42,7 @@
   <div class="panel help">
     <h2>How it works</h2>
     <ol>
-      <li>The page opens on <strong>next week</strong>, which is the week you usually set. Change the week at the top if you need to fix the current one.</li>
+      <li>This page is always for <strong>next week</strong> — the dates at the top. The verse you set here appears on the website and in the apps from Monday.</li>
       <li>Choose the book, chapter and first verse. If the verse runs over several verses, choose the last verse too; leave it at "single verse" otherwise.</li>
       <li>Preview if you like, then press <strong>Update memory verse</strong>. The box at the top shows what the website and the apps will display.</li>
     </ol>
@@ -56,16 +54,13 @@
 <script>
 (async () => {
   const A = window.EPHOD_ADMIN, { $, esc, api, status } = A;
-  const weekSel = $("#week"), range = $("#range"), current = $("#current"), st = $("#status");
-  let picker;
+  const range = $("#range"), current = $("#current"), st = $("#status");
+  let picker, week = null;   // always next week; the server tells us which week that is
   async function load() {
     current.textContent = "Loading…";
     try {
-      const j = await api("mv_get", weekSel.value ? { week: weekSel.value } : {});
-      if (!weekSel.options.length) {
-        weekSel.innerHTML = Array.from({ length: 53 }, (_, i) => `<option value="${i + 1}">Week ${i + 1}${i + 1 === j.currentWeek ? " (this week)" : i + 1 === j.week ? " (next week)" : ""}</option>`).join("");
-        weekSel.value = j.week;
-      }
+      const j = await api("mv_get", {});
+      week = j.week;
       range.textContent = j.range;
       if (j.exists) {
         const e = j.entry, ref = `${e.bookName || e.book} ${e.chapter}:${e.verse}${+e.lastverse ? "–" + e.lastverse : ""}`;
@@ -76,14 +71,13 @@
       }
     } catch (err) { current.innerHTML = `<span class="danger">${esc(err.message)}</span>`; }
   }
-  weekSel.addEventListener("change", load);
   await load();
   picker = await A.makePicker($("#form"));
   await load();
   $("#preview-btn").addEventListener("click", () => picker.preview($("#preview")));
   $("#form").addEventListener("submit", async (ev) => {
     ev.preventDefault(); status(st, "busy", "Saving…");
-    try { const j = await api("mv_save", null, Object.assign({ week: weekSel.value }, picker.values())); status(st, "ok", j.message + "."); await load(); }
+    try { const j = await api("mv_save", null, Object.assign({ week }, picker.values())); status(st, "ok", j.message + "."); await load(); }
     catch (err) { status(st, "err", err.message); }
   });
 })();

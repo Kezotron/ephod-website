@@ -17,9 +17,11 @@
   <div class="panel" id="editor-panel">
     <h2 id="editor-title">New devotion</h2>
     <form id="form">
+      <p class="muted" style="margin:0 0 .25rem">Devotion for next week</p>
+      <h2 id="week-range" style="margin:0 0 .75rem">…</h2>
+      <input id="f-date" name="date" type="hidden">
       <div class="row">
         <div class="field grow"><label for="f-title">Title</label><input id="f-title" name="title" required maxlength="255" placeholder="Checkmate"></div>
-        <div class="field"><label for="f-date">Date</label><input id="f-date" name="date" type="date" required></div>
       </div>
       <div class="row" style="margin-top:.75rem">
         <div class="field grow"><label for="f-reading">Reading (the passage this devotion goes with)</label><input id="f-reading" name="reading" maxlength="255" placeholder="Isaiah 36:1 through 38:22"></div>
@@ -55,7 +57,7 @@
   <div class="panel help">
     <h2>Each week</h2>
     <ol>
-      <li>Type the title and set the date (it starts on the coming Sunday).</li>
+      <li>This page is always for <strong>next week</strong> — the dates at the top. Type the title.</li>
       <li>Type the reading reference, for example <em>Isaiah 36:1 through 38:22</em>.</li>
       <li>Paste the devotion text. Mark the Scripture quotation with <strong>Scripture quote</strong>.</li>
       <li>Add a photo if you have one, then press <strong>Publish</strong>. It appears on the website right away.</li>
@@ -71,13 +73,20 @@
   const form = $("#form"), body = $("#f-body"), st = $("#status"), thumb = $("#f-thumb"), delBtn = $("#delete-btn");
   let id = 0;
   function nextSunday() { const d = new Date(); d.setDate(d.getDate() + ((7 - d.getDay()) % 7 || 7)); return d.toISOString().slice(0, 10); }
+  // the devotion is posted on Sunday for the Monday–Sunday week that follows
+  function showWeek(dateStr) {
+    const d = new Date(dateStr + "T12:00:00"), a = new Date(d); a.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7));
+    const b = new Date(a); b.setDate(a.getDate() + 6);
+    const m = (x) => x.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+    $("#week-range").textContent = `${m(a)} – ${m(b)}, ${b.getFullYear()}`;
+  }
   function reset() {
-    id = 0; form.reset(); body.innerHTML = ""; $("#f-date").value = nextSunday(); thumb.hidden = true; delBtn.hidden = true;
+    id = 0; form.reset(); body.innerHTML = ""; $("#f-date").value = nextSunday(); showWeek($("#f-date").value); thumb.hidden = true; delBtn.hidden = true;
     $("#editor-title").textContent = "New devotion"; st.className = "status"; window.scrollTo({ top: 0 });
   }
   async function edit(i) {
     const j = await api("devo_get", { id: i }); const d = j.devotion; id = d.id;
-    $("#f-title").value = d.title; $("#f-date").value = d.post_date; $("#f-reading").value = d.reading || ""; body.innerHTML = d.body || "";
+    $("#f-title").value = d.title; $("#f-date").value = d.post_date; showWeek(d.post_date); $("#f-reading").value = d.reading || ""; body.innerHTML = d.body || "";
     $("#f-published").checked = +d.published === 1; $("#f-remove").checked = false; $("#f-image").value = "";
     if (d.image) { thumb.src = "../" + d.image + "?v=" + Date.now(); thumb.hidden = false; } else thumb.hidden = true;
     delBtn.hidden = false; $("#editor-title").textContent = "Editing: " + d.title; st.className = "status"; window.scrollTo({ top: 0 });
