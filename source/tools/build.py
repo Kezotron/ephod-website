@@ -37,5 +37,13 @@ json.dump(index,open(os.path.join(dd,'index.json'),'w',encoding='utf-8'),ensure_
 for p in posts:
     json.dump(p,open(os.path.join(dd,p['slug']+'.json'),'w',encoding='utf-8'),ensure_ascii=False)
 json.dump(posts,open(os.path.join(dd,'all.json'),'w',encoding='utf-8'),ensure_ascii=False)
+# version-stamp the entry pages' assets too (they are cached for an hour)
+ad=os.path.join(DIST,'admin-ephod-entry')
+for f in os.listdir(ad):
+    if not f.endswith('.html'): continue
+    fp=os.path.join(ad,f); s=open(fp,encoding='utf-8').read()
+    s=s.replace('href="../css/themes.css"','href="../%s"'%stamp('css/themes.css')).replace('href="../css/site.css"','href="../%s"'%stamp('css/site.css'))
+    s=s.replace('href="admin.css"','href="%s"'%stamp('admin/admin.css').replace('admin/','')).replace('src="admin.js"','src="%s"'%stamp('admin/admin.js').replace('admin/',''))
+    open(fp,'w',encoding='utf-8').write(s)
 shutil.copy(os.path.join(SRC,'README-DEPLOY.md'),os.path.join(DIST,'README-DEPLOY.md'))
 print("built",len(posts),"devotions;",len([f for f in os.listdir(DIST) if f.endswith('.html')]),"pages")
