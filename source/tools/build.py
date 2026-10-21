@@ -135,7 +135,11 @@ tpl=render(tpl_meta,tpl_body,'devotion/%%SLUG%%.html')
 tpl=tpl.replace('</head>','%%JSONLD%%</head>').replace('  <meta property="og:image:width" content="1200">\n  <meta property="og:image:height" content="630">\n','')
 tpl=re.sub(r'(href|src)="(?!https?:|//|/|#|mailto:|\.\./|%%)',r'\1="../',tpl)
 open(os.path.join(DIST,'memoryverse','devotion-template.html'),'w',encoding='utf-8').write(tpl)
-open(os.path.join(DIST,'memoryverse','site.json'),'w',encoding='utf-8').write(json.dumps({'site':SITE,'url':SITE_URL,'name':SITE_NAME,'peer':[u for s,u in SITE_URLS.items() if s!=SITE]}))
+# IndexNow (Bing, DuckDuckGo, Yahoo, Yandex): the key file proves we own the site; api.php submits
+# every new or changed devotion page the moment it is saved.
+INDEXNOW_KEY='eca2896dae446c2dec26bff68af7c23a'
+open(os.path.join(DIST,INDEXNOW_KEY+'.txt'),'w').write(INDEXNOW_KEY)
+open(os.path.join(DIST,'memoryverse','site.json'),'w',encoding='utf-8').write(json.dumps({'site':SITE,'url':SITE_URL,'name':SITE_NAME,'peer':[u for s,u in SITE_URLS.items() if s!=SITE],'indexnow_key':INDEXNOW_KEY}))
 # devotions data
 posts=json.load(open(os.path.join(ROOT,'tools','devotions_full.json'),encoding='utf-8'))
 posts.sort(key=lambda p:p['date'],reverse=True)

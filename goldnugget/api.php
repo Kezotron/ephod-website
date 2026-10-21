@@ -105,7 +105,7 @@ function excerptOf(string $html): string {
   if (mb_strlen($t) <= 200) return $t;
   $t = mb_substr($t, 0, 200); return mb_substr($t, 0, mb_strrpos($t, ' ') ?: 200) . '…';
 }
-function rebuildDevotionFiles(mysqli $db): int {
+function rebuildDevotionFiles(mysqli $db, ?string $changedSlug = null): int {
   $dir = SITE_ROOT . '/data/devotions';
   if (!is_dir($dir) && !mkdir($dir, 0755, true)) fail('Cannot create data/devotions folder', 500);
   $r = $db->query('SELECT slug, title, post_date, reading, image, excerpt, body, (image_data IS NOT NULL) AS has_blob FROM ' . T_DEVOTIONS . ' WHERE published = 1 ORDER BY post_date DESC, id DESC');
@@ -124,7 +124,7 @@ function rebuildDevotionFiles(mysqli $db): int {
   file_put_contents("$dir/all.json", json_encode($all, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
   foreach (glob("$dir/*.json") as $f) if (!isset($keep[basename($f)])) unlink($f); // unpublished/renamed
   $GLOBALS['restoredImages'] = $restored;
-  writeDevotionPages($all);
+  writeDevotionPages($all, $changedSlug);
   return count($index);
 }
 
@@ -135,7 +135,7 @@ function devoWeek(string $date): array {
   $ts = strtotime($date . ' 12:00:00'); $dow = (int)date('w', $ts); $add = ((8 - $dow) % 7) ?: 7;
   $start = strtotime("+$add days", $ts); return [$start, strtotime('+6 days', $start)];
 }
-function writeDevotionPages(array $all): void {
+function writeDevotionPages(array $all, ?string $changedSlug = null): void {
   $tplFile = __DIR__ . '/devotion-template.html'; $siteFile = __DIR__ . '/site.json';
   if (!is_file($tplFile) || !is_file($siteFile)) return; // older build: nothing to do
   $tpl = file_get_contents($tplFile); $site = json_decode(file_get_contents($siteFile), true);
@@ -177,13 +177,28 @@ function writeDevotionPages(array $all): void {
   }
   foreach (glob("$dir/*.html") as $f) if (!isset($keep[basename($f)])) unlink($f);
   file_put_contents(SITE_ROOT . '/sitemap-devotions.xml', "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n$sitemap</urlset>\n");
+  // Tell the search engines (IndexNow: Bing, DuckDuckGo, Yahoo, Yandex) which pages changed.
+  // A save: that devotion, the Devotions list and the home page. A full rebuild: every devotion.
+  $changed = $changedSlug ?? ($_GET['slug'] ?? null);
+  if ($changed !== null && $changed !== '') $urls = ["$base/devotion/" . rawurlencode($changed) . ".html", "$base/devotions.html", "$base/"];
+  else $urls = array_merge(["$base/", "$base/devotions.html"], array_map(fn($d) => "$base/devotion/{$d['slug']}.html", $all));
+  indexNow($site, $urls);
   // The other EPHOD site shares this database: ask it to rebuild its own copies too (best effort, 8 s).
-  if (($_GET['action'] ?? '') !== 'devo_rebuild' || empty($_GET['from_peer'])) {
+  if (empty($_GET['from_peer'])) {
     foreach ($site['peer'] ?? [] as $peer) {
       $ctx = stream_context_create(['http' => ['timeout' => 8, 'ignore_errors' => true]]);
-      @file_get_contents(rtrim($peer, '/') . '/memoryverse/api.php?action=devo_rebuild&from_peer=1', false, $ctx);
+      @file_get_contents(rtrim($peer, '/') . '/memoryverse/api.php?action=devo_rebuild&from_peer=1' . ($changed ? '&slug=' . rawurlencode($changed) : ''), false, $ctx);
     }
   }
+}
+function indexNow(array $site, array $urls): void {
+  $key = $site['indexnow_key'] ?? ''; if ($key === '' || !$urls) return;
+  if (!is_file(SITE_ROOT . "/$key.txt")) return; // key file not deployed yet
+  $host = parse_url($site['url'], PHP_URL_HOST);
+  $body = json_encode(['host' => $host, 'key' => $key, 'keyLocation' => rtrim($site['url'], '/') . "/$key.txt", 'urlList' => array_values(array_unique($urls))], JSON_UNESCAPED_SLASHES);
+  $ctx = stream_context_create(['http' => ['method' => 'POST', 'header' => "Content-Type: application/json; charset=utf-8\r\n", 'content' => $body, 'timeout' => 8, 'ignore_errors' => true]]);
+  $r = @file_get_contents('https://api.indexnow.org/indexnow', false, $ctx);
+  $GLOBALS['indexNowStatus'] = $http_response_header[0] ?? 'no response';
 }
 function ensureDevotionsTable(mysqli $db): void {
   // photos are kept in the database too, so a site deploy (which replaces every file) can be undone by devo_rebuild
@@ -361,19 +376,20 @@ switch ($action) {
       $st->bind_param('sssssssi', $slug, $title, $date, $reading, $image, $excerpt, $body, $published); $st->execute(); $id = $db->insert_id;
     }
     if ($imageData !== false) { $st = $db->prepare('UPDATE ' . T_DEVOTIONS . ' SET image_data = ? WHERE id = ?'); $null = null; $st->bind_param('bi', $null, $id); if ($imageData !== null) $st->send_long_data(0, $imageData); $st->execute(); }
-    $n = rebuildDevotionFiles($db);
+    $n = rebuildDevotionFiles($db, $slug);
     out(['success' => true, 'id' => $id, 'slug' => $slug, 'message' => $published ? "Published. The website now shows $n devotions." : 'Saved as a draft (not shown on the website).']);
   }
   case 'devo_delete': {
     $id = (int)$q('id', 0);
+    $st = $db->prepare('SELECT slug FROM ' . T_DEVOTIONS . ' WHERE id = ?'); $st->bind_param('i', $id); $st->execute(); $gone = $st->get_result()->fetch_assoc()['slug'] ?? null;
     $st = $db->prepare('DELETE FROM ' . T_DEVOTIONS . ' WHERE id = ?'); $st->bind_param('i', $id); $st->execute();
-    $n = rebuildDevotionFiles($db);
+    $n = rebuildDevotionFiles($db, $gone);
     out(['success' => true, 'message' => "Deleted. The website now shows $n devotions."]);
   }
   case 'devo_rebuild': {
     ensureDevotionsTable($db);
     $n = rebuildDevotionFiles($db);
-    out(['success' => true, 'message' => "$n devotion files written, " . ($GLOBALS['restoredImages'] ?? 0) . ' photos restored from the database']);
+    out(['success' => true, 'message' => "$n devotion files written, " . ($GLOBALS['restoredImages'] ?? 0) . ' photos restored from the database', 'indexnow' => $GLOBALS['indexNowStatus'] ?? 'not sent']);
   }
   case 'devo_import': {
     // One-time import of the WordPress devotions from import/devotions_import.json
