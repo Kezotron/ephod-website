@@ -44,7 +44,20 @@ RewriteRule ^(category/devotions|blog|devotions)(/.*)?$ /devotions.html [R=301,L
 RewriteRule ^(log-in|register|profile|reset-your-password|demo|demo-home|wp-login\.php|wp-admin.*|feed|comments/feed)/?$ / [R=301,L]
 RewriteRule ^[0-9]{4}/[0-9]{2}/?$ /devotions.html [R=301,L]
 
-# --- old devotion permalinks: /checkmate/ -> the devotion page ---
+# --- devotions: every devotion has a real page at /devotion/<slug>.html (written on the server) ---
+# devotion.html?slug=x -> /devotion/x.html when that page exists (permanent: the page is the address)
+RewriteCond %{QUERY_STRING} ^slug=([a-z0-9-]+)$
+RewriteCond %{DOCUMENT_ROOT}/devotion/%1.html -f
+RewriteRule ^devotion\.html$ /devotion/%1.html? [R=301,L]
+# /devotion/x.html not generated yet -> the script page (temporary, until the page is written)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^devotion/([a-z0-9-]+)\.html$ /devotion.html?slug=$1 [R=302,L]
+
+# --- old WordPress devotion permalinks: /checkmate/ -> the devotion page ---
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/devotion/$1.html -f
+RewriteRule ^([a-z0-9-]+)/?$ /devotion/$1.html [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-z0-9-]+)/?$ /devotion.html?slug=$1 [R=301,L]

@@ -108,3 +108,12 @@ Hostinger's GitHub deploy replaces everything in `public_html`, so a `config.loc
 ```
 
 `memoryverse/config.php` and `goldnugget/config.php` look there first. Check with `/memoryverse/api.php?action=db_check` — it says whether it connected and which tables it can see.
+
+## Devotion pages and the sitemap (added Oct 21, 2026)
+Every published devotion is a real page at `/devotion/<slug>.html`, written on the server by
+`memoryverse/api.php` (from `memoryverse/devotion-template.html`) whenever a devotion is saved,
+together with `/sitemap-devotions.xml`. `sitemap.xml` is an index of `sitemap-pages.xml` (built)
+and `sitemap-devotions.xml` (server). Both are git-ignored, so a deploy never removes them.
+After the first deploy of this version (or on a brand-new site) open
+`/memoryverse/api.php?action=devo_rebuild` once in a browser to create them; a save on one site
+also asks the other site (same database) to rebuild its copies.

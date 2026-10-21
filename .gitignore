@@ -2,3 +2,5 @@ source/dist/
 source/dist-png/
 data/devotions/
 images/devotions/
+devotion/
+sitemap-devotions.xml

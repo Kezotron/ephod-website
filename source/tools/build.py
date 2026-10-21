@@ -15,8 +15,18 @@ if SITE!='ph':
     for dp,dn,fn in os.walk(ov):
         for f in fn:
             rel=os.path.relpath(os.path.join(dp,f),ov); os.makedirs(os.path.dirname(os.path.join(SRC,rel)),exist_ok=True); shutil.copy(os.path.join(dp,f),os.path.join(SRC,rel))
-SITE_URL={'ph':'https://ephodlifestyle.com','png':'https://ephod4png.com'}[SITE]
+SITE_URLS={'ph':'https://ephodlifestyle.com','png':'https://ephod4png.com'}
+SITE_URL=SITE_URLS[SITE]
 SITE_NAME={'ph':'EPHOD','png':'EPHOD PNG'}[SITE]
+OG_IMAGE=SITE_URL+'/images/og-ephod.jpg'
+# Both sites carry the same pages for two regions: tell search engines so instead of letting them
+# treat one site as a copy of the other (hreflang pair, x-default = the Philippines/worldwide site).
+HREFLANG={'ph':'en-PH','png':'en-PG'}
+def alternates(path):
+    out=''
+    for s,u in SITE_URLS.items(): out+='  <link rel="alternate" hreflang="%s" href="%s/%s">\n'%(HREFLANG[s],u,path)
+    return out+'  <link rel="alternate" hreflang="x-default" href="%s/%s">\n'%(SITE_URLS['ph'],path)
+def jsonld(obj): return '  <script type="application/ld+json">'+json.dumps(obj,ensure_ascii=False,separators=(',',':'))+'</script>\n'
 layout=open(os.path.join(SRC,'layout.html'),encoding='utf-8').read()
 if SITE=='png':
     layout=layout.replace('<a href="apps.html">EPHOD PH app</a>','<a href="apps.html">EPHOD PNG app</a>')
@@ -51,17 +61,81 @@ def stamp(rel):
     h=hashlib.md5(open(os.path.join(SRC,rel),'rb').read()).hexdigest()[:8]
     return rel+'?v='+h
 layout=layout.replace('href="css/themes.css"','href="%s"'%stamp('css/themes.css')).replace('href="css/site.css"','href="%s"'%stamp('css/site.css')).replace('src="js/config.js"','src="%s"'%stamp('js/config.js')).replace('src="js/ephod.js"','src="%s"'%stamp('js/ephod.js'))
+# ---- structured data (JSON-LD) ----
+cfg=open(os.path.join(SRC,'js/config.js'),encoding='utf-8').read()
+def store(app,key):
+    m=re.search(r'\b%s:\s*\{([^}]*)\}'%app,cfg); m2=m and re.search(r'\b%s:\s*"([^"]*)"'%key,m.group(1)); return m2.group(1) if m2 else ''
+ORG={"@type":"Organization","@id":SITE_URLS['ph']+"/#org","name":"EPHOD Discipleship","alternateName":"EPHOD — Every Person Household Oikos Discipled",
+     "url":SITE_URLS['ph']+"/","logo":SITE_URLS['ph']+"/images/ephod-banner-1200.webp",
+     "founder":[{"@type":"Person","name":"Herb Johnson"},{"@type":"Person","name":"Karen Johnson"}],
+     "sameAs":["https://www.facebook.com/ephodlifestyle/","https://www.youtube.com/channel/UCJKO4sIhohnlkeiCB7mFcbQ","https://vimeo.com/user193302610",SITE_URLS['png']+"/"],
+     "email":"kevin@ephodlifestyle.com"}
+APP={'ph':("EPHOD PH","English, Tagalog and Chinese interface; KJV, WEB, ASV, BBE, Tagalog (Ang Dating Biblia) and Chinese Bibles."),
+     'png':("EPHOD PNG","English and Tok Pisin interface; the Tok Pisin Bible and more than 200 Papua New Guinea language translations.")}[SITE]
+LD={
+ 'index.html':[ORG,{"@type":"WebSite","name":SITE_NAME,"url":SITE_URL+"/","publisher":{"@id":SITE_URLS['ph']+"/#org"},"inLanguage":"en"}],
+ 'apps.html':[{"@type":"SoftwareApplication","name":APP[0],"operatingSystem":"Android, iOS","applicationCategory":"LifestyleApplication",
+   "description":"Free offline Bible reading app for the EPHOD plan: daily morning and evening readings, weekly memory verse, daily Gold Nugget, journal and progress tracker. No ads, nothing to buy. "+APP[1],
+   "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"isAccessibleForFree":True,"author":{"@id":SITE_URLS['ph']+"/#org"},
+   "installUrl":[u for u in (store(SITE,'play'),store(SITE,'apple')) if u],"image":OG_IMAGE,"url":SITE_URL+"/apps.html"}],
+ 'seminars.html':[{"@type":"Course","name":"EPHOD Church Strengthening Seminars","description":"A free online discipleship course: thirteen video seminars by Rev. Herb and Rev. Karen Johnson on being a disciple and a disciple maker of Jesus Christ, with printable handouts, a quiz for each seminar and a certificate.",
+   "provider":{"@id":SITE_URLS['ph']+"/#org"},"isAccessibleForFree":True,"inLanguage":"en","url":SITE_URL+"/seminars.html","image":OG_IMAGE,
+   "offers":{"@type":"Offer","price":"0","priceCurrency":"USD","category":"Free"},
+   "hasCourseInstance":{"@type":"CourseInstance","courseMode":"Online","courseWorkload":"PT8H","courseSchedule":{"@type":"Schedule","repeatFrequency":"Weekly","repeatCount":13}}}],
+}
+def render(meta,body,path,extra_ld=None):
+    """Fill the layout for one page. path = URL path from the site root ('' for the home page)."""
+    html=layout
+    import html as _h
+    for k in ('title','description','page'): html=html.replace('{{%s}}'%k,_h.escape(meta.get(k,''),quote=(k=='description')) if k!='page' else meta.get(k,''))
+    ld=''.join(jsonld(dict({"@context":"https://schema.org"},**o)) for o in (extra_ld or []))
+    html=(html.replace('{{body_attrs}}',meta.get('body_attrs','')).replace('{{year}}',year)
+          .replace('{{canonical}}',SITE_URL+'/'+path).replace('{{alternates}}',alternates(path))
+          .replace('{{site_name}}',SITE_NAME).replace('{{og_type}}',meta.get('og_type','website'))
+          .replace('{{og_image}}',meta.get('og_image',OG_IMAGE)).replace('{{jsonld}}',ld).replace('{{content}}',body))
+    for js in ('js/seminars.js','js/course.js'):
+        html=html.replace('src="%s"'%js,'src="%s"'%stamp(js))
+    return html
+# per-site title/description overrides (src/sites/<site>/meta.json), so the PNG site is not a word-for-word copy
+OVER={}
+if os.path.exists(os.path.join(SRC,'meta.json')): OVER=json.load(open(os.path.join(SRC,'meta.json'),encoding='utf-8'))
 for f in sorted(os.listdir(os.path.join(SRC,'pages'))):
     if not f.endswith('.html'): continue
     s=open(os.path.join(SRC,'pages',f),encoding='utf-8').read()
     m=re.match(r'\s*<!--\s*(\{.*?\})\s*-->\s*',s,flags=re.S)
     meta=json.loads(m.group(1)); body=s[m.end():]
-    html=layout
-    for k in ('title','description','page'): html=html.replace('{{%s}}'%k,meta.get(k,''))
-    html=html.replace('{{body_attrs}}',meta.get('body_attrs','')).replace('{{year}}',year).replace('{{content}}',body)
-    for js in ('js/seminars.js','js/course.js'):
-        html=html.replace('src="%s"'%js,'src="%s"'%stamp(js))
-    open(os.path.join(DIST,f),'w',encoding='utf-8').write(html)
+    meta.update(OVER.get(f,{}))
+    if SITE!='ph' and re.search(r'\| EPHOD( Seminars)?$',meta['title']): meta['title']=re.sub(r'\| EPHOD( Seminars)?$','| '+SITE_NAME,meta['title'])
+    open(os.path.join(DIST,f),'w',encoding='utf-8').write(render(meta,body,'' if f=='index.html' else f,LD.get(f)))
+
+# ---- template for the static devotion pages ----
+# The live server writes one real HTML page per published devotion at /devotion/<slug>.html
+# (api.php, rebuildDevotionFiles) so every devotion is a page search engines can read, with its own
+# title, description, share image and Article data. This template is the layout with %%FIELDS%% for
+# api.php to fill; the pages live one folder down, so relative links get a ../ prefix.
+tpl_meta={'title':'%%TITLE%%','description':'%%DESCRIPTION%%','page':'devotion-static','og_type':'article','og_image':'%%IMAGE%%'}
+tpl_body='''<section class="section">
+  <div class="wrap">
+    <p class="meta"><a href="devotions.html">← All devotions</a></p>
+    <div class="devo-layout">
+      <article class="article" id="devotion" data-date="%%DATE%%" data-reading="%%READING%%">%%ARTICLE%%</article>
+      <aside class="passage-panel" id="passage-panel" hidden>
+        <div class="passage-head">
+          <h2 id="passage-title">This week's reading</h2>
+          <div class="field"><label for="version-devo" class="small">Bible version</label><select id="version-devo" class="version-select"></select></div>
+        </div>
+        <div class="scripture passage-body" id="passage"></div>
+        <p class="copyright-note" id="passage-copyright"></p>
+      </aside>
+    </div>
+  </div>
+</section>
+'''
+tpl=render(tpl_meta,tpl_body,'devotion/%%SLUG%%.html')
+tpl=tpl.replace('</head>','%%JSONLD%%</head>').replace('  <meta property="og:image:width" content="1200">\n  <meta property="og:image:height" content="630">\n','')
+tpl=re.sub(r'(href|src)="(?!https?:|//|/|#|mailto:|\.\./|%%)',r'\1="../',tpl)
+open(os.path.join(DIST,'memoryverse','devotion-template.html'),'w',encoding='utf-8').write(tpl)
+open(os.path.join(DIST,'memoryverse','site.json'),'w',encoding='utf-8').write(json.dumps({'site':SITE,'url':SITE_URL,'name':SITE_NAME,'peer':[u for s,u in SITE_URLS.items() if s!=SITE]}))
 # devotions data
 posts=json.load(open(os.path.join(ROOT,'tools','devotions_full.json'),encoding='utf-8'))
 posts.sort(key=lambda p:p['date'],reverse=True)
@@ -77,11 +151,14 @@ for folder in ENTRY:
     s=s.replace('href="../css/themes.css"','href="../%s"'%stamp('css/themes.css')).replace('href="../css/site.css"','href="../%s"'%stamp('css/site.css'))
     s=s.replace('href="admin.css"','href="%s"'%stamp('admin/admin.css').replace('admin/','')).replace('src="admin.js"','src="%s"'%stamp('admin/admin.js').replace('admin/',''))
     open(fp,'w',encoding='utf-8').write(s)
-# robots.txt and sitemap.xml for the live domain
+# robots.txt and sitemaps for the live domain.
+# sitemap.xml is an index: sitemap-pages.xml (built here) + sitemap-devotions.xml (written on the
+# server by api.php with the devotion pages, so it is current whenever Zarah publishes one).
 open(os.path.join(DIST,'robots.txt'),'w').write("User-agent: *\nDisallow: /memoryverse/\nDisallow: /goldnugget/\nDisallow: /source/\nAllow: /\nSitemap: %s/sitemap.xml\n"%SITE_URL)
 pages=[f for f in sorted(os.listdir(DIST)) if f.endswith('.html') and f not in ('404.html','devotion.html','certificate.html','seminar.html')]
-urls=[SITE_URL+'/']+[SITE_URL+'/'+f for f in pages if f!='index.html']+[SITE_URL+'/seminar.html?n=%d'%n for n in range(1,14)]+[SITE_URL+'/devotion.html?slug='+p['slug'] for p in posts]
+urls=[SITE_URL+'/']+[SITE_URL+'/'+f for f in pages if f!='index.html']+[SITE_URL+'/seminar.html?n=%d'%n for n in range(1,14)]
 today=datetime.date.today().isoformat()
-open(os.path.join(DIST,'sitemap.xml'),'w',encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join('<url><loc>%s</loc><lastmod>%s</lastmod></url>\n'%(u,today) for u in urls)+'</urlset>\n')
+open(os.path.join(DIST,'sitemap-pages.xml'),'w',encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join('<url><loc>%s</loc><lastmod>%s</lastmod></url>\n'%(u,today) for u in urls)+'</urlset>\n')
+open(os.path.join(DIST,'sitemap.xml'),'w',encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<sitemap><loc>%s/sitemap-pages.xml</loc></sitemap>\n<sitemap><loc>%s/sitemap-devotions.xml</loc></sitemap>\n</sitemapindex>\n'%(SITE_URL,SITE_URL))
 shutil.copy(os.path.join(SRC,'README-DEPLOY.md'),os.path.join(DIST,'README-DEPLOY.md'))
 print("built",len(posts),"devotions;",len([f for f in os.listdir(DIST) if f.endswith('.html')]),"pages")

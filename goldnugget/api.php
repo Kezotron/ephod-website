@@ -124,7 +124,66 @@ function rebuildDevotionFiles(mysqli $db): int {
   file_put_contents("$dir/all.json", json_encode($all, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
   foreach (glob("$dir/*.json") as $f) if (!isset($keep[basename($f)])) unlink($f); // unpublished/renamed
   $GLOBALS['restoredImages'] = $restored;
+  writeDevotionPages($all);
   return count($index);
+}
+
+// ---- one real HTML page per devotion (/devotion/<slug>.html) + sitemap-devotions.xml ----
+// Search engines read these directly: own title, description, share photo and Article data.
+// Template: memoryverse/devotion-template.html, produced by build.py from the site layout.
+function devoWeek(string $date): array {
+  $ts = strtotime($date . ' 12:00:00'); $dow = (int)date('w', $ts); $add = ((8 - $dow) % 7) ?: 7;
+  $start = strtotime("+$add days", $ts); return [$start, strtotime('+6 days', $start)];
+}
+function writeDevotionPages(array $all): void {
+  $tplFile = __DIR__ . '/devotion-template.html'; $siteFile = __DIR__ . '/site.json';
+  if (!is_file($tplFile) || !is_file($siteFile)) return; // older build: nothing to do
+  $tpl = file_get_contents($tplFile); $site = json_decode(file_get_contents($siteFile), true);
+  $base = rtrim($site['url'], '/'); $dir = SITE_ROOT . '/devotion';
+  if (!is_dir($dir) && !mkdir($dir, 0755, true)) return;
+  $h = fn($s) => htmlspecialchars((string)$s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+  $keep = []; $sitemap = '';
+  foreach ($all as $i => $d) {
+    [$ws, $we] = devoWeek($d['date']);
+    $range = date('F j', $ws) . ' to ' . date('F j', $we) . ', ' . date('Y', $we);
+    $newer = $i > 0 ? $all[$i - 1] : null; $older = $i < count($all) - 1 ? $all[$i + 1] : null;
+    $desc = trim(preg_replace('/\s+/', ' ', (string)$d['excerpt']));
+    if (mb_strlen($desc) > 155) { $desc = mb_substr($desc, 0, 155); $desc = mb_substr($desc, 0, mb_strrpos($desc, ' ') ?: 155) . '…'; }
+    $desc = ($d['reading'] ? 'Devotion on ' . $d['reading'] . '. ' : '') . $desc;
+    $img = $d['image'] ? "$base/" . ltrim($d['image'], '/') : "$base/images/og-ephod.jpg";
+    $article = ($d['image'] ? '<div class="article-hero"><img src="../' . $h(ltrim($d['image'], '/')) . '" alt="" onerror="this.parentNode.remove()"></div>' : '')
+      . '<p class="meta">Week of ' . $h($range) . '</p>'
+      . '<h1>' . $h($d['title']) . '</h1>'
+      . ($d['reading'] ? '<p class="read-line">Read ' . $h($d['reading']) . '</p>' : '')
+      . '<div class="article-body">' . $d['body'] . '</div>'
+      . '<p class="copyright-note">© Gospel Publishing House, 1445 N. Boonville Ave., Springfield, Missouri 65802. Used by permission.</p>'
+      . '<nav class="article-nav" aria-label="More devotions"><span>'
+      . ($older ? '<a href="' . $h($older['slug']) . '.html" rel="prev"><span class="lbl">Older</span>← ' . $h($older['title']) . '</a>' : '')
+      . '</span><span>'
+      . ($newer ? '<a href="' . $h($newer['slug']) . '.html" rel="next" style="text-align:right"><span class="lbl">Newer</span>' . $h($newer['title']) . ' →</a>' : '')
+      . '</span></nav>';
+    $ld = ['@context' => 'https://schema.org', '@type' => 'Article', 'headline' => $d['title'],
+      'description' => $desc, 'image' => $img, 'datePublished' => date('Y-m-d', $ws), 'dateModified' => $d['date'],
+      'url' => "$base/devotion/{$d['slug']}.html", 'mainEntityOfPage' => "$base/devotion/{$d['slug']}.html",
+      'isAccessibleForFree' => true, 'inLanguage' => 'en', 'about' => $d['reading'] ?: 'Bible reading',
+      'author' => ['@type' => 'Organization', 'name' => 'Gospel Publishing House'],
+      'publisher' => ['@type' => 'Organization', 'name' => 'EPHOD Discipleship', 'url' => 'https://ephodlifestyle.com/', 'logo' => ['@type' => 'ImageObject', 'url' => 'https://ephodlifestyle.com/images/ephod-banner-1200.webp']],
+      'isPartOf' => ['@type' => 'WebSite', 'name' => $site['name'], 'url' => "$base/"]];
+    $page = strtr($tpl, ['%%TITLE%%' => $h($d['title'] . ' — Devotions | ' . $site['name']), '%%DESCRIPTION%%' => $h($desc),
+      '%%SLUG%%' => $h($d['slug']), '%%IMAGE%%' => $h($img), '%%DATE%%' => $h($d['date']), '%%READING%%' => $h($d['reading']),
+      '%%ARTICLE%%' => $article, '%%JSONLD%%' => '  <script type="application/ld+json">' . json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "</script>\n"]);
+    file_put_contents("$dir/{$d['slug']}.html", $page); $keep[$d['slug'] . '.html'] = 1;
+    $sitemap .= "<url><loc>$base/devotion/{$d['slug']}.html</loc><lastmod>" . date('Y-m-d', $ws) . "</lastmod></url>\n";
+  }
+  foreach (glob("$dir/*.html") as $f) if (!isset($keep[basename($f)])) unlink($f);
+  file_put_contents(SITE_ROOT . '/sitemap-devotions.xml', "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n$sitemap</urlset>\n");
+  // The other EPHOD site shares this database: ask it to rebuild its own copies too (best effort, 8 s).
+  if (($_GET['action'] ?? '') !== 'devo_rebuild' || empty($_GET['from_peer'])) {
+    foreach ($site['peer'] ?? [] as $peer) {
+      $ctx = stream_context_create(['http' => ['timeout' => 8, 'ignore_errors' => true]]);
+      @file_get_contents(rtrim($peer, '/') . '/memoryverse/api.php?action=devo_rebuild&from_peer=1', false, $ctx);
+    }
+  }
 }
 function ensureDevotionsTable(mysqli $db): void {
   // photos are kept in the database too, so a site deploy (which replaces every file) can be undone by devo_rebuild
