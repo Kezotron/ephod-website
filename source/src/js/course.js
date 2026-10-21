@@ -69,10 +69,13 @@
           : `<div class="sem-card is-${state}" aria-disabled="true">${inner}</div>`;
       }).join("");
       return `<section class="course-group group-${g.id}" aria-labelledby="g-${g.id}">
-        <header class="course-group-head">
-          <p class="kicker">${esc(g.kicker)}</p>
-          <h2 id="g-${g.id}">${esc(g.title)}</h2>
-          <p class="muted">${esc(g.blurb)}</p>
+        <header class="course-group-head${g.cover ? " has-cover" : ""}">
+          <div>
+            <p class="kicker">${esc(g.kicker)}</p>
+            <h2 id="g-${g.id}">${esc(g.title)}</h2>
+            <p class="muted">${esc(g.blurb)}</p>
+          </div>
+          ${g.cover ? `<img class="group-cover" src="${esc(g.cover)}" width="1186" height="911" alt="" loading="lazy">` : ""}
         </header>
         <div class="sem-grid">${cards}</div>
       </section>`;
@@ -107,6 +110,7 @@
       <nav class="crumbs" aria-label="Breadcrumb"><a href="seminars.html">EPHOD Seminars</a> <span aria-hidden="true">›</span> <span>Seminar ${n} of ${TOTAL}</span></nav>
       <p class="kicker group-${g.id}">${esc(g.title)}</p>
       <h1><span class="h-num">${n}</span> ${esc(s.title)}</h1>
+      ${s.commitment ? `<p class="commitment">${esc(s.commitment)}</p>` : ""}
       <p class="meta">${s.minutes ? fmtMin(s.minutes) + " · " : ""}${done ? "Completed " + esc(fmtDate(P.done[n])) : unlocked ? "In progress" : "Locked"}</p>`;
 
     if (!unlocked) {
@@ -123,20 +127,25 @@
 
     const video = `<figure class="video lesson-video">
       <div class="video-frame"><iframe src="https://player.vimeo.com/video/${esc(s.vimeo)}?dnt=1&title=0&byline=0&portrait=0" title="EPHOD Seminar ${n}: ${esc(s.title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
-      <figcaption>Seminar ${n} · ${esc(s.title)} — Rev. Herb and Rev. Karen Johnson</figcaption>
+      <figcaption>Seminar ${n} · ${esc(s.title)} — Rev. Herb and Rev. Karen Johnson${s.handout ? ` · <a href="${esc(s.handout.href)}" download>Handout (PDF)</a>` : ""}</figcaption>
     </figure>`;
 
     const body = (s.body || []).map((p) => `<p>${esc(p)}</p>`).join("");
     const scriptures = s.scriptures && s.scriptures.length ? `<h2>Key Scriptures</h2><ul class="scripture-list">${s.scriptures.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>` : "";
     const reflect = s.reflect && s.reflect.length ? `<h2>For reflection and small groups</h2><ol class="reflect-list">${s.reflect.map((q) => `<li>${esc(q)}</li>`).join("")}</ol>` : "";
-    const materials = `<h2>Seminar notes</h2>${s.materials && s.materials.length
-      ? `<ul class="materials">${s.materials.map((m) => `<li><a href="${esc(m.href)}" download>${esc(m.label)}</a></li>`).join("")}</ul>`
-      : `<p class="muted">Printed notes for this seminar will be added here.</p>`}`;
+    const handout = s.handout ? `<div class="card handout-card">
+        <div class="handout-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15 2v5h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12h8M9 15.5h8M9 19h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <div>
+          <h2>Print the handout first</h2>
+          <p class="muted">Fill in the blanks as you watch — the answers are underlined on the screen. ${s.handout.pages === 1 ? "One page" : s.handout.pages + " pages"}, PDF.</p>
+          <a class="btn btn-primary" href="${esc(s.handout.href)}" download>Seminar ${n} handout</a>
+        </div>
+      </div>` : "";
 
     const quiz = hasQuiz ? `
       <section class="quiz card" id="quiz" aria-labelledby="quiz-h">
         <h2 id="quiz-h">Check what you learned</h2>
-        <p class="muted">Answer the questions below. You need ${Math.ceil(s.quiz.length * D.passMark)} of ${s.quiz.length} right to complete this seminar — you can try as often as you like.</p>
+        <p class="muted">Every question is one of the blanks on the handout. You need ${Math.ceil(s.quiz.length * D.passMark)} of ${s.quiz.length} right to complete this seminar — you can try as often as you like.</p>
         <form id="quiz-form">
           ${s.quiz.map((q, qi) => `<fieldset class="quiz-q"><legend>${qi + 1}. ${esc(q.q)}</legend>
             ${q.c.map((c, ci) => `<label class="quiz-opt"><input type="radio" name="q${qi}" value="${ci}" required> <span>${esc(c)}</span></label>`).join("")}
@@ -171,9 +180,9 @@
           ${body}
           ${scriptures}
           ${reflect}
-          ${materials}
         </div>
         <aside class="lesson-side">
+          ${handout}
           <div class="card">${progressBar()}<a class="small" href="seminars.html">All seminars</a></div>
           ${quiz}
           ${complete}

@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
 <title>Devotions — EPHOD entry page</title>
 <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/themes.css?v=4b88e193"><link rel="stylesheet" href="../css/site.css?v=1625cb76"><link rel="stylesheet" href="admin.css?v=805be1d9">
+<link rel="stylesheet" href="../css/themes.css?v=4b88e193"><link rel="stylesheet" href="../css/site.css?v=ef2908e0"><link rel="stylesheet" href="admin.css?v=805be1d9">
 </head>
 <body>
 <header class="site-header"><a class="banner-wrap" href="../index.html" aria-label="EPHOD — Every Person Household Oikos Discipled"><span class="banner" aria-hidden="true"></span></a></header>
