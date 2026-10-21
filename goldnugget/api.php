@@ -158,6 +158,12 @@ switch ($action) {
     $r = $db->query('SELECT id, book, booknumber FROM ' . T_BOOKS . ' ORDER BY booknumber');
     out(['success' => true, 'books' => $r->fetch_all(MYSQLI_ASSOC)]);
 
+  case 'all_versions': {
+    // every version table the API knows (read-only; used to build the PNG site's language list)
+    $r = $db->query('SELECT `table`, abbreviation, language, version, publisher, copyright FROM ' . T_VERSIONS . ' ORDER BY language, version');
+    $rows = []; while ($row = $r->fetch_assoc()) $rows[] = $row;
+    out(['success' => true, 'count' => count($rows), 'versions' => $rows]);
+  }
   case 'get_versions':
     $o = [];
     foreach ($ENTRY_VERSIONS as $t => $label) $o[] = ['table' => $t, 'label' => $label];
