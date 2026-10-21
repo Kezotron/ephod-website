@@ -377,6 +377,13 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 .people { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem 2rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
 .people li strong { display: block; }
 .people li span { color: var(--ink-2); font-size: .95rem; }
+.team-grid { align-items: start; }
+.team-photo { margin: .25rem 0 1rem; }
+.team-grid .people { grid-template-columns: 1fr; }
+.team-photo img { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius-lg); box-shadow: var(--shadow); display: block; }
+.team-photo figcaption { margin-top: .5rem; }
+.partner-group.sponsors { margin-top: 2rem; }
+.partner-group.sponsors .people { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
 .intro-wide { max-width: 62rem; }
 .intro-wide .lede { max-width: none; }
 .profile { display: grid; grid-template-columns: minmax(0, 17rem) 1fr; gap: 1.75rem; align-items: center; margin-top: 1.75rem; }
