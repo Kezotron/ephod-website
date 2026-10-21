@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" data-theme="classic">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+<title>Gold Nugget — EPHOD entry page</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/themes.css?v=4b88e193"><link rel="stylesheet" href="../css/site.css?v=2a9ae95b"><link rel="stylesheet" href="admin.css?v=805be1d9">
+</head>
+<body>
+<header class="site-header"><a class="banner-wrap" href="../index.html" aria-label="EPHOD — Every Person Household Oikos Discipled"><span class="banner" aria-hidden="true"></span></a></header>
+<div class="admin-wrap">
+  <div class="admin-head">
+    <h1>Gold Nugget</h1>
+    <nav><a href="../gold-nugget.html">View on website</a></nav>
+  </div>
+
+  <div class="panel">
+    <div class="row" style="justify-content:space-between">
+      <h2 style="margin:0">Pick a day</h2>
+      <span class="legend" id="count"></span>
+    </div>
+    <div class="month-tabs" id="months" style="margin-top:.75rem"></div>
+    <div class="daygrid" id="days"></div>
+    <p class="legend">Green days already have a Gold Nugget. The outlined day is today. February 29 is listed at the end of February.</p>
+  </div>
+
+  <div class="panel">
+    <h2 id="day-title">Day</h2>
+    <div id="current" class="current">Choose a day above.</div>
+    <form id="form" style="margin-top:1rem">
+      <div class="row">
+        <div class="field grow"><label>Book</label><select name="book"></select></div>
+        <div class="field"><label>Chapter</label><select name="chapter"></select></div>
+        <div class="field"><label>First verse</label><select name="verse"></select></div>
+        <div class="field"><label>Last verse</label><select name="lastverse"></select></div>
+        <div class="field grow"><label>Version</label><select name="version"></select></div>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button type="button" class="btn btn-quiet" id="preview-btn">Preview in every version</button>
+        <button type="submit" class="btn btn-primary">Save Gold Nugget</button>
+        <button type="button" class="btn btn-quiet danger" id="delete-btn" hidden>Remove this day's nugget</button>
+      </div>
+      <div id="status" class="status"></div>
+      <div id="preview" class="preview"></div>
+    </form>
+  </div>
+</div>
+<script src="admin.js?v=503bfe39"></script>
+<script>
+(async () => {
+  const A = window.EPHOD_ADMIN, { $, $$, esc, api, status } = A;
+  const months = $("#months"), days = $("#days"), st = $("#status"), current = $("#current"), title = $("#day-title"), delBtn = $("#delete-btn");
+  const today = A.dayOfYear(new Date());
+  let filled = new Set(), month = new Date().getMonth(), day = today, picker;
+  const firstDay = (m) => { let n = 1; for (let i = 0; i < m; i++) n += A.MDAYS[i]; return n; };
+  function renderMonths() { months.innerHTML = A.MONTHS.map((n, i) => `<button type="button" aria-pressed="${i === month}" data-m="${i}">${n.slice(0, 3)}</button>`).join(""); }
+  function renderDays() {
+    const start = firstDay(month), n = A.MDAYS[month];
+    let html = "";
+    for (let i = 0; i < n; i++) { const d = start + i; html += `<button type="button" data-d="${d}" class="${filled.has(d) ? "filled" : ""} ${d === today ? "today" : ""}" aria-pressed="${d === day}">${i + 1}</button>`; }
+    if (month === 1) html += `<button type="button" data-d="366" class="${filled.has(366) ? "filled" : ""}" aria-pressed="${day === 366}" title="February 29">29</button>`;
+    days.innerHTML = html;
+  }
+  async function refreshStatus() { const j = await api("gn_status"); filled = new Set(j.filledDays); $("#count").textContent = `${j.count} of 366 days filled`; renderDays(); }
+  async function loadDay() {
+    title.textContent = `${A.dayLabel(day)} (day ${day})`; current.textContent = "Loading…";
+    try {
+      const j = await api("gn_get", { day });
+      if (j.exists) {
+        const e = j.entry, vsel = $("select[name=version]"), vl = vsel && [...vsel.options].find((o) => o.value === e.version);
+        current.innerHTML = `<span class="ref">${esc(e.bookName || e.book)} ${esc(e.chapter)}:${esc(e.verse)}${+e.lastverse ? "–" + esc(e.lastverse) : ""} · ${esc(vl ? vl.text : e.version)}</span>`;
+        delBtn.hidden = false; if (picker) await picker.set(e);
+      } else { current.innerHTML = `<em>No Gold Nugget for this day yet.</em>`; delBtn.hidden = true; }
+    } catch (err) { current.innerHTML = `<span class="danger">${esc(err.message)}</span>`; }
+  }
+  months.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; month = +b.dataset.m; renderMonths(); renderDays(); });
+  days.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; day = +b.dataset.d; renderDays(); st.className = "status"; $("#preview").innerHTML = ""; loadDay(); });
+  renderMonths(); await refreshStatus();
+  picker = await A.makePicker($("#form")); await loadDay();
+  $("#preview-btn").addEventListener("click", () => picker.preview($("#preview")));
+  $("#form").addEventListener("submit", async (ev) => {
+    ev.preventDefault(); status(st, "busy", "Saving…");
+    try { const j = await api("gn_save", null, Object.assign({ day }, picker.values())); status(st, "ok", j.message + "."); await refreshStatus(); await loadDay(); }
+    catch (err) { status(st, "err", err.message); }
+  });
+  delBtn.addEventListener("click", async () => {
+    if (!confirm(`Remove the Gold Nugget for ${A.dayLabel(day)}?`)) return;
+    try { const j = await api("gn_delete", null, { day }); status(st, "ok", j.message + "."); await refreshStatus(); await loadDay(); } catch (err) { status(st, "err", err.message); }
+  });
+})();
+</script>
+</body>
+</html>

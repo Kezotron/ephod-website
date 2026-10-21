@@ -1,0 +1,178 @@
+/* ============================================================
+   EPHOD — theme tokens
+   ------------------------------------------------------------
+   Every colour on the site comes from the variables below.
+   "classic" is the EPHOD brand: the purple, sky blue, navy and
+   green of the EPHOD banner. To try another look add ?theme=name
+   to any address; to change the default edit js/config.js.
+   To add a theme, copy a block and give it a new name.
+   ============================================================ */
+
+:root,
+[data-theme="classic"] {
+  color-scheme: light;
+  /* surfaces */
+  --bg: #e4e9ef;            /* the banner's cool grey, a shade deeper so cards stand out */
+  --banner-bg: #e4e9ed;     /* matches the banner image's own background */
+  --store-bg: #052f5f;      /* app-store buttons */
+  --store-ink: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #d9e0e9;
+  --line: #cbd3de;
+  /* text */
+  --ink: #1b2432;
+  --ink-2: #4a5566;
+  --ink-3: #74808f;
+  --heading: #052f5f;       /* navy of EVERY PERSON HOUSEHOLD … */
+  /* brand */
+  --primary: #8a2a8c;       /* EPHOD purple: buttons, highlights */
+  --primary-ink: #ffffff;
+  --primary-soft: #f1e3f1;
+  --band: #e6dff0;          /* tinted band behind alternating home sections: soft purple */
+  --secondary: #2f6fb5;     /* sky blue: links, AM/PM markers */
+  --secondary-soft: #dfeaf6;
+  --accent: #028566;        /* green of the cross: Gold Nugget, rules */
+  --accent-soft: #dcefe8;
+  /* bars */
+  --nav-bg: #052f5f;
+  --nav-ink: #ffffff;
+  --nav-active: #8a2a8c;
+  --footer-bg: #052f5f;
+  --footer-ink: #c9d6e6;
+  --footer-head: #ffffff;
+  /* scripture block */
+  --verse-bg: #ffffff;
+  --verse-ink: #1b2432;
+  --focus: #8a2a8c;
+  --shadow: 0 1px 2px rgba(5, 47, 95, .06), 0 10px 28px -16px rgba(5, 47, 95, .35);
+}
+
+/* Evening: the brand colours on a dark ground, for night reading */
+[data-theme="evening"] {
+  color-scheme: dark;
+  --bg: #121a26;
+  --banner-bg: #0e182b;     /* matches images/ephod-banner-dark2.webp */
+  --store-bg: #e7ecf3;
+  --store-ink: #0b1220;
+  --surface: #1a2433;
+  --surface-2: #223044;
+  --line: #2f3f55;
+  --ink: #e7ecf3;
+  --ink-2: #b7c2d1;
+  --ink-3: #8a97a9;
+  --heading: #ffffff;
+  --primary: #c66cc8;
+  --primary-ink: #1a0b1b;
+  --primary-soft: #3a2240;
+  --band: #1b2235;
+  --secondary: #87b9dc;
+  --secondary-soft: #1f3550;
+  --accent: #4fc39f;
+  --accent-soft: #163a31;
+  --nav-bg: #0b1220;
+  --nav-ink: #e7ecf3;
+  --nav-active: #8a2a8c;
+  --footer-bg: #0b1220;
+  --footer-ink: #a9b6c8;
+  --footer-head: #ffffff;
+  --verse-bg: #1f2a3b;
+  --verse-ink: #f1f4f8;
+  --focus: #c66cc8;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 28px -16px rgba(0, 0, 0, .7);
+}
+
+/* Morning: a softer, greener take */
+[data-theme="morning"] {
+  color-scheme: light;
+  --store-bg: var(--heading); --store-ink: #ffffff;
+  --bg: #f4f6f1;
+  --surface: #ffffff;
+  --surface-2: #e9eee6;
+  --line: #d3dbd1;
+  --ink: #1d2823;
+  --ink-2: #4f5d55;
+  --ink-3: #7b877f;
+  --heading: #1f3d33;
+  --primary: #2f5d50;
+  --primary-ink: #ffffff;
+  --primary-soft: #dfe9e3;
+  --band: #e6ede4;
+  --secondary: #2f6fb5;
+  --secondary-soft: #dfeaf6;
+  --accent: #b08a3e;
+  --accent-soft: #f3ead6;
+  --nav-bg: #2f5d50;
+  --nav-ink: #ffffff;
+  --nav-active: #1f3d33;
+  --footer-bg: #1f3d33;
+  --footer-ink: #c8d6cf;
+  --footer-head: #ffffff;
+  --verse-bg: #fbfaf5;
+  --verse-ink: #1d2823;
+  --focus: #b08a3e;
+  --shadow: 0 1px 2px rgba(29, 40, 35, .06), 0 8px 24px -16px rgba(29, 40, 35, .25);
+}
+
+/* Harbor: navy and sand */
+[data-theme="harbor"] {
+  color-scheme: light;
+  --store-bg: var(--heading); --store-ink: #ffffff;
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --surface-2: #e7ebef;
+  --line: #d0d7de;
+  --ink: #16212c;
+  --ink-2: #4a5663;
+  --ink-3: #76828e;
+  --heading: #1f3a5f;
+  --primary: #1f3a5f;
+  --primary-ink: #ffffff;
+  --primary-soft: #dde5ee;
+  --band: #e3e9f0;
+  --secondary: #2f6fb5;
+  --secondary-soft: #dfeaf6;
+  --accent: #c0943f;
+  --accent-soft: #f5ecd9;
+  --nav-bg: #1f3a5f;
+  --nav-ink: #ffffff;
+  --nav-active: #c0943f;
+  --footer-bg: #16212c;
+  --footer-ink: #b9c3cf;
+  --footer-head: #ffffff;
+  --verse-bg: #fbfaf7;
+  --verse-ink: #16212c;
+  --focus: #c0943f;
+  --shadow: 0 1px 2px rgba(22, 33, 44, .06), 0 8px 24px -16px rgba(22, 33, 44, .25);
+}
+
+/* Vineyard: warm paper and deep plum */
+[data-theme="vineyard"] {
+  color-scheme: light;
+  --store-bg: var(--heading); --store-ink: #ffffff;
+  --bg: #f8f4ee;
+  --surface: #fffdf9;
+  --surface-2: #efe8df;
+  --line: #ddd3c6;
+  --ink: #2b1f22;
+  --ink-2: #5d4f53;
+  --ink-3: #887a7e;
+  --heading: #5b2a3c;
+  --primary: #5b2a3c;
+  --primary-ink: #ffffff;
+  --primary-soft: #efdfe4;
+  --band: #efe6e0;
+  --secondary: #6f7a3a;
+  --secondary-soft: #e9ecd8;
+  --accent: #b08a3e;
+  --accent-soft: #f3ead6;
+  --nav-bg: #5b2a3c;
+  --nav-ink: #ffffff;
+  --nav-active: #3d1a28;
+  --footer-bg: #3d1a28;
+  --footer-ink: #d9c9cf;
+  --footer-head: #ffffff;
+  --verse-bg: #fdfaf4;
+  --verse-ink: #2b1f22;
+  --focus: #6f7a3a;
+  --shadow: 0 1px 2px rgba(43, 31, 34, .06), 0 8px 24px -16px rgba(43, 31, 34, .25);
+}

@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /memoryverse/
+Disallow: /goldnugget/
+Disallow: /source/
+Allow: /
+Sitemap: https://ephod4png.com/sitemap.xml

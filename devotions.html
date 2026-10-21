@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" data-theme="classic">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devotions | EPHOD</title>
+  <meta name="description" content="Weekly devotions that follow the EPHOD Bible reading plan, from 2017 to today.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/themes.css?v=4b88e193">
+  <link rel="stylesheet" href="css/site.css?v=2a9ae95b">
+  <script src="js/config.js?v=9106b5c0"></script>
+  <script>(function(){try{var t=new URLSearchParams(location.search).get("theme")||localStorage.getItem("ephod-theme-v2")||window.EPHOD_CONFIG.DEFAULT_THEME;document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+  <meta property="og:site_name" content="EPHOD">
+  <meta property="og:title" content="Devotions | EPHOD">
+  <meta property="og:description" content="Weekly devotions that follow the EPHOD Bible reading plan, from 2017 to today.">
+</head>
+<body data-page="devotions">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <a class="banner-wrap" href="index.html" aria-label="EPHOD — Every Person Household Oikos Discipled">
+    <span class="banner" aria-hidden="true"></span>
+  </a>
+  <div class="navbar">
+    <div class="wrap">
+      <a class="brand-small" href="index.html">EPHOD</a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav class="nav" id="site-nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="reading-plan.html">Reading plan</a>
+        <a href="devotions.html">Devotions</a>
+        <a href="apps.html">Apps</a>
+        <a href="seminars.html">Seminars</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <button class="mode-toggle" type="button" aria-label="Switch to dark mode" title="Light / dark">
+        <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.6 8.6 0 0 1 8.9 3.8a8.6 8.6 0 1 0 11.3 11.3z"/></svg>
+        <svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></g></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<section class="section">
+  <div class="wrap">
+    <h1>Devotions</h1>
+    <p class="lede">A short reflection each week on the passages you are reading — <span id="devo-count">…</span> of them since 2017, from Gospel Publishing House.</p>
+    <h2>Latest</h2>
+    <div class="grid grid-3" id="latest"><p class="loading">Loading…</p></div>
+    <hr>
+    <h2>All devotions</h2>
+    <nav class="year-jump" id="year-jump" aria-label="Jump to year"></nav>
+    <div id="archive"></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Read with us</h4>
+        <ul>
+          <li><a href="am-reading.html">Morning Passage</a></li>
+          <li><a href="pm-reading.html">Evening Passage</a></li>
+          <li><a href="catch-up.html">Missed a day? Catch up</a></li>
+          <li><a href="memory-verse.html">Memory verses</a></li>
+          <li><a href="gold-nugget.html">Gold Nuggets</a></li>
+          <li><a href="reading-plan.html">The one-year plan</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>EPHOD</h4>
+        <ul>
+          <li><a href="about.html">About EPHOD and the Johnsons</a></li>
+          <li><a href="devotions.html">Devotions</a></li>
+          <li><a href="seminars.html">EPHOD Seminars</a></li>
+          <li><a href="apps.html">EPHOD PNG app</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="privacy-policy.html">Privacy policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Follow</h4>
+        <ul>
+          <li><a href="https://www.facebook.com/ephodlifestyle/" rel="noopener">Facebook</a></li>
+          <li><a href="https://www.youtube.com/channel/UCJKO4sIhohnlkeiCB7mFcbQ" rel="noopener">YouTube</a></li>
+        </ul>
+        <div class="theme-pick">
+          <label for="theme-pick" class="small">Appearance</label>
+          <select id="theme-pick">
+            <option value="classic">EPHOD classic</option>
+            <option value="evening">Evening (dark)</option>
+            <option value="morning">Morning</option>
+            <option value="harbor">Harbor</option>
+            <option value="vineyard">Vineyard</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="legal">
+      <p>Full Life Study Bible Reading Plan used by permission of the copyright holder. © Life Publishers International, Springfield, Missouri, United States of America. All rights reserved.</p>
+      <p>Scripture quotations marked NIV are taken from the Holy Bible, New International Version®, NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.® Used by permission. All rights reserved worldwide. New International Version® and NIV® are registered trademarks of Biblica, Inc.</p>
+      <p>Devotions © Gospel Publishing House, Springfield, Missouri. Used by permission.</p>
+      <p>© 2017–2026 EPHOD Discipleship. EPHOD is a ministry developed by Rev. Herb and Rev. Karen Johnson.</p>
+    </div>
+  </div>
+</footer>
+<script src="js/ephod.js?v=b602e202"></script>
+</body>
+</html>
