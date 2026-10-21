@@ -185,6 +185,18 @@
     const end = new Date(start); end.setDate(start.getDate() + 6);
     return { start, end };
   }
+  // A devotion goes live when its week starts, by the calendar date in Manila (where it is posted),
+  // so Zarah can enter next week's devotion early without it showing before Monday.
+  function manilaToday() {
+    try { return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Manila", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()); }
+    catch (e) { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
+  }
+  function devoStartISO(dateStr) {
+    const s = devoWeek(dateStr).start;
+    return `${s.getFullYear()}-${String(s.getMonth() + 1).padStart(2, "0")}-${String(s.getDate()).padStart(2, "0")}`;
+  }
+  function devoLive(d) { return devoStartISO(d.date) <= manilaToday(); }
+  function liveDevotions(idx) { return (idx || []).filter(devoLive); }
   function devoWeekRange(dateStr) {
     const { start, end } = devoWeek(dateStr);
     const m = (x) => x.toLocaleDateString(undefined, { month: "long", day: "numeric" });
@@ -269,7 +281,7 @@
     // latest devotion, inside its card
     const ld = $("#latest-devotion");
     if (ld) getJSON(C.DEVOTIONS_INDEX).then((idx) => {
-      const d = idx[0]; if (!d) { ld.innerHTML = ""; return; }
+      const d = liveDevotions(idx)[0]; if (!d) { ld.innerHTML = ""; return; }
       ld.innerHTML = `<a class="devo-teaser" href="${devoURL(d)}">
           ${d.image ? `<img class="devo-thumb" src="${esc(d.image)}" alt="" width="96" height="72" onerror="this.remove()">` : ""}
           <span>
@@ -315,7 +327,7 @@
     // devotion of the week
     const dw = $("#week-devotion");
     if (dw) getJSON(C.DEVOTIONS_INDEX).then((idx) => {
-      const d = idx[0]; if (!d) return;
+      const d = liveDevotions(idx)[0]; if (!d) return;
       dw.innerHTML = `<h3>This week's devotion</h3>${devoCard(d)}`;
     }).catch(() => {});
   };
@@ -449,7 +461,7 @@
   pages.devotions = async function () {
     const latest = $("#latest"), arch = $("#archive"), jump = $("#year-jump");
     try {
-      const idx = await getJSON(C.DEVOTIONS_INDEX);
+      const idx = liveDevotions(await getJSON(C.DEVOTIONS_INDEX));
       latest.innerHTML = idx.slice(0, 6).map(devoCard).join("");
       const years = {};
       idx.forEach((d) => { const w = devoWeek(d.date).start, y = String(w.getFullYear()), m = w.getMonth() + 1; (years[y] = years[y] || {}); (years[y][m] = years[y][m] || []).push(d); });
@@ -561,13 +573,15 @@
       const one = getJSON(C.DEVOTIONS_DIR + slug + ".json").catch(async () => {
         const all = await getJSON(C.DEVOTIONS_DIR + "all.json"); const hit = all.find((x) => x.slug === slug); if (!hit) throw new Error("not found"); return hit;
       });
-      const [d, idx] = await Promise.all([one, getJSON(C.DEVOTIONS_INDEX).catch(() => [])]);
+      const [d, idxAll] = await Promise.all([one, getJSON(C.DEVOTIONS_INDEX).catch(() => [])]);
+      const idx = liveDevotions(idxAll), upcoming = !devoLive(d);
       document.title = `${d.title} — Devotions | EPHOD`;
       const i = idx.findIndex((x) => x.slug === slug);
       const newer = i > 0 ? idx[i - 1] : null, older = i >= 0 && i < idx.length - 1 ? idx[i + 1] : null;
       out.innerHTML = `
         ${d.image ? `<div class="article-hero"><img src="${esc(d.image)}" alt="" onerror="this.parentNode.remove()"></div>` : ""}
         <p class="meta">Week of ${esc(devoWeekRange(d.date))}</p>
+        ${upcoming ? `<p class="notice">Scheduled: this devotion goes on the site on Monday, when its week begins.</p>` : ""}
         <h1>${esc(d.title)}</h1>
         ${d.reading ? `<p class="read-line">Read ${esc(d.reading)}</p>` : ""}
         <div class="article-body">${d.body}</div>
