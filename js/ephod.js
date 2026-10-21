@@ -176,7 +176,9 @@
         <p>${esc(d.excerpt || "")}</p>
       </div></a>`;
   }
-  function devoURL(d) { return "devotion.html?slug=" + encodeURIComponent(d.slug); }
+  // Each devotion has a real page at devotion/<slug>.html (written on the server); if that page
+  // hasn't been generated yet, .htaccess sends the visitor to devotion.html?slug=… instead.
+  function devoURL(d) { return "devotion/" + encodeURIComponent(d.slug) + ".html"; }
   // Devotions are posted on Sunday for the week that follows (Monday to Sunday),
   // the same week the memory verse covers.
   function devoWeek(dateStr) {
@@ -592,6 +594,17 @@
         </nav>`;
       if (d.reading) loadPassage(d.reading);
     } catch (e) { fail(out, "This devotion couldn't be found. It may have moved — see all devotions on the Devotions page."); }
+  };
+
+  /* ---------- static devotion page (devotion/<slug>.html) ---------- */
+  pages["devotion-static"] = async function () {
+    const art = $("#devotion"); if (!art) return;
+    if (art.dataset.date && !devoLive({ date: art.dataset.date })) {
+      const n = document.createElement("p"); n.className = "notice";
+      n.textContent = "Scheduled: this devotion goes on the site on Monday, when its week begins.";
+      art.querySelector("h1").before(n);
+    }
+    if (art.dataset.reading) loadPassage(art.dataset.reading);
   };
 
   /* ---------- boot ---------- */
