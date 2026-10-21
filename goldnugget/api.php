@@ -162,7 +162,10 @@ switch ($action) {
     // every version table the API knows (read-only; used to build the PNG site's language list)
     $r = $db->query('SELECT `table`, abbreviation, language, version, publisher, copyright FROM ' . T_VERSIONS . ' ORDER BY language, version');
     $rows = []; while ($row = $r->fetch_assoc()) $rows[] = $row;
-    out(['success' => true, 'count' => count($rows), 'versions' => $rows]);
+    // plus every p_* table in the database (the PNG-language Bibles are not all in bible_version_key)
+    $tables = []; $t = $db->query("SHOW TABLE STATUS LIKE 'p\\_%'");
+    while ($row = $t->fetch_assoc()) $tables[] = ['table' => $row['Name'], 'rows' => (int)$row['Rows'], 'comment' => $row['Comment'] ?? ''];
+    out(['success' => true, 'count' => count($rows), 'versions' => $rows, 'png_tables' => $tables]);
   }
   case 'get_versions':
     $o = [];
