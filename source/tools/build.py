@@ -65,12 +65,9 @@ for f in sorted(os.listdir(os.path.join(SRC,'pages'))):
 # devotions data
 posts=json.load(open(os.path.join(ROOT,'tools','devotions_full.json'),encoding='utf-8'))
 posts.sort(key=lambda p:p['date'],reverse=True)
-dd=os.path.join(DIST,'data','devotions'); os.makedirs(dd)
-index=[{k:p[k] for k in ('slug','title','date','reading','image','excerpt')} for p in posts]
-json.dump(index,open(os.path.join(dd,'index.json'),'w',encoding='utf-8'),ensure_ascii=False)
-for p in posts:
-    json.dump(p,open(os.path.join(dd,p['slug']+'.json'),'w',encoding='utf-8'),ensure_ascii=False)
-json.dump(posts,open(os.path.join(dd,'all.json'),'w',encoding='utf-8'),ensure_ascii=False)
+# data/devotions/ is NOT built or deployed: the live site generates it from the database
+# (api.php?action=devo_rebuild, and automatically whenever a devotion is saved), so a deploy
+# never overwrites it. devotions_full.json is kept only for the sitemap and the one-time import.
 # version-stamp the entry pages' assets too (they are cached for an hour)
 for folder in ENTRY:
   ad=os.path.join(DIST,folder)
