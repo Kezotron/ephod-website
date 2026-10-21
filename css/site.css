@@ -129,6 +129,7 @@ main > .section:first-child { padding-top: var(--gap); }
 .band-color .lede { line-height: 1.33; }
 .inset-photo { margin: 1rem 0 0; text-align: center; }
 .inset-photo img { width: 150px; max-width: 100%; height: auto; display: inline-block; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+.inset-photo.wide img { width: 100%; }
 .footnote { margin-top: .75rem; }
 .qr figcaption { color: var(--ink-2); font-size: 1.15rem; line-height: 1.4; max-width: 20rem; flex: 1 1 8rem; min-width: 0; }
 
