@@ -424,7 +424,8 @@ select:focus, input:focus, textarea:focus { border-color: var(--primary); outlin
 @media (min-width: 56rem) { .photo-split { grid-template-columns: 1fr 1fr; } .photo-split.rev > :first-child { order: 2; } }
 .photo-split img { border-radius: var(--radius-lg); box-shadow: var(--shadow); width: 100%; }
 .band-color { background: var(--band); }
-.apps-photo { border-radius: var(--radius-lg); box-shadow: var(--shadow); width: 100%; max-width: 13.5rem; }
+.apps-photos { display: flex; gap: .75rem; margin-top: 1rem; }
+.apps-photo { width: 50%; max-width: 13.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow); object-fit: cover; aspect-ratio: 3 / 2; }
 
 /* ---------- misc ---------- */
 .notice { padding: .9rem 1.1rem; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid var(--line); font-size: .95rem; }

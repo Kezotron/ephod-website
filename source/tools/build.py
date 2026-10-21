@@ -2,8 +2,24 @@
 """Build the EPHOD static site: src/ -> dist/."""
 import json, os, re, shutil, sys, datetime
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC=os.path.join(ROOT,'src'); DIST=os.path.join(ROOT,'dist')
+SITE=(sys.argv[sys.argv.index('--site')+1] if '--site' in sys.argv else 'ph')
+SRC0=os.path.join(ROOT,'src'); DIST=os.path.join(ROOT,'dist' if SITE=='ph' else 'dist-'+SITE)
+# a site overlay (src/sites/<site>/…) replaces same-named files; build from a merged copy
+SRC=SRC0
+if SITE!='ph':
+    import tempfile
+    SRC=os.path.join(tempfile.gettempdir(),'ephod-src-'+SITE)
+    if os.path.exists(SRC): shutil.rmtree(SRC)
+    shutil.copytree(SRC0,SRC,ignore=shutil.ignore_patterns('sites'))
+    ov=os.path.join(SRC0,'sites',SITE)
+    for dp,dn,fn in os.walk(ov):
+        for f in fn:
+            rel=os.path.relpath(os.path.join(dp,f),ov); os.makedirs(os.path.dirname(os.path.join(SRC,rel)),exist_ok=True); shutil.copy(os.path.join(dp,f),os.path.join(SRC,rel))
+SITE_URL={'ph':'https://ephodlifestyle.com','png':'https://ephod4png.com'}[SITE]
+SITE_NAME={'ph':'EPHOD','png':'EPHOD PNG'}[SITE]
 layout=open(os.path.join(SRC,'layout.html'),encoding='utf-8').read()
+if SITE=='png':
+    layout=layout.replace('<a href="apps.html">EPHOD PH app</a>','<a href="apps.html">EPHOD PNG app</a>')
 if os.path.exists(DIST): shutil.rmtree(DIST)
 os.makedirs(DIST)
 for d in ('css','js','images'):
@@ -65,7 +81,6 @@ for folder in ENTRY:
     s=s.replace('href="admin.css"','href="%s"'%stamp('admin/admin.css').replace('admin/','')).replace('src="admin.js"','src="%s"'%stamp('admin/admin.js').replace('admin/',''))
     open(fp,'w',encoding='utf-8').write(s)
 # robots.txt and sitemap.xml for the live domain
-SITE_URL='https://ephodlifestyle.com'
 open(os.path.join(DIST,'robots.txt'),'w').write("User-agent: *\nDisallow: /memoryverse/\nDisallow: /goldnugget/\nDisallow: /source/\nAllow: /\nSitemap: %s/sitemap.xml\n"%SITE_URL)
 pages=[f for f in sorted(os.listdir(DIST)) if f.endswith('.html') and f not in ('404.html','devotion.html','certificate.html','seminar.html')]
 urls=[SITE_URL+'/']+[SITE_URL+'/'+f for f in pages if f!='index.html']+[SITE_URL+'/devotion.html?slug='+p['slug'] for p in posts]

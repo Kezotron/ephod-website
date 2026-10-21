@@ -127,7 +127,11 @@
     versionSelectsReady = true;
     window._ephodVersionChange = onChange;
     $$("select.version-select").forEach((sel) => {
-      sel.innerHTML = C.VERSIONS.map((v) => `<option value="${v.table}">${esc(v.label)}</option>`).join("");
+      const opt = (v) => `<option value="${v.table}">${esc(v.label)}</option>`;
+      const groups = [...new Set(C.VERSIONS.map((v) => v.lang))];
+      sel.innerHTML = groups.length > 2
+        ? groups.map((g) => `<optgroup label="${esc(g)}">${C.VERSIONS.filter((v) => v.lang === g).map(opt).join("")}</optgroup>`).join("")
+        : C.VERSIONS.map(opt).join("");
       sel.value = cur;
       sel.addEventListener("change", () => {
         store.set("ephod-version", sel.value);
@@ -241,7 +245,7 @@
     // memory verse, visible inside its card
     const mv = $("#memory-verse");
     // shown in the version Zarah chose when she entered it
-    api("get_memory_verse.php", {}).then((j) => {
+    api(C.MEMORY_VERSE_ENDPOINT || "get_memory_verse.php", {}).then((j) => {
       const md = $("#memory-date"); if (md) md.textContent = j.dateRange;
       mv.innerHTML = `<p class="verse-ref">${esc(j.reference.replace(/\s*\(.*\)$/, ""))}</p>
         <div class="verse-text small-verse">${j.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
