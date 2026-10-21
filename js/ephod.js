@@ -249,7 +249,7 @@
       const md = $("#memory-date"); if (md) md.textContent = j.dateRange;
       mv.innerHTML = `<p class="verse-ref">${esc(j.reference.replace(/\s*\(.*\)$/, ""))}</p>
         <div class="verse-text small-verse">${j.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
-        <p class="verse-foot">${esc(j.version)}</p>`;
+        <p class="verse-foot">${esc(versionLabel(j.version))}</p>`;
     }).catch(() => fail(mv, "The memory verse couldn't be loaded."));
 
     // gold nugget
