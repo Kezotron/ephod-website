@@ -240,7 +240,8 @@
 
     // memory verse, visible inside its card
     const mv = $("#memory-verse");
-    api("get_memory_verse.php", { version: ver }).then((j) => {
+    // shown in the version Zarah chose when she entered it
+    api("get_memory_verse.php", {}).then((j) => {
       const md = $("#memory-date"); if (md) md.textContent = j.dateRange;
       mv.innerHTML = `<p class="verse-ref">${esc(j.reference.replace(/\s*\(.*\)$/, ""))}</p>
         <div class="verse-text small-verse">${j.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
@@ -249,7 +250,8 @@
 
     // gold nugget
     const gn = $("#gold-nugget");
-    api("get_golden_nugget.php", { day, version: ver }).then((j) => {
+    // shown in the version Herb & Karen chose when they entered it (the API uses the stored version when none is sent)
+    api("get_golden_nugget.php", { day }).then((j) => {
       gn.innerHTML = `<div class="verse-card nugget-card">
         <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(j.reference)}</span></div>
         <div class="nugget-body">
@@ -415,15 +417,18 @@
     const ver = initVersionSelects(() => pages.nuggets());
     const top = $("#nugget-today"), out = $("#nugget-list");
     try {
-      const j = await api("get_past_golden_nuggets.php", { version: ver, day: dayOfYear(new Date()), days: 366 });
+      const [j, today] = await Promise.all([
+        api("get_past_golden_nuggets.php", { version: ver, day: dayOfYear(new Date()), days: 366 }),
+        api("get_golden_nugget.php", { day: dayOfYear(new Date()) })   // today's, in the version Herb & Karen chose
+      ]);
       const list = j.goldenNuggets;
-      const cur = list[0];
+      const cur = Object.assign({}, list[0], { verses: today.verses || list[0].verses, version: today.version || ver, reference: today.reference || list[0].reference });
       top.innerHTML = `<div class="verse-card nugget-card">
         <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(cur.reference)}</span></div>
         <div class="nugget-body">
         <h3>Today's Gold Nugget</h3>
         <div class="verse-text">${cur.verses.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
-        <div class="verse-footrow"><span class="muted small">${esc(cur.date)}</span><span class="verse-foot">${copyrightLine(ver, null)}</span></div>
+        <div class="verse-footrow"><span class="muted small">${esc(cur.date)}</span><span class="verse-foot">${copyrightLine(cur.version, today.versionInfo && !Array.isArray(today.versionInfo) ? today.versionInfo : null)}</span></div>
         </div>
       </div>`;
       let year = new Date().getFullYear(), prev = cur.day;
