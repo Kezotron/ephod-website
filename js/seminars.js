@@ -3,329 +3,432 @@
    ------------------------------------------------------------
    This is the only file to edit to change the course:
    titles, descriptions, Scriptures, reflection questions,
-   quiz questions and downloadable materials.
+   quiz questions and the handout for each seminar.
+
+   Source: Rev. Herb and Rev. Karen Johnson's seminar PowerPoints
+   and the 2020 fill-in-the-blank handouts. Every quiz question
+   is one of the handout's blanks, so someone who watched the
+   video and filled in the handout will pass.
 
    Each seminar:
-     n          seminar number (order matters — the course is taken in order)
-     group      "defined" | "noun" | "verb"
-     title      one word, as on the DVDs
-     vimeo      Vimeo video id
-     minutes    running time, whole minutes (0 = unknown yet)
-     summary    one or two sentences for the course page card
-     body       paragraphs for the lesson page (plain text, one per array item)
-     scriptures key passages
-     reflect    reflection / small-group questions
-     quiz       multiple-choice questions; "a" is the index of the right answer
-                (0-based). A seminar with an empty quiz can be completed without one.
-     materials  downloads: { label, href } — leave empty until the notes arrive
-     review     true = Claude drafted this from the video description only;
-                Herb, Karen or KJ should read it before the course goes public.
+     n           seminar number (order matters — the course is taken in order)
+     group       "defined" | "noun" | "verb"
+     title       one word, as on the handouts
+     vimeo       Vimeo video id
+     minutes     running time, whole minutes
+     commitment  the commitment this seminar asks for (shown under the title)
+     summary     one or two sentences for the course page card
+     body        paragraphs for the lesson page (plain text, one per array item)
+     scriptures  key passages
+     reflect     reflection / small-group questions
+     quiz        multiple-choice questions; "a" is the index of the right answer (0-based)
+     handout     { href, pages } — the fill-in-the-blank handout (PDF)
    ============================================================ */
 window.EPHOD_SEMINARS = {
   intro: { vimeo: "795072887", title: "Course introduction", minutes: 1 },
   passMark: 0.75, // share of quiz questions that must be right to pass
   groups: [
-    { id: "defined", title: "EPHOD Defined", kicker: "Seminars 1–5", blurb: "What EPHOD is, where it comes from in Scripture, and how the whole course fits together." },
-    { id: "noun",    title: "EPHOD the Noun — being a disciple", kicker: "Seminars 6–9", blurb: "A disciple is something you are. Four seminars on the life that makes a strong disciple: Magnify, Membership, Maturity and Ministry." },
-    { id: "verb",    title: "EPHOD the Verb — making disciples", kicker: "Seminars 10–13", blurb: "To disciple is something you do. Four seminars on being released, guided and multiplied as a disciple maker: Monitor, Management, Mission and Mabuhay." }
+    { id: "defined", title: "EPHOD Defined", kicker: "Seminars 1–5", cover: "images/cover-defined.webp",
+      blurb: "What EPHOD is and why it exists: the Purpose, the Pattern, the Plan, the Process and the Power behind it all." },
+    { id: "noun", title: "EPHOD the Noun — being a disciple", kicker: "Seminars 6–9", cover: "images/cover-noun.webp",
+      blurb: "“If you continue in my word, then are you my disciples indeed” (John 8:31). Four commitments that make a disciple: Magnify, Membership, Maturity and Ministry." },
+    { id: "verb", title: "EPHOD the Verb — making disciples", kicker: "Seminars 10–13", cover: "images/cover-verb.webp",
+      blurb: "“Go and make disciples” (Matthew 28:19). Four commitments that make a disciple maker: Monitor, Management, Mission and Mabuhay." }
   ],
   seminars: [
+    /* ───────────────────────── EPHOD DEFINED ───────────────────────── */
     {
       n: 1, group: "defined", title: "Purpose", vimeo: "794997783", minutes: 18,
-      summary: "Why EPHOD exists: every person, household and oikos discipled, and the command of Jesus that drives it.",
+      commitment: "Every Person, Household, Oikos, Discipled.",
+      summary: "What the word EPHOD means, what the five letters stand for, and the two sides of the word “disciple” — the noun and the verb.",
       body: [
-        "EPHOD stands for Every Person, Household, Oikos, Discipled. This opening seminar explains the purpose behind the name and behind the whole course.",
-        "It begins in 1 Samuel 30, where David, facing the loss of everything at Ziklag, seeks the Lord's presence through the ephod and recovers all that had been taken. Jesus warned that the thief comes only to steal, kill and destroy; the purpose of EPHOD is recovery — people, families and whole networks of relationships brought back to God.",
-        "The seminar closes with the command of Matthew 28:19, to go and make disciples of all nations, and asks what that command means for an ordinary believer and an ordinary church."
+        "EPHOD is a Hebrew word. It was the priestly garment — colour-coded and custom-made — that the priest put on to come into the presence of God. When David had lost everything at Ziklag he said, “Bring me the ephod,” asked the Lord, and was told he would recover everything that had been taken (1 Samuel 30). That is the picture behind the whole programme.",
+        "The five letters spell out the purpose: Every Person, Household, Oikos, Discipled. Oikos is a Greek word for every person in your life — your household oikos, your extended oikos and your church oikos. Each word carries a verse: John 3:16 (every), 2 Peter 3:9 (person), 1 Samuel 30 (household), Acts 10:24 (oikos, where Cornelius gathered his relatives and close friends) and Matthew 28:19–20 with John 8:31 (discipled).",
+        "“Disciple” is both a noun and a verb. I am a disciple — the noun, John 8:31: “If ye continue in my word, then are ye my disciples indeed.” I disciple someone — the verb, Matthew 28:19: “Go and make disciples.” The seminars that follow are built on those two sides. And who makes disciples? We do, and Jesus is with us as we do it.",
+        "This first seminar also sets out the five parts of EPHOD Defined — Purpose, Pattern, Plan, Process and Power — which are Seminars 1 to 5 of this course."
       ],
-      scriptures: ["1 Samuel 30:7–8", "John 10:10", "Matthew 28:19–20"],
+      scriptures: ["1 Samuel 30:1–20", "John 3:16", "2 Peter 3:9", "Acts 10:24", "John 8:31", "Matthew 28:18–20", "Ephesians 4:11–16"],
       reflect: [
-        "David \"inquired of the Lord\" before he acted. When was the last time you sought God's direction before a decision, and what happened?",
-        "What has the thief stolen in your community — in families, in young people, in the church? What would \"recovering all\" look like there?",
-        "Who is in your oikos — the people naturally connected to you by family, work, school and neighbourhood? Write down ten names.",
-        "Matthew 28:19 is a command, not a suggestion. What has kept you from treating it that way?"
+        "David asked the Lord before he went after what was lost. Where in your life or church is something lost that needs recovering — and have you asked Him about it?",
+        "Write down your household oikos, your extended oikos and your church oikos — the actual names. How many people is that?",
+        "“I am a disciple” and “I disciple someone.” Which of the two is stronger in your life right now? Why?",
+        "The seminars are for all believers, all ages. Who in your church — young or old — is usually left out of discipleship, and how could they be included?"
       ],
       quiz: [
-        { q: "What does EPHOD stand for?", c: ["Every Pastor Helping Other Disciples", "Every Person, Household, Oikos, Discipled", "Evangelism, Prayer, Holiness, Obedience, Devotion", "Equipping People for Holy Outreach Daily"], a: 1 },
-        { q: "In 1 Samuel 30, what did David do before pursuing the raiders who had taken everything from Ziklag?", c: ["He gathered more soldiers", "He inquired of the Lord through the ephod", "He waited for the Philistines to help", "He sent spies ahead"], a: 1 },
-        { q: "According to John 10:10, what does the thief come to do?", c: ["Test and refine", "Steal, kill and destroy", "Divide and conquer", "Deceive and delay"], a: 1 },
-        { q: "Which command of Jesus is the foundation of the EPHOD purpose?", c: ["Love your neighbour as yourself", "Go and make disciples of all nations", "Feed my sheep", "Pray without ceasing"], a: 1 }
+        { q: "EPHOD is a word from which language?", c: ["Hebrew", "Greek", "Latin", "Tagalog"], a: 0 },
+        { q: "The ephod was the garment the priest put on to come into the ______ of God.", c: ["temple", "presence", "service", "fear"], a: 1 },
+        { q: "Which of these is NOT one of the five parts of EPHOD Defined?", c: ["Purpose", "Pattern", "Prayer", "Power"], a: 2 },
+        { q: "What do the letters of EPHOD stand for?", c: ["Every Pastor Helping Other Disciples", "Every Person, Household, Oikos, Discipled", "Equipping People for Holy Outreach Daily", "Evangelism, Prayer, Holiness, Obedience, Devotion"], a: 1 },
+        { q: "Oikos is a Greek word for…", c: ["the church building", "every person in your life", "a priest’s robe", "a small group leader"], a: 1 },
+        { q: "In 1 Samuel 30, when David asked the Lord through the ephod whether to chase the raiders, what was the answer?", c: ["Wait until morning", "No, let them go", "Yes — you will surely recover everything that was taken", "Send Abiathar instead"], a: 2 },
+        { q: "“I am a disciple” is the ______; “I disciple someone” is the ______.", c: ["verb; noun", "noun; verb", "pattern; plan", "process; power"], a: 1 },
+        { q: "Who makes disciples?", c: ["Only pastors and missionaries", "Only those with a Bible school degree", "We make disciples, and Jesus is with us as we do it", "Jesus alone, without us"], a: 2 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-01-purpose-handout.pdf", pages: 1 }
     },
     {
       n: 2, group: "defined", title: "Pattern", vimeo: "794998645", minutes: 16,
-      summary: "The model, design and detailed instructions for making a disciple — \"according to the pattern shown you on the mountain.\"",
+      commitment: "Make everything according to the pattern shown you on the mountain.",
+      summary: "A model to copy, a design to follow and detailed instructions — where God’s pattern is found and how a disciple is clothed, colour-coded and custom-made.",
       body: [
-        "When God told Moses to build the tabernacle he gave him a pattern and said, \"See to it that you make everything according to the pattern shown you on the mountain\" (Hebrews 8:5). The Pattern seminar takes that command and applies it to making disciples.",
-        "The New Testament says that believers are now the temple of the Holy Spirit. God is still building according to a pattern, and the pattern is His Son: we are always in the process of being conformed to the image of Jesus (Romans 8:29).",
-        "This seminar lays out the model, design and detailed instructions that the rest of the course follows, so that disciple making is done God's way rather than by trial and error."
+        "A pattern is a model to copy, a design to follow and detailed instructions. When God told Moses to build the tabernacle He said, “See to it that you make everything according to the pattern shown you on the mountain” (Hebrews 8:5, quoting Exodus 25:40). EPHOD applies that command to making disciples: God has a pattern, and He expects us to follow it rather than improvise.",
+        "Where do we find the pattern? In the Word — “the whole will of God” (Acts 20:27) — and in mentoring: “Pattern yourselves after me, as I imitate and follow Christ” (1 Corinthians 11:1). A disciple needs both the Book and a person.",
+        "How is the EPHOD pattern developed? Like the priest’s ephod itself. Clothed: “stay in the city until you have been clothed with power from on high” (Luke 24:49). Colour-coded: Exodus 28:6 names gold, blue, purple and scarlet yarn and finely twisted linen — in the seminars gold stands for finishing strong, blue for prayer, purple for worship and royalty, scarlet for the blood of Jesus, and white linen for being clean through the Word. Custom-made: Paul laid a foundation as an expert builder and “each one should be careful how he builds” (1 Corinthians 3:10); the garments were made for ministering in the sanctuary, as the Lord commanded (Exodus 39:1).",
+        "A pilot keeps a plane on course by constant small adjustments — only one percent of the flight is flying straight. The Word, prayer and monitoring are how a disciple keeps coming back to God’s original pattern."
       ],
-      scriptures: ["Hebrews 8:5", "Exodus 25:9, 40", "1 Corinthians 6:19", "Romans 8:29"],
+      scriptures: ["Hebrews 8:5", "Exodus 25:40", "Acts 20:27", "1 Corinthians 11:1", "Luke 24:49", "Exodus 28:6", "1 Corinthians 3:10", "Exodus 39:1"],
       reflect: [
-        "Why do you think God insisted on an exact pattern for the tabernacle? What does that say about how He wants His church built?",
-        "If believers are the temple of the Holy Spirit, what is being built in you right now, and what still needs work?",
-        "Romans 8:29 says we are being conformed to the image of Jesus. Name one area where you have seen that happen in the past year.",
-        "Where has your church's discipleship been \"trial and error\" rather than following a pattern?"
+        "Why do you think God was so exact about the tabernacle? What does “according to the pattern” mean for how a church makes disciples?",
+        "The pattern is found in the Word and in mentoring. Who has been a pattern for you? Who are you a pattern for?",
+        "Gold, blue, purple, scarlet, white: finishing strong, prayer, worship, the blood of Jesus, the Word. Which colour is strongest in your life, and which is faded?",
+        "“Each one should be careful how he builds.” What are you building on the foundation someone else laid in your life?"
       ],
       quiz: [
-        { q: "Hebrews 8:5 repeats a command God first gave to whom?", c: ["David, for the temple", "Moses, for the tabernacle", "Noah, for the ark", "Solomon, for the palace"], a: 1 },
-        { q: "According to the New Testament, who or what is the temple of the Holy Spirit today?", c: ["The church building", "The city of Jerusalem", "Believers themselves", "The priests only"], a: 2 },
-        { q: "Romans 8:29 says believers are being conformed to what?", c: ["The pattern of this world", "The law of Moses", "The image of God's Son", "The traditions of the elders"], a: 2 },
-        { q: "What does the Pattern seminar provide for the rest of the course?", c: ["A list of church programmes to run", "The model, design and detailed instructions for making a disciple", "A fundraising plan", "A history of the Assemblies of God"], a: 1 }
+        { q: "A pattern is a model to copy, a design to follow and…", c: ["a picture to admire", "detailed instructions", "a rule to enforce", "a list of leaders"], a: 1 },
+        { q: "Hebrews 8:5 says: “See to it that you make everything according to the ______ shown you on the mountain.”", c: ["plan", "law", "pattern", "promise"], a: 2 },
+        { q: "Where do we find the pattern? (two places)", c: ["Tradition and culture", "The Word and mentoring", "Conferences and books", "Dreams and visions"], a: 1 },
+        { q: "Who said, “Pattern yourselves after me, as I imitate and follow Christ” (1 Corinthians 11:1)?", c: ["Peter", "Moses", "Paul", "John"], a: 2 },
+        { q: "The three ways the EPHOD pattern is developed are Clothed, Colour-coded and…", c: ["Counted", "Custom-made", "Copied", "Completed"], a: 1 },
+        { q: "In Luke 24:49 Jesus told the disciples to stay in the city until they were…", c: ["ordained by the apostles", "clothed with power from on high", "joined by Paul", "baptized in water"], a: 1 },
+        { q: "Which colour is NOT named in Exodus 28:6 for the ephod?", c: ["Gold", "Blue", "Green", "Scarlet"], a: 2 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-02-pattern-handout.pdf", pages: 1 }
     },
     {
       n: 3, group: "defined", title: "Plan", vimeo: "794999431", minutes: 18,
-      summary: "A first look at the EPHOD 10 Point Plan — a daily lifestyle that reflects the life of Jesus and finds God's will for yours.",
+      commitment: "A custom-made plan for the local church, so that every believer grows.",
+      summary: "The EPHOD 10 Point Plan introduced, and the Full Life Study Bible reading plan that runs through the whole of it — the same plan you will find on this website.",
       body: [
-        "The Plan seminar introduces the EPHOD 10 Point Plan, which is taught in full in the Maturity seminar. The plan is a set of ten daily and weekly habits that together build a lifestyle reflecting the life of Jesus (John 8:31).",
-        "The plan has two aims: to help you continue in the Word so that your life looks more and more like His, and to help you find God's specific, personal will for your life — with daily guidance for carrying it out.",
-        "At the heart of the plan is daily Bible reading. The reading guide EPHOD uses comes from the Full Life Study Bible and is used by permission of Life Publishers International; it is the same plan you will find on this website and in the EPHOD apps."
+        "The Plan is a custom-made plan for the local church to help every believer grow spiritually, be an effective disciple and be an active disciple maker. It has ten points: daily Bible reading; weekly Scripture memorisation; Sunday school and worship; a weekly care cell or Bible study; a devotional journal; praying and fasting one meal each week; sharing or witnessing Jesus; tithes and offerings; a daily prayer and worship time; and taking notes in services. Each point is taught in full in the Maturity seminar.",
+        "The reading plan EPHOD uses is the Full Life Study Bible reading plan, a study Bible made for Spirit-filled believers. The one-year plan reads the Old Testament in the morning and the New Testament in the evening; a two-year plan takes the Old Testament in the first year and the New in the second. The Old Testament books are read in Biblical order except the prophets, who are read in the order they lived and wrote, beginning with Obadiah and ending with Malachi. The New Testament begins with Matthew, then Acts, then Mark and the General Epistles, then Luke and the Pauline Epistles, and finally John and John’s epistles — so the plan keeps coming back to the life, death and resurrection of Jesus.",
+        "The same passages give the church its Sunday sermon, its Sunday school lesson and its house-fellowship discussion, so the whole church is in the same Word together. And preaching must come from the anointing of the Holy Spirit and your own study of the Word — not copied from a book or the internet.",
+        "EPHOD Discipleship is a biblical lifestyle and it is a process — not a book, and not a one-year training programme."
       ],
-      scriptures: ["John 8:31–32", "Psalm 1:1–3", "Romans 12:1–2", "Joshua 1:8"],
+      scriptures: ["John 8:31", "Psalm 1:1–3", "Joshua 1:8", "2 Timothy 3:16–17"],
       reflect: [
-        "Jesus said, \"If you hold to my teaching, you are really my disciples.\" What does \"holding to\" His teaching look like on an ordinary Tuesday?",
-        "Which of the ten points do you already practise? Which one would make the biggest difference if you started this week?",
-        "How do you currently try to discern God's will for your life? How might a daily plan change that?",
-        "Who could you invite to follow the reading plan with you, starting tomorrow?"
+        "Go through the ten points and mark the ones you already practise. Which one would change the most if you started it this week?",
+        "The plan puts the whole church in the same passages — sermon, Sunday school and small group. What would that do for your church?",
+        "Why do you think the New Testament plan returns to a Gospel four times a year?",
+        "“A biblical lifestyle, not a one-year programme.” What is the difference, in practice, between a programme and a lifestyle?"
       ],
       quiz: [
-        { q: "How many points are in the EPHOD plan?", c: ["Five", "Seven", "Ten", "Twelve"], a: 2 },
-        { q: "Which verse does the 10 Point Plan build on — \"If you hold to my teaching, you are really my disciples\"?", c: ["John 3:16", "John 8:31", "Matthew 5:16", "Acts 2:42"], a: 1 },
-        { q: "Where does the EPHOD daily reading guide come from?", c: ["The Full Life Study Bible (Life Publishers International)", "The Book of Common Prayer", "A plan written by the Johnsons from scratch", "The YouVersion app"], a: 0 },
-        { q: "Besides building a Christlike lifestyle, what is the plan's second aim?", c: ["To raise money for missions", "To help you find and carry out God's personal will for your life", "To prepare you for ordination", "To memorise the whole New Testament"], a: 1 }
+        { q: "The Plan is custom-made for the local church to help every believer grow spiritually, be an effective disciple and be…", c: ["a church officer", "an active disciple maker", "a Bible school graduate", "a worship leader"], a: 1 },
+        { q: "How many points are in the EPHOD Discipleship Plan?", c: ["Five", "Eight", "Ten", "Twelve"], a: 2 },
+        { q: "Which of these is NOT one of the ten points?", c: ["Weekly Scripture memorisation", "A yearly church retreat", "Devotional journal", "Take notes in services"], a: 1 },
+        { q: "The plan asks you to pray and fast…", c: ["one day each month", "one meal each week", "one week each year", "every Friday"], a: 1 },
+        { q: "The reading plan comes from which study Bible?", c: ["The Scofield Reference Bible", "The Life Application Bible", "The Full Life Study Bible", "The Ryrie Study Bible"], a: 2 },
+        { q: "In the one-year plan, the Old Testament is read in the ______ and the New Testament in the ______.", c: ["evening; morning", "morning; evening", "first year; second year", "winter; summer"], a: 1 },
+        { q: "The Old Testament prophets are read in the order they lived and wrote, beginning with ______ and ending with ______.", c: ["Isaiah; Malachi", "Obadiah; Malachi", "Hosea; Daniel", "Jonah; Zechariah"], a: 1 },
+        { q: "The reading plan keeps coming back to…", c: ["the law of Moses", "the life, death and resurrection of Jesus", "the Psalms", "the book of Revelation"], a: 1 },
+        { q: "EPHOD Discipleship is a biblical lifestyle and it is a…", c: ["book", "one-year programme", "process", "denomination"], a: 2 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-03-plan-handout.pdf", pages: 1 }
     },
     {
       n: 4, group: "defined", title: "Process", vimeo: "795000283", minutes: 28,
-      summary: "A preview of the four Noun and four Verb seminars, and how they connect — explained with a baseball diamond.",
+      commitment: "Every seminar builds on the one before — then take someone else around the bases.",
+      summary: "How the 10 Point Plan, the eight seminars and small groups fit together — explained with a baseball diamond — and the commitment each seminar asks for.",
       body: [
-        "The Process seminar previews the eight teaching seminars that follow: the four Noun seminars on being a disciple (Magnify, Membership, Maturity, Ministry) and the four Verb seminars on making disciples (Monitor, Management, Mission, Mabuhay).",
-        "It uses the picture of a baseball diamond to show how the seminars connect. A player has to touch every base, in order, to score; a disciple moves through each stage in order to become a well-rounded team player who can bring others home.",
-        "By the end of this seminar you will know the shape of the whole EPHOD process and where each later seminar fits."
+        "The EPHOD discipling process has three parts: the 10 Point Discipleship Plan, the eight EPHOD seminars, and small groups. The game of baseball illustrates it. Each base represents an EPHOD seminar in the disciple-making process; every seminar builds on the one before; and after completing the process, the disciple takes someone else around the bases. That is discipleship multiplication.",
+        "The real issue is not how many decisions for Christ, but how many we are helping on their way to heaven. It’s not how we start, but how we finish that counts.",
+        "Each seminar asks the believer for a specific commitment: Magnify — praise and worship; Membership — the local church; Maturity — a biblical lifestyle; Ministry — service; Monitor — finishing strong; Management — the Holy Spirit and the pastoral team; Mission — EPHOD; Mabuhay — relationships.",
+        "A small group is an effective tool in the important process of making disciples (Matthew 28:19). Why small groups? They allow time for every person to talk, give every person a sense of belonging, provide learning and sharing through interaction, give a time and place to minister to every person, and keep the focus on individual needs.",
+        "Put together: the Purpose and the Pattern give direction and develop unity; the Plan produces quality; the Process results in quantity. But for fruitful multiplication the church and the believers need the power of the Holy Spirit — which is the next seminar."
       ],
-      scriptures: ["Ephesians 4:11–16", "2 Timothy 2:2", "Colossians 1:28–29"],
+      scriptures: ["Matthew 28:19", "Ephesians 4:13", "2 Timothy 2:2", "Mark 6:39–41"],
       reflect: [
-        "Why does order matter in a process like this? What happens to a church that tries to send people out (the Verb) before they are grounded (the Noun)?",
-        "Which base are you on right now? Be honest about it with your group.",
-        "Paul told Timothy to entrust the teaching to reliable people who would teach others. How many generations deep has discipleship gone in your church?",
-        "What would it take for your church to become a \"team\" in the sense this seminar describes?"
+        "Which base are you on? Be honest with your group about it.",
+        "“Not how many decisions, but how many we are helping on their way to heaven.” How would your church measure differently if it believed that?",
+        "Of the five reasons for small groups, which one is most missing from your church’s gatherings?",
+        "Direction and unity, quality, quantity. Which of the three does your church have most of, and which least?"
       ],
       quiz: [
-        { q: "How many Noun seminars and how many Verb seminars are there?", c: ["Two and two", "Three and three", "Four and four", "Five and five"], a: 2 },
-        { q: "What picture does the Process seminar use to show how the seminars connect?", c: ["A ladder", "A baseball diamond", "A tree", "A road map"], a: 1 },
-        { q: "The Noun seminars are about…", c: ["being a disciple", "church finance", "making disciples", "world missions"], a: 0 },
-        { q: "The Verb seminars are about…", c: ["being a disciple", "making disciples", "Bible translation", "church history"], a: 1 }
+        { q: "The EPHOD discipling process has three parts: the 10 Point Plan, the eight seminars and…", c: ["Sunday school", "small groups", "a yearly convention", "a building programme"], a: 1 },
+        { q: "In the baseball picture, each base represents…", c: ["a year of membership", "an EPHOD seminar", "a church department", "a Bible book"], a: 1 },
+        { q: "After completing the process, what does the disciple do?", c: ["Rest for a year", "Take someone else around the bases", "Apply for ordination", "Start a new church"], a: 1 },
+        { q: "“The real issue is not how many decisions for Christ, but how many we are ______ on their way to heaven.”", c: ["counting", "baptizing", "helping", "teaching"], a: 2 },
+        { q: "Monitor is a commitment to…", c: ["praise and worship", "finishing strong", "relationships", "the local church"], a: 1 },
+        { q: "Mabuhay is a commitment to…", c: ["service", "finishing strong", "relationships", "a biblical lifestyle"], a: 2 },
+        { q: "Which of these is NOT one of the reasons given for small groups?", c: ["Allows time for every person to talk", "Gives every person a sense of belonging", "Needs fewer leaders than a Sunday service", "Group focus is on individual needs"], a: 2 },
+        { q: "The Plan produces ______; the Process results in ______.", c: ["quantity; quality", "quality; quantity", "unity; direction", "power; purpose"], a: 1 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-04-process-handout.pdf", pages: 1 }
     },
     {
-      n: 5, group: "defined", title: "Power", vimeo: "850700923", minutes: 36, review: true,
-      summary: "The power behind the process: the Holy Spirit, without whom no plan or pattern can make a disciple.",
+      n: 5, group: "defined", title: "Power", vimeo: "850700923", minutes: 36,
+      commitment: "Our power source is the Baptism in the Holy Spirit.",
+      summary: "The power behind the whole process: the Baptism in the Holy Spirit — what it is, how it is received, and the door it opens to the gifts of the Spirit.",
       body: [
-        "A pattern and a plan are not enough on their own. The Power seminar turns to the One who makes discipleship possible — the Holy Spirit, promised by Jesus to His followers before He sent them out.",
-        "\"You will receive power when the Holy Spirit comes on you; and you will be my witnesses\" (Acts 1:8). The power to live the EPHOD lifestyle, and the power to bring others into it, is the same power that filled the first disciples.",
-        "This seminar completes the EPHOD Defined section and prepares you for the four Noun seminars that follow."
+        "Our power source is the Baptism in the Holy Spirit. Jesus executes it: “I baptize you with water, but He will baptize you with the Holy Spirit” (Mark 1:8). The Word explains it: “You will receive power when the Holy Spirit comes on you; and you will be my witnesses” (Acts 1:8). And the believer experiences it: “All of them were filled with the Holy Spirit and began to speak in other tongues as the Spirit enabled them” (Acts 2:4).",
+        "The Holy Spirit is a gentleman. He will not force you to speak in tongues; you will use your own lips, teeth, tongue and voice to give voice to the words He gives you, and you keep control of your voice and body. The initial outward sign is tongues — Peter and his companions heard the household of Cornelius speaking in tongues and praising God (Acts 10:46). It is not an emotional state one works up. How do you receive? Be a committed disciple of Jesus; desire to be filled; ask — “how much more will your heavenly Father give the Holy Spirit to those who ask him” (Luke 11:13); and when the Holy Spirit gives the words, you are the one who gives voice to them.",
+        "The Baptism in the Holy Spirit is the door to the spiritual gifts: wisdom, knowledge, faith, gifts of healing, miracles, prophecy, distinguishing between spirits, tongues and interpretation of tongues (1 Corinthians 12:8–10). The gifts are manifestations of the Holy Spirit, and pastors and leaders especially need the manifestation of wisdom to finish strong.",
+        "The seminar closes with guidelines for finishing strong: no unwise counselling with the opposite sex alone; remember the rule of three; do not stop daily devotions; do not think “it will not happen to me”; do the EPHOD 10 Point Plan. These matter most when small groups come into a church — leadership is entrusted to reliable people, and male-female relations must be protected. EPHOD is more than a purpose, pattern, plan and process: it is a covering, a protection, a prevention and a power. Remember: believers can only go as far as their leaders can take them."
       ],
-      scriptures: ["Acts 1:8", "Zechariah 4:6", "Luke 24:49", "Ephesians 5:18"],
+      scriptures: ["Mark 1:8", "Acts 1:8", "Acts 2:4", "Acts 10:44–46", "Luke 11:13", "1 Corinthians 12:7–11"],
       reflect: [
-        "Jesus told the disciples to wait for power before they went. Where are you tempted to go without waiting?",
-        "\"Not by might nor by power, but by my Spirit.\" Where have you been relying on your own strength in ministry or in your walk with God?",
-        "Describe a time you knew the Holy Spirit was at work through you. What was different about it?",
-        "How does your small group make room for the Holy Spirit when it meets?"
+        "Jesus told the disciples to wait for power before they went. Where have you been going without waiting?",
+        "“The Holy Spirit is a gentleman.” What fears or misunderstandings about the Baptism in the Holy Spirit have you heard, and how does this seminar answer them?",
+        "Which of the nine gifts have you seen operate in your church? Which have you never seen?",
+        "The guidelines for finishing strong are mostly about protecting yourself before anything goes wrong. Which one do you most need to put in place now?"
       ],
       quiz: [
-        { q: "According to Acts 1:8, what happens when the Holy Spirit comes on believers?", c: ["They receive power and become witnesses", "They are excused from witnessing", "They become church leaders", "They receive wealth"], a: 0 },
-        { q: "Zechariah 4:6 says the work is done \"not by might nor by power, but by…\"", c: ["my prophets", "my Spirit", "my law", "my angels"], a: 1 },
-        { q: "Where does the Power seminar sit in the course?", c: ["It is the first seminar", "It is the last of the EPHOD Defined seminars", "It is the first Verb seminar", "It is the last seminar in the course"], a: 1 }
+        { q: "According to the seminar, our power source is…", c: ["Bible knowledge", "the Baptism in the Holy Spirit", "church membership", "strong leadership"], a: 1 },
+        { q: "Mark 1:8 — who baptizes the believer in the Holy Spirit?", c: ["John the Baptist", "The pastor", "Jesus", "The apostles"], a: 2 },
+        { q: "Acts 1:8: “You will receive ______ when the Holy Spirit comes on you.”", c: ["wisdom", "healing", "power", "peace"], a: 2 },
+        { q: "The initial outward sign of the Baptism in the Holy Spirit is…", c: ["tears", "trembling", "tongues", "prophecy"], a: 2 },
+        { q: "“The Holy Spirit is a gentleman” means…", c: ["He speaks only to men", "He will not force you to speak in tongues; you keep control of your voice and body", "He only comes in quiet services", "He waits for the pastor’s permission"], a: 1 },
+        { q: "The Baptism in the Holy Spirit is not…", c: ["for believers today", "promised by Jesus", "an emotional state one works up", "the door to the spiritual gifts"], a: 2 },
+        { q: "Which of these is NOT one of the nine gifts listed in 1 Corinthians 12:8–10?", c: ["Word of wisdom", "Gifts of healing", "Preaching", "Interpretation of tongues"], a: 2 },
+        { q: "Which is one of the guidelines to finish strong?", c: ["Counsel the opposite sex alone when necessary", "Remember the rule of three", "Rest from daily devotions when busy", "Trust that it will not happen to you"], a: 1 },
+        { q: "EPHOD Discipleship is a covering, a protection, a prevention and a…", c: ["programme", "power", "promise", "plan"], a: 1 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-05-power-handout.pdf", pages: 3 }
+    },
+
+    /* ───────────────────────── EPHOD THE NOUN ───────────────────────── */
+    {
+      n: 6, group: "noun", title: "Magnify", vimeo: "850739922", minutes: 49,
+      commitment: "Magnify is a commitment to become a true worshipper of God.",
+      summary: "Praise and worship as a lifestyle: what they are, who, when, why and how — including singing in the Spirit and the things that hinder worship.",
+      body: [
+        "Magnify is a commitment to become a true worshipper of God. Worship is both individual and corporate; Pentecostals worship in spirit and in truth, and the Assemblies of God have a distinctive style of worship. Magnify has two parts: praise, and worship or adoration. Worship is a love relationship — “Love the Lord your God with all your heart and with all your soul and with all your mind and with all your strength” (Mark 12:30).",
+        "Praise is more of an outward expression: spoken or sung audibly, in the vernacular or mother tongue, and in corporate prayer in tongues (Ephesians 5:18–19). Worship is an attitude of the heart — a deep meditation on the greatness and worthiness of God and a spontaneous overflow of those thoughts and emotions; it cannot be worked up (Psalm 103:1). Who should worship? All believers (Psalm 79:13). When? Every day, at all times (Psalm 145:2; 113:3; 34:1). Why? It is commanded by God (Psalms 146–150), the Father seeks worshippers (John 4:23), praise is a garment of the Spirit (Isaiah 61:3 — the Hebrew ‘atah means a total covering, leaving no openings for the enemy), and we are to be filled with the Spirit again and again (Ephesians 5:18).",
+        "How do we worship? With a clean heart (1 John 1:9; John 15:3) and with spiritual songs (1 Corinthians 14:15). Singing in the Spirit is singing to the Lord with words the Holy Spirit gives us; every Spirit-filled believer can do it, by yielding our voices in song to the Holy Spirit. In solemn worship, don’t be afraid of silence — pauses are necessary to allow the Holy Spirit time and place to speak through tongues and interpretation and through prophecy, and to minister the nine spiritual gifts, which He alone distributes (1 Corinthians 12:11).",
+        "Hindrances to worship: sin (Isaiah 59:2) — the solution is to confess (1 John 1:9) — and any activity or action that takes the focus off Jesus: late-comers, talking habits, non-participation, physical manifestations that do not edify the church, suppressing the impulses of the Holy Spirit, phones and texting. Congregational worship is at its purest when every member of the body is participating, when the whole body is alive, inspired and indwelt by the Holy Spirit and yielded to His operation."
+      ],
+      scriptures: ["Mark 12:30", "Psalm 103:1", "Psalm 145:2", "John 4:23", "Isaiah 61:3", "Ephesians 5:18–19", "1 Corinthians 14:15", "1 Corinthians 12:11", "Isaiah 59:2", "1 John 1:9"],
+      reflect: [
+        "Praise is outward; worship is an attitude of the heart that cannot be worked up. Which comes more easily to you, and what does that tell you?",
+        "“When distressed, be dressed — with praise.” Describe a time praise changed a heavy spirit in you or in a service.",
+        "What happens in your church when there is silence in worship? Is there room for the Holy Spirit to speak?",
+        "Go through the list of hindrances honestly. Which one are you guilty of, and what will you change this Sunday?"
+      ],
+      quiz: [
+        { q: "Magnify is a commitment to become a…", c: ["worship leader", "true worshipper of God", "member of the choir", "song writer"], a: 1 },
+        { q: "The two parts of Magnify are…", c: ["singing and giving", "praise and worship/adoration", "prayer and fasting", "preaching and teaching"], a: 1 },
+        { q: "According to the seminar, worship is a ______ relationship.", c: ["working", "love", "formal", "weekly"], a: 1 },
+        { q: "Which describes praise rather than worship?", c: ["An attitude of the heart", "Cannot be worked up", "More of an outward expression — spoken or sung audibly", "A deep meditation on the greatness of God"], a: 2 },
+        { q: "Who should worship?", c: ["The praise team", "All believers", "Pastors and elders", "Those with musical gifts"], a: 1 },
+        { q: "Praise is a ______ of the Spirit (Isaiah 61:3).", c: ["weapon", "fruit", "garment", "reward"], a: 2 },
+        { q: "Who should sing in the Spirit?", c: ["Only trained singers", "Only the worship leader", "Every believer who is Spirit-filled", "No one — it was only for the apostles"], a: 2 },
+        { q: "Why are pauses important in solemn worship?", c: ["To rest the musicians", "To allow the Holy Spirit time and place to speak through tongues, interpretation and prophecy", "To let late-comers find seats", "To make announcements"], a: 1 },
+        { q: "Which is listed as a hindrance to worship?", c: ["Lifting hands", "Singing in the mother tongue", "Suppressing the impulses of the Holy Spirit", "Children praising"], a: 2 }
+      ],
+      handout: { href: "handouts/seminar-06-magnify-handout.pdf", pages: 5 }
     },
     {
-      n: 6, group: "noun", title: "Magnify", vimeo: "850739922", minutes: 49, review: true,
-      summary: "The first mark of a disciple: a life that magnifies the Lord in worship, prayer and daily devotion.",
+      n: 7, group: "noun", title: "Membership", vimeo: "850891875", minutes: 45,
+      commitment: "Membership is a commitment to God and to the local Assembly of God church.",
+      summary: "Why a disciple belongs: the church as a family, commitment as the difference between an attender and a member, and what the Assemblies of God believe — the 16 Fundamental Truths and 4 Cardinal Doctrines.",
       body: [
-        "The Noun seminars describe what a disciple is. The first and foundational mark is worship: \"Glorify the Lord with me; let us exalt his name together\" (Psalm 34:3). A disciple is someone whose life makes God look as great as He is.",
-        "Magnify covers the personal and corporate worship of a disciple — daily prayer and worship time, giving thanks, and gathering with God's people to exalt His name — the habits from the 10 Point Plan that keep God at the centre.",
-        "Everything else in the EPHOD process flows out of this: people who magnify the Lord become people who want to belong, to grow and to serve."
+        "Membership is a commitment to God and a commitment to the local Assembly of God church. The church is a family — “you are members of God’s very own family … and you belong in God’s household with every other Christian” (Ephesians 2:19). The difference between a church attender and a member is commitment, and commitment is necessary before becoming a leader in the local church. “Those who are planted in the house of the Lord shall flourish in the courts of our God” (Psalm 92:13).",
+        "The Assemblies of God have 16 Fundamental Truths and 4 Cardinal Doctrines. The seminar walks through all sixteen with a verse for each: the Bible is the Word of God; the one true God in three Persons; the deity of the Lord Jesus Christ; the fall of man; the salvation of man through the shed blood of Christ; the ordinances of the church — water baptism and holy communion; the Baptism in the Holy Spirit; the initial physical evidence of the Baptism in the Holy Spirit is speaking in tongues; sanctification; the church and its mission; the ministry; divine healing; the blessed hope; the millennial reign of Christ; the final judgment; and the new heavens and the new earth.",
+        "Why tongues? It is the biblical pattern (Acts 10:44–46): the outward evidence of being filled, a prayer language that edifies, the means of messages in tongues, and a sign to the unbeliever. The four Cardinal Doctrines — the principal, basic ones — are that Jesus saves, Jesus baptizes in the Holy Spirit, Jesus heals, and Jesus is coming again.",
+        "The seminar ends with a Membership Commitment to sign: daily Bible reading and praying in the Spirit, faithful attendance, tithes and offerings, prayer for the pastor and church, following the leadership, avoiding gossip, being used in the gifts, being equipped to serve, a Christ-like attitude, love toward other members, a warm welcome for visitors, and sharing Jesus. We become what we are committed to: commitment to the Great Commandment and the Great Commission produces a dedicated EPHOD disciple. The vision of the church is for every person in the church to become an EPHOD disciple — and when you have completed the first round of the bases, you will be ready to be used in the Leadership Base of the church."
       ],
-      scriptures: ["Psalm 34:1–3", "Luke 1:46–47", "John 4:23–24", "Psalm 100"],
+      scriptures: ["Ephesians 2:19", "Psalm 92:12–13", "2 Peter 1:21", "Acts 2:4", "Romans 12:1–2", "Titus 2:13", "Acts 10:44–46", "Mark 12:28–31", "Matthew 28:18–20"],
       reflect: [
-        "What does it mean, practically, to \"magnify\" the Lord? How is that different from simply singing about Him?",
-        "When is your daily prayer and worship time, and what gets in the way of it?",
-        "Mary said, \"My soul magnifies the Lord.\" What in your life right now causes you to magnify Him? What causes you to shrink Him?",
-        "How could your household begin to worship together this week?"
+        "“The difference between an attender and a member is commitment.” Which are you, by that definition — and which are most of the people in your church?",
+        "Pick three of the 16 Fundamental Truths you could not have explained before this seminar. Say each one in your own words.",
+        "Read the Membership Commitment line by line. Which line would be hardest to keep? Which would change your church most if everyone kept it?",
+        "“We become what we are committed to.” What are you actually committed to, judging by your time and money?"
       ],
       quiz: [
-        { q: "Magnify is the first of which group of seminars?", c: ["EPHOD Defined", "The Noun seminars (being a disciple)", "The Verb seminars (making disciples)", "The leadership seminars"], a: 1 },
-        { q: "Psalm 34:3 says, \"Glorify the Lord with me; let us…\"", c: ["build his house", "exalt his name together", "keep his commandments", "go into all the world"], a: 1 },
-        { q: "Which points of the 10 Point Plan belong most closely to Magnify?", c: ["Tithes and offerings", "Daily prayer and worship time; Sunday worship", "Taking notes in services", "Sharing and witnessing"], a: 1 }
+        { q: "Membership is a commitment to God and to…", c: ["a denomination in general", "the local Assembly of God church", "a weekly television ministry", "the pastor personally"], a: 1 },
+        { q: "According to Ephesians 2:19, the church is a…", c: ["building", "business", "family", "school"], a: 2 },
+        { q: "The difference between a church attender and a member is…", c: ["baptism", "commitment", "age", "giving"], a: 1 },
+        { q: "The Assemblies of God have ______ Fundamental Truths and ______ Cardinal Doctrines.", c: ["10; 2", "12; 3", "16; 4", "20; 5"], a: 2 },
+        { q: "The two ordinances of the church are…", c: ["Prayer and fasting", "Water baptism and holy communion", "Tithing and witnessing", "Preaching and teaching"], a: 1 },
+        { q: "The initial physical evidence of the Baptism in the Holy Spirit is…", c: ["joy", "speaking in tongues", "healing", "boldness"], a: 1 },
+        { q: "Which is NOT one of the four Cardinal Doctrines?", c: ["Jesus saves", "Jesus baptizes in the Holy Spirit", "Jesus is the Good Shepherd", "Jesus is coming again"], a: 2 },
+        { q: "The vision of the church is for ______ in the church to become an EPHOD disciple.", c: ["every leader", "every person", "every young person", "every family head"], a: 1 },
+        { q: "When you have completed the first round of the bases you are ready to be used in the…", c: ["pulpit", "Leadership Base of the church", "mission field", "choir"], a: 1 }
       ],
-      materials: []
-    },
-    {
-      n: 7, group: "noun", title: "Membership", vimeo: "850891875", minutes: 45, review: true,
-      summary: "A disciple belongs: committed membership in a local church body and in a weekly small group.",
-      body: [
-        "A disciple is not a lone believer. The second Noun seminar, Membership, teaches that every follower of Jesus is placed by God into a body — the local church — and is meant to belong to it in a real, committed way (1 Corinthians 12:27).",
-        "Membership covers the believer's place in Sunday worship, Sunday school and especially the weekly care cell or small group, where discipleship actually happens (Mark 6:39). It also addresses commitment, faithfulness and the mutual care that marks members of one body.",
-        "The seminar connects directly to the 10 Point Plan habits of Sunday school and worship attendance and weekly small-group membership."
-      ],
-      scriptures: ["1 Corinthians 12:12–27", "Hebrews 10:24–25", "Acts 2:42–47", "Mark 6:39–40"],
-      reflect: [
-        "Paul says, \"Now you are the body of Christ, and each one of you is a part of it.\" What part are you, and does your church know it?",
-        "Why did Jesus seat the crowd in groups of hundreds and fifties before He fed them? What does that teach about small groups?",
-        "Hebrews 10:25 warns against giving up meeting together. What has pulled people in your church away from meeting?",
-        "Who in your small group needs to be cared for this week, and what will you do about it?"
-      ],
-      quiz: [
-        { q: "According to 1 Corinthians 12:27, believers together are…", c: ["an audience", "the body of Christ", "a club", "a committee"], a: 1 },
-        { q: "Where does EPHOD say discipleship most effectively happens?", c: ["In large crusades", "In weekly small groups or care cells", "On television", "In seminary"], a: 1 },
-        { q: "Hebrews 10:24–25 tells believers not to give up…", c: ["fasting", "tithing", "meeting together", "travelling"], a: 2 }
-      ],
-      materials: []
+      handout: { href: "handouts/seminar-07-membership-handout.pdf", pages: 7 }
     },
     {
       n: 8, group: "noun", title: "Maturity", vimeo: "795008748", minutes: 54,
-      summary: "The full EPHOD 10 Point Plan — ten spiritual lifestyles that together build a strong, faithful Christian.",
+      commitment: "Maturity is a commitment to develop spiritual habits — the EPHOD 10 Point Plan — for growth.",
+      summary: "The heart of the course: all ten points of the EPHOD plan, strand by strand. Your spiritual maturity is determined by your EPHOD lifestyle.",
       body: [
-        "Maturity is the heart of the course. It presents the EPHOD 10 Point Plan in full: ten spiritual habits that, practised together, build a strong and faithful Christian. Each point develops a specific lifestyle that strengthens the individual disciple, the local church and the wider community.",
-        "The ten points: daily Bible reading (morning and evening); weekly Scripture memorisation; Sunday school and worship; a weekly care cell or small group; a devotional journal; praying and fasting one meal a week; sharing and witnessing; tithes and offerings; a daily prayer and worship time; and taking notes in services.",
+        "Maturity is a commitment to develop spiritual habits — the EPHOD 10 Point Plan — for growth. Your spiritual maturity is determined by your EPHOD lifestyle. It is a process; there are no shortcuts; it takes discipline. “If ye continue in my word, then are ye my disciples indeed” (John 8:31). Each of the ten points is like a strand of a cord that together makes a complete and strong biblical lifestyle: “a cord of three strands is not quickly broken” (Ecclesiastes 4:12).",
+        "Strand 1, daily Bible reading: have a reading plan, custom-make your own schedule around the Word and your available time, and use the Full Life Study Bible plan — Old Testament in Biblical order except the prophets, New Testament always coming back to the life, death and resurrection of Jesus. Read the whole passage first, marking the verses you want to come back to; it is like mining for gold. Strand 2, weekly Scripture memorisation: “Guard my words as your most precious possession. Write them down, and also keep them within your heart” (Proverbs 7:2–3). Strand 3, Sunday school and worship: do not stay away from the church meetings, but meet together and encourage each other (Hebrews 10:25). Strand 4, the weekly house fellowship or Bible study: a channel of pastoral care for all who belong to the local church, and the place where potential leaders are recognised and groomed (Nehemiah 8). Strand 5, the devotional journal: “Write my answer in large, clear letters on a tablet, so that a runner can read it and tell everyone else” (Habakkuk 2:2) — the date, the passage, God’s message to you, your thoughts, prayer requests and answered prayers.",
+        "Strand 6, pray and fast one meal each week: fasting is abstaining from food during mealtime and spending that time in prayer; fasting without prayer is just skipping a meal. Strand 7, sharing or witnessing Jesus: you are the salt of the earth and the light of the world (Matthew 5:13–16); “go home to your family and tell them how much the Lord has done for you” (Mark 5:19). Strand 8, tithes and offerings: the tithe is the tenth that automatically belongs to God (Malachi 3:10); offerings are gifts given above the tithe to advance God’s mission and ministry, including benevolence to the poor (Proverbs 19:17). Strand 9, daily prayer and worship time: enter His presence with thanksgiving every day (Psalm 145:2), pray in the Spirit daily (Jude 20; 1 Corinthians 14:4; Romans 8:26), be still and listen (Psalm 32:8), and watch God work (Psalm 5:3). Strand 10, take notes in services: it keeps your focus, overcomes distractions, brings the points together and lets you review — you will forget 95% of what you only hear.",
         "Everything on this website — the Morning and Evening Passages, the weekly memory verse, the Gold Nugget and the devotions — exists to help you keep this plan every day."
       ],
-      scriptures: ["John 8:31–32", "Ephesians 4:13–15", "Hebrews 5:12–14", "2 Peter 3:18"],
+      scriptures: ["John 8:31–32", "Ecclesiastes 4:12", "Proverbs 7:2–3", "Hebrews 10:25", "Nehemiah 8:5–8", "Habakkuk 2:2", "Matthew 5:13–16", "Malachi 3:10", "Jude 20", "Psalm 5:3"],
       reflect: [
-        "Go through the ten points one by one. Give yourself an honest mark out of ten for each. Which two will you work on first?",
-        "Why do you think these ten were chosen? Is there one you don't yet understand the purpose of?",
-        "Ephesians 4:13 speaks of \"attaining to the whole measure of the fullness of Christ.\" How is maturity different from simply knowing a lot?",
-        "Which point would you find hardest to keep for a whole year? Who could hold you accountable for it?"
+        "Give yourself an honest mark out of ten for each strand. Which two will you work on first, and who will ask you about them next week?",
+        "A cord of many strands: which strand, if it broke, would weaken the others most in your life?",
+        "“Fasting without prayer is just skipping a meal.” What has your experience of fasting been, and what would make it prayer?",
+        "What is in your devotional journal from this week? If nothing, what stopped you?"
       ],
       quiz: [
-        { q: "How often does the plan call for Scripture memorisation?", c: ["Daily", "Weekly", "Monthly", "Only at seminars"], a: 1 },
-        { q: "The plan asks you to pray and fast…", c: ["for a week each year", "one meal a week", "every Friday all day", "only during Lent"], a: 1 },
-        { q: "Which of these is NOT one of the ten points?", c: ["Keeping a devotional journal", "Taking notes in services", "Running a church website", "Tithes and offerings"], a: 2 },
-        { q: "What does daily Bible reading in the plan look like?", c: ["One verse a day", "A morning passage and an evening passage, through the whole Bible in a year", "The Gospels only", "Whatever you choose each day"], a: 1 },
-        { q: "The 10 Point Plan strengthens…", c: ["only the pastor", "only the individual", "the individual, the church and the wider community", "only new believers"], a: 2 }
+        { q: "Maturity is a commitment to develop ______ for growth.", c: ["leadership skills", "spiritual habits — the EPHOD 10 Point Plan", "Bible knowledge", "church programmes"], a: 1 },
+        { q: "Your spiritual maturity is determined by your…", c: ["years as a Christian", "position in the church", "EPHOD lifestyle", "Bible school training"], a: 2 },
+        { q: "Each of the ten points is like a ______ of a cord.", c: ["knot", "strand", "link", "stitch"], a: 1 },
+        { q: "What is the devotional journal for, according to Habakkuk 2:2?", c: ["Recording attendance", "Writing God’s answer plainly so that a runner can read it and tell everyone", "Listing prayer requests only", "Keeping sermon outlines"], a: 1 },
+        { q: "Fasting is abstaining from food during mealtime and…", c: ["resting", "spending that time in prayer", "reading a book", "drinking only water"], a: 1 },
+        { q: "The tithe is…", c: ["whatever you decide to give", "the tenth that automatically belongs to God", "a gift above your offerings", "money for the poor"], a: 1 },
+        { q: "The weekly house fellowship is a channel of ______ and a place where ______ are recognised and groomed.", c: ["entertainment; singers", "pastoral care; potential leaders", "fundraising; donors", "announcements; visitors"], a: 1 },
+        { q: "Strand 9 says to pray in the ______ daily.", c: ["morning only", "Spirit", "church building", "same place"], a: 1 },
+        { q: "Why take notes in services? Because you will forget ______ of what you hear.", c: ["25%", "50%", "75%", "95%"], a: 3 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-08-maturity-handout.pdf", pages: 4 }
     },
     {
       n: 9, group: "noun", title: "Ministry", vimeo: "795011499", minutes: 46,
-      summary: "Every disciple is a minister: discovering your God-given gifts and being released by church leaders into works of service.",
+      commitment: "Ministry is the commitment to discover and use your God-given gifts and abilities in serving God and others.",
+      summary: "God’s plan for ministry, ministering the nine gifts of the Spirit, your unique SHAPE, and finding your place in the local church.",
       body: [
-        "Ministry is using the gifts God has given you to serve others. Ephesians 4:11–12 says the gifts Christ gave to the church exist to prepare God's people for works of service — every person, not only the pastor.",
-        "The seminar offers five evaluation tools to help a disciple discern God's will and recognise where they are gifted and called. It then shows how church leaders can take what they learn and deploy each person into service.",
-        "Ministry completes the four Noun seminars: a disciple who magnifies the Lord, belongs to the body and is maturing in the Word is ready to be released to serve."
+        "Ministry is the commitment to discover and use your God-given gifts and abilities in serving God and others. The seminar has four parts: God’s plan for ministry, ministering the gifts of the Spirit, your unique SHAPE, and your place in the ministry of the local church. God’s plan: “the Son of Man did not come to be served, but to serve” (Matthew 20:28). Ministry is serving; it is building up the body of Christ; it is using the abilities God has given us; it is expressing love.",
+        "The nine gifts of the Holy Spirit (the pneumatika) are the word of wisdom, the word of knowledge, faith, gifts of healing, the working of miracles, prophecy, discerning of spirits, a message in tongues, and the interpretation of a message in tongues (1 Corinthians 12:8–10). Who may minister them? “The manifestation of the Spirit is given to each one for the profit of all” (1 Corinthians 12:7): the Holy Spirit desires every Spirit-filled believer to be a willing vessel, and pastors and leaders need to be used in the gifts to set the example — always under the guidance of the Holy Spirit and of the pastor as overseer. How? Be teachable; be filled with the Holy Spirit daily; learn about the gifts; seek to be used; develop a rich devotional life; memorise Scripture; do not let fear stop you — take a step of faith (2 Timothy 1:7); and respond boldly to the urge to minister a gift.",
+        "God has a unique design and plan for every person in ministry (Romans 12:2). Your unique SHAPE: Spiritual gifts — two kinds of permanent gifts, the charismata or grace gifts of Romans 12:6–8 and the diakoniai or ministry gifts of Ephesians 4:11, which exist to prepare God’s people for works of service; we discover our gifts when we serve. Heart — the centre of your motivation; your heart is your passion (Ephesians 6:7). Anointed abilities — your natural abilities become anointed abilities as you use them in ministry for the glory of God (Exodus 31:3). Personality — very important in matching people with ministry (1 Corinthians 2:11). Experience — we can pass to others the same help and comfort God has given us in our own spiritual, painful, educational and ministry experiences (2 Corinthians 1:3–4).",
+        "How to find your place in the local church: submit to the leadership and vision of the senior pastor (Hebrews 13:17); be a team player; remember that when you are not in God’s place you cannot do your best — you take someone else’s place and rob them of their blessing; have the attitude of Christ Jesus (Philippians 2:5); and find the place where you belong — you will be effective and fulfilled, you will be loved, and you will love it. The pastor’s part is to list the ministry needs of the church, list the members already active in them, and communicate the needs to the leaders; the small-group leaders’ part is to communicate the needs to the members, help each member identify their SHAPE, and mobilise them to meet the needs under the ministry leader."
       ],
-      scriptures: ["Ephesians 4:11–12", "1 Peter 4:10–11", "Romans 12:4–8", "1 Corinthians 12:4–7"],
+      scriptures: ["Matthew 20:28", "1 Corinthians 12:7–11", "2 Timothy 1:7", "Romans 12:2–8", "Ephesians 4:11–13", "Ephesians 6:7", "Exodus 31:3", "2 Corinthians 1:3–4", "Hebrews 13:17", "Philippians 2:5", "Colossians 3:23–24"],
       reflect: [
-        "Ephesians 4:12 says leaders exist \"to prepare God's people for works of service.\" In your church, who does the ministry — the few or the many?",
-        "What has God gifted you to do? How do you know? What do others say about you?",
-        "Peter says each of us should use whatever gift we have received to serve others. Where are you serving now, and where might God be moving you?",
-        "What stops churches from releasing people into ministry? What would help your leaders do it?"
+        "Work through your own SHAPE on paper: gifts, heart, abilities, personality, experience. What does the whole picture point to?",
+        "“Do not let fear stop you.” What has fear stopped you from doing in a service or small group when you sensed the Spirit prompting you?",
+        "“When you are not in God’s place you take someone else’s place and rob them of their blessing.” Is anyone in your church in the wrong place? Are you?",
+        "If your church listed its ministry needs and its active members side by side, where would the gaps be?"
       ],
       quiz: [
-        { q: "According to Ephesians 4:11–12, why did Christ give apostles, prophets, evangelists, pastors and teachers to the church?", c: ["To run the church for everyone else", "To prepare God's people for works of service", "To collect offerings", "To judge disputes"], a: 1 },
-        { q: "How many evaluation tools does the Ministry seminar give for discerning God's will?", c: ["Two", "Three", "Five", "Ten"], a: 2 },
-        { q: "Who does EPHOD say is called to ministry?", c: ["Ordained pastors only", "Every disciple", "Missionaries only", "People with a theology degree"], a: 1 },
-        { q: "After a disciple's gifts are recognised, what do church leaders do?", c: ["Wait for them to volunteer", "Deploy them into service", "Send them to Bible college", "Nothing further"], a: 1 }
+        { q: "Ministry is the commitment to discover and use your God-given gifts and abilities in…", c: ["building a career", "serving God and others", "leading worship", "earning a title"], a: 1 },
+        { q: "Matthew 20:28 says the Son of Man came not to be served but to…", c: ["rule", "teach", "serve", "judge"], a: 2 },
+        { q: "How many gifts of the Holy Spirit are listed in 1 Corinthians 12:8–10?", c: ["Three", "Seven", "Nine", "Twelve"], a: 2 },
+        { q: "Who may minister the gifts of the Spirit?", c: ["Only ordained ministers", "Only prophets", "Every Spirit-filled believer who is a willing vessel", "Only those over forty"], a: 2 },
+        { q: "What does the “H” in SHAPE stand for?", c: ["Holiness", "Heart", "Habits", "Hope"], a: 1 },
+        { q: "The two kinds of permanent spiritual gifts are the grace gifts (charismata) and the…", c: ["ministry gifts (diakoniai)", "fruit of the Spirit", "nine manifestations", "natural talents"], a: 0 },
+        { q: "Your natural abilities become ______ abilities as you use them in ministry for the glory of God.", c: ["professional", "anointed", "paid", "public"], a: 1 },
+        { q: "The first step in finding your place in the local church is to…", c: ["volunteer for everything", "submit to the leadership and vision of the senior pastor", "wait to be asked", "take a spiritual gifts test"], a: 1 },
+        { q: "Which is part of the small-group leaders’ part?", c: ["Approve the church budget", "Help members identify their unique SHAPE", "Preach on Sunday", "Appoint the elders"], a: 1 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-09-ministry-handout.pdf", pages: 5 }
     },
+
+    /* ───────────────────────── EPHOD THE VERB ───────────────────────── */
     {
       n: 10, group: "verb", title: "Monitor", vimeo: "795014039", minutes: 68,
-      summary: "Finishing strong: the guidance system for a believer released into ministry — accountability and four integrity principles.",
+      commitment: "Monitor is the commitment to finishing strong.",
+      summary: "The first Verb seminar: staying alert against the enemy’s ambushes, and the four danger zones of integrity — vision, doctrine, finance and morals.",
       body: [
-        "Monitor is the first Verb seminar. Once a believer has been released into ministry, what keeps them on course? This seminar is about finishing strong — a guidance system for the disciple who is now preparing to become a disciple maker.",
-        "It covers accountability and four integrity principles that protect the unity of the Body of Christ: integrity of vision, integrity of doctrine, integrity of finance and integrity of morals.",
-        "Monitor is the longest seminar in the course, and for good reason: more ministries are lost to a lack of monitoring than to a lack of gifting."
+        "Monitor is the commitment to finishing strong. Be alert against the ambushes of the enemy: “Put on the full armour of God so that you can take your stand against the devil’s schemes” (Ephesians 6:11). To monitor is accountability — it observes, warns and instructs in overseeing the church. Saul started strong, with a changed heart and the empowering of the Spirit, and ended with a rebellious heart and a lost kingdom; he did not finish strong. Samuel, a man of prayer and integrity, and Ruth, a Moabite who chose the God of Israel and is in the genealogy of Christ, finished strong. Integrity is faithfulness to biblical principles.",
+        "There are four danger zones. Integrity of vision: how many visions are possible for an effective church? One. Two visions equal di-vision (Mark 3:25). Support the vision of the pastor for the church, and do not entertain the Jezebel spirit (Revelation 2:20), which uses people in the church to usurp, control, destroy and divide — Miriam, Korah, Balaam and Absalom are the examples. How to deal with it: depend on the Holy Spirit, do not tolerate Jezebel activities, expose them to the leadership, and let the leadership deal with it. The Holy Spirit restores and does not divide, strengthens and does not weaken, reveals what is hidden, and allows the power of God to flow through His people.",
+        "Doctrinal integrity (Joshua 1:8): every leader speaks the same language in unity with the church and has accepted the 16 Fundamental Truths. Do not compromise them — all guest speakers, all written materials, all videos and all discussion topics must be approved by the senior pastor; small-group topics come from the weekly reading plan, the Full Life Study Bible articles and notes, and approved discipleship books. Financial integrity (Deuteronomy 8:18): it is wisdom when pastors do not collect, count, bank, loan or borrow church funds — the pastor oversees, helps make the budget and approves disbursement — and there is no borrowing, lending or selling among the members within the cell or the church.",
+        "Moral integrity: “Keep away from every kind of evil” (1 Thessalonians 5:22). Attraction and passion are God’s gifts, to be enjoyed within the fidelity of marriage (Hebrews 13:4; 1 Corinthians 7:2–5). Remember Joseph’s ten-second window of escape (1 Corinthians 10:13; Genesis 39:12) and Job’s pact with his eyes (Job 31:1). In counselling, remember the rule of three: let men minister to men and women to women, and no unwise counselling with the opposite sex alone (Luke 10:1). Guard your daily devotions and prayer time; remember David, and do not think “it will not happen to me.” To finish strong you need salvation, the Baptism in the Holy Spirit, an up-to-date experience with God, the EPHOD plan, and to be a disciple and a disciple maker — with five tools: a Bible (the Full Life Study Bible if possible), an EPHOD devotional journal, an EPHOD bookmark, a pencil and a tithe envelope. Let’s grow, glow, go and make disciples."
       ],
-      scriptures: ["2 Timothy 4:7", "Ephesians 4:3", "Proverbs 27:17", "1 Timothy 4:16", "Hebrews 13:17"],
+      scriptures: ["Ephesians 6:11", "Mark 3:25", "Revelation 2:20", "Joshua 1:8", "Deuteronomy 8:18", "1 Thessalonians 5:22–23", "Hebrews 13:4", "1 Corinthians 10:13", "Genesis 39:12", "Luke 10:1", "Job 31:1"],
       reflect: [
-        "Paul could say, \"I have finished the race, I have kept the faith.\" What would make it hard for you to say that at the end?",
-        "Take the four integrity principles one at a time — vision, doctrine, finance, morals. Which one is the weakest point in ministries you have seen fall?",
-        "Who are you accountable to right now? Could they ask you anything?",
-        "What would a healthy monitoring relationship between a pastor and a small-group leader look like in your church?"
+        "Saul and Samuel both started with God’s anointing. What was the difference in how they finished, and what does that warn you about?",
+        "Vision, doctrine, finance, morals: in the ministries you have seen fall, which danger zone was it? Which is your own weakest point?",
+        "Who are you accountable to right now — someone who observes, warns and instructs? If no one, who could it be?",
+        "The rule of three and the ten-second window are both about deciding beforehand. What decisions do you need to make now, before the moment comes?"
       ],
       quiz: [
-        { q: "Monitor is the first seminar in which group?", c: ["EPHOD Defined", "The Noun seminars", "The Verb seminars", "The appendix"], a: 2 },
-        { q: "Which of these is NOT one of the four integrity principles?", c: ["Vision", "Doctrine", "Popularity", "Finance"], a: 2 },
-        { q: "What is the purpose of the guidance system described in Monitor?", c: ["To keep people from ministering", "To help a released believer finish strong and become a disciple maker", "To track attendance", "To choose a new pastor"], a: 1 },
-        { q: "The four integrity principles protect what?", c: ["The church budget", "The unity of the Body of Christ", "The pastor's reputation", "The building"], a: 1 }
+        { q: "Monitor is the commitment to…", c: ["church growth", "finishing strong", "Sunday attendance", "leadership titles"], a: 1 },
+        { q: "To monitor is accountability — it observes, warns and…", c: ["punishes", "instructs", "replaces", "records"], a: 1 },
+        { q: "Who did NOT finish strong?", c: ["Samuel", "Ruth", "Saul", "Daniel"], a: 2 },
+        { q: "Integrity is faithfulness to…", c: ["the pastor", "biblical principles", "church tradition", "your own conscience"], a: 1 },
+        { q: "How many visions are possible for an effective church?", c: ["One", "Two", "One per department", "As many as there are leaders"], a: 0 },
+        { q: "What is the right way to deal with the Jezebel spirit?", c: ["Ignore it and hope it leaves", "Confront it alone in public", "Depend on the Holy Spirit, do not tolerate it, expose it to the leadership, and let the leadership deal with it", "Start a second group"], a: 2 },
+        { q: "Who must approve all guest speakers, written materials, videos and discussion topics?", c: ["The worship leader", "The senior pastor", "The treasurer", "The oldest member"], a: 1 },
+        { q: "For financial integrity, it is wisdom when pastors do not…", c: ["preach about money", "help make the budget", "collect, count, bank, loan or borrow church funds", "approve disbursements"], a: 2 },
+        { q: "The rule of three in counselling means…", c: ["meet for three sessions only", "let men minister to men and women to women — no unwise counselling with the opposite sex alone", "counsel in groups of three families", "wait three days before advising"], a: 1 },
+        { q: "Which is NOT one of the five tools needed to finish strong?", c: ["EPHOD devotional journal", "Tithe envelope", "Smartphone", "Pencil"], a: 2 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-10-monitor-handout.pdf", pages: 4 }
     },
     {
-      n: 11, group: "verb", title: "Management", vimeo: "795017609", minutes: 0,
-      summary: "Making disciples is shared work: developing Spirit-filled leaders who multiply, around a four-part Leadership Base.",
+      n: 11, group: "verb", title: "Management", vimeo: "795017609", minutes: 27,
+      commitment: "Management is the commitment to the management of the Holy Spirit and the pastoral team.",
+      summary: "For new leaders: the Leadership Base — Vision, Role, Reproduction and Progression — and how to raise an apprentice who will raise others.",
       body: [
-        "Management means committing yourself to the guidance of the Holy Spirit and of the pastoral team. \"I planted the seed, Apollos watered it, but God has been making it grow\" (1 Corinthians 3:6). No one makes a disciple alone.",
-        "The seminar shows how to develop Spirit-filled leaders who can multiply, built around a four-part Leadership Base: Vision, Role, Reproduction and Progression. Leaders keep cycling through these bases, bringing a new group with them each time round.",
-        "The seminars can be completed online individually and then discussed together in a small group — which is exactly how this course is designed to be used."
+        "Management is the commitment to the management of the Holy Spirit and the pastoral team, and the commitment to reproduce Spirit-filled leaders: “the things you have heard me say … entrust to reliable men who will also be qualified to teach others” (2 Timothy 2:2). The purpose of this seminar is to help new leaders understand their role under the management of the Holy Spirit and the pastoral team in their EPHOD lifestyle and ministry assignment. The leader’s EPHOD lifestyle: broken free from the past (not a recent convert in leadership), grounded in the Word, a tither; round one of the bases completed; now ready to be used in the Leadership Base of the church.",
+        "The Leadership Base has four parts. Vision: the senior pastor needs leaders committed to the vision of the church, and vision and commitment will determine the pastor’s entrustment and the release into ministry. First base — Membership — is a must; each church has its own dialect and its own vision; the vision is taught and caught; two visions equal di-vision. Role: understand your role as a leader — you are a team member. “Be sure you know the condition of your flocks” (Proverbs 27:23): know the spiritual condition of your cell members, anticipate moving the cell to the next base once it is functioning at the present one, and schedule and announce the EPHOD seminars. A small group is an effective tool in the process of making disciples; its five-step process gives every person time to talk, a sense of belonging, learning through interaction, time to be ministered to, and a focus on individual needs — the leader moderates it.",
+        "Reproduction: a leader can only take you as far as he has gone himself — first-base leaders reproduce only first-base disciples. True reproduction is the completion of all of EPHOD: EPHOD Defined and the eight seminars. The next step for a small-group leader is to choose an apprentice, and there are five steps to work with one: I do and you watch, then we talk; I do and you help, then we talk; you do and I help, then we talk; you do and I watch, then we talk; you are released — to be a leader and mentor, and to select a new apprentice. Debrief every time: what happened, what do we want to happen, what changes do we need to make.",
+        "Progression: convert; disciple; apprentice (beginning the discipleship process, faithfully doing the EPHOD plan, reliable); care-cell or house-fellowship leader (one round completed, a reliable apprentice, qualified); sectional leader (has mentored three apprentices into care-cell leaders); district leader (has mentored three care-cell leaders into sectional leaders); church planter (has mentored three sectional leaders into district leaders). You will continue the never-ending process of going around the bases."
       ],
-      scriptures: ["1 Corinthians 3:5–9", "2 Timothy 2:2", "Exodus 18:17–23", "Acts 6:1–7"],
+      scriptures: ["2 Timothy 2:2", "Proverbs 27:23", "Luke 6:39", "Exodus 18:17–23", "1 Corinthians 3:5–9"],
       reflect: [
-        "\"I planted, Apollos watered, but God gave the increase.\" Whose planting and watering made you who you are? Have you thanked them?",
-        "Vision, Role, Reproduction, Progression: which base is your church strongest on, and which is missing?",
-        "Jethro told Moses, \"What you are doing is not good… you cannot handle it alone.\" Where is a leader you know carrying too much alone?",
-        "Who are you bringing with you round the bases? If the answer is no one, what is the first step?"
+        "“A leader can only take you as far as he has gone himself.” How far have you gone? What does that mean for who you can lead?",
+        "Vision, Role, Reproduction, Progression. Which base is your church strongest on, and which is missing altogether?",
+        "Walk through the five apprentice steps with someone you are already helping. Which step are you on — and have you ever got to “you are released”?",
+        "Who is your apprentice? If you don’t have one, who could it be, and what is stopping you from asking?"
       ],
       quiz: [
-        { q: "1 Corinthians 3:6 says: \"I planted, Apollos watered, but…\"", c: ["the church prayed", "God gave the increase", "the elders decided", "the people gave"], a: 1 },
-        { q: "What are the four parts of the Leadership Base?", c: ["Prayer, Praise, Preaching, Prophecy", "Vision, Role, Reproduction, Progression", "Plan, Pattern, Process, Power", "Teach, Train, Test, Trust"], a: 1 },
-        { q: "What does a leader bring with them each time they cycle through the bases?", c: ["A larger offering", "A new group of disciples", "A new building project", "A written report"], a: 1 },
-        { q: "How does EPHOD suggest the seminars be used?", c: ["Watched alone and never discussed", "Completed online individually, then discussed in a small group", "Only taught by Herb and Karen in person", "Read as a book"], a: 1 }
+        { q: "Management is the commitment to the management of…", c: ["the church budget", "the Holy Spirit and the pastoral team", "the worship schedule", "the building"], a: 1 },
+        { q: "A leader’s EPHOD lifestyle must include being broken free from the past, grounded in the Word, and being a…", c: ["tither", "singer", "preacher", "graduate"], a: 0 },
+        { q: "The four parts of the Leadership Base are Vision, Role, Reproduction and…", c: ["Promotion", "Progression", "Protection", "Provision"], a: 1 },
+        { q: "Two visions equal…", c: ["double growth", "di-vision", "a bigger church", "a new district"], a: 1 },
+        { q: "As a leader, your role is to be a…", c: ["boss", "team member", "spectator", "critic"], a: 1 },
+        { q: "“A leader can only take you as far as…”", c: ["the pastor allows", "he has gone himself", "the budget stretches", "the building holds"], a: 1 },
+        { q: "What is the first of the five steps with an apprentice?", c: ["You do, I watch", "I do, you help", "I do, you watch, then we talk", "You are released"], a: 2 },
+        { q: "What does the final step with an apprentice release them to do?", c: ["Rest from ministry", "Be a leader/mentor and select a new apprentice", "Move to another church", "Collect the offering"], a: 1 },
+        { q: "A sectional leader must have nurtured and mentored how many apprentices to be care-cell leaders?", c: ["One", "Two", "Three", "Ten"], a: 2 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-11-management-handout.pdf", pages: 3 }
     },
     {
       n: 12, group: "verb", title: "Mission", vimeo: "795018843", minutes: 32,
-      summary: "Committing to disciple every person, household and oikos — organising small groups that follow Jesus' own mission pattern, and taking part in world missions.",
+      commitment: "Mission is the commitment to Every Person, Household, Oikos, Discipled.",
+      summary: "Jesus’ mission pattern applied: choosing your few, mission match-making, affinity groups that multiply, and every believer’s part in mission to the world.",
       body: [
-        "Mission is the commitment to disciple every person, their household and their oikos — the wider circle of relationships God has placed around them. The seminar starts with Jesus' own mission pattern and shows how to organise discipleship small groups that follow it.",
-        "It walks through how new leaders are matched with their target groups, how those groups go through the discipleship process and choose an apprentice, and how they prepare to multiply.",
-        "The final section shows how people of every age can take part in world missions through prayer and giving, with the Annual World Mission Convention and Faith Promise as key tools."
+        "Mission is the commitment to Every Person, Household, Oikos, Discipled. Jesus’ mission statement — “Go and make disciples” (Matthew 28:19) — is a command given to every disciple. A disciple, a leader, is a learner or follower of Jesus, one who reflects His lifestyle, one who obeys His teaching, and one who is actively reproducing this pattern in others. The qualifications for the verb: empowered by the Holy Spirit (Acts 2:4); agrees with the vision of the local church; has completed the discipleship process; is active in the 10 Point Plan; has a servant-leader attitude; and is willing to invest himself in others.",
+        "Jesus’ mission pattern: the best way to make leaders is on-the-job training — just letting them do it; the mentor coaches the disciple as he disciples his few; Jesus focused His investment on a few; He chose His few with prayer; and He had a 91.67% success rate — eleven of twelve. So choose your few under the management of the Holy Spirit, the senior pastor and the pastoral team, after prayer. In the few there are two categories: the target, a group of six to eight, drawn from uncommitted church attenders, your household and your oikos; and the apprentice, one or two believers baptized in the Holy Spirit, committed to Magnify and Membership and ready to commit to Maturity and Ministry.",
+        "Mission match-making: who? The pastor and the pastoral team are the facilitators. What? Matching leaders and target. When? Whenever there are available leaders. How to get started: make a list of available leaders, a list of possible apprentices and a list of potential target; pray; and under the management of the Holy Spirit and the pastoral team choose affinity groups — people with common interests and natural bonds. The affinity group meets as a small group for discipleship, goes through the discipleship process, the apprentice becomes ready to lead, and the match-making is repeated for small-group multiplication.",
+        "Mission to the world (Acts 1:8): crossing the cultural barrier through the missions convention, praying, sending and missionary going. A missions convention creates a world vision; Faith Promise allows everyone to have a part in fulfilling the Great Commission with a set amount given each month for six or twelve months; and a mission budget puts it to work. Missionary going means leaving your comfort zone, obeying His purpose for your life and experiencing His comfort — “how can they preach unless they are sent?” (Romans 10:15). God uses every person, every household and every oikos to get the job done. The chicken offers eggs for breakfast — a contribution; the pig offers bacon — a commitment. Which will it be?"
       ],
-      scriptures: ["Matthew 28:18–20", "Acts 1:8", "Acts 16:31–34", "Luke 10:1–9", "Romans 10:13–15"],
+      scriptures: ["Matthew 28:18–20", "Acts 2:4", "Acts 1:8", "Hebrews 12:1", "Luke 10:1–9", "Romans 10:13–15", "Ecclesiastes 11:1–2"],
       reflect: [
-        "The jailer in Acts 16 believed \"he and his whole household.\" Which households in your oikos could come to Christ together?",
-        "Describe the mission pattern of Jesus as you understand it from the Gospels. How closely does your small group follow it?",
-        "Does your group have an apprentice — someone being prepared to lead the next group? If not, who could it be?",
-        "What is your part in world missions? How could Faith Promise giving become part of your household's lifestyle?"
+        "Go through the six qualifications for the verb one by one. Which do you meet? Which is the next one to work on?",
+        "Jesus chose His few with prayer and invested in them. Who are your six to eight? Who are your one or two?",
+        "If your pastoral team made the three lists this month — leaders, apprentices, target — what would be on them?",
+        "Contribution or commitment: what is your household’s part in world missions right now, and what would Faith Promise change?"
       ],
       quiz: [
-        { q: "In EPHOD, \"oikos\" refers to…", c: ["a church building", "a person's wider circle of relationships", "a Greek island", "a type of offering"], a: 1 },
-        { q: "What does each discipleship small group select as it goes through the process?", c: ["A treasurer", "An apprentice who will lead the next group", "A building", "A choir"], a: 1 },
-        { q: "Which two tools does the Mission seminar name for involving everyone in world missions?", c: ["Bake sales and raffles", "The Annual World Mission Convention and Faith Promise", "Radio and television", "Crusades and camps"], a: 1 },
-        { q: "What is the end goal of a discipleship small group in the Mission seminar?", c: ["To grow as large as possible", "To multiply into new groups", "To replace the Sunday service", "To close after one year"], a: 1 }
+        { q: "Mission is the commitment to…", c: ["overseas travel", "Every Person, Household, Oikos, Discipled", "church planting only", "a yearly convention"], a: 1 },
+        { q: "Jesus’ mission statement, “Go and make disciples,” is given to…", c: ["the twelve apostles only", "pastors and missionaries", "every disciple", "the church board"], a: 2 },
+        { q: "Which is NOT one of the six qualifications for the verb?", c: ["Empowered by the Holy Spirit", "Agrees with the vision of the local church", "Has a seminary degree", "Is willing to invest himself in others"], a: 2 },
+        { q: "According to the seminar, the best way to make leaders is…", c: ["classroom lectures", "on-the-job training — just letting them do it", "reading books", "watching from a distance"], a: 1 },
+        { q: "Jesus’ success rate with the twelve was…", c: ["50%", "75%", "91.67%", "100%"], a: 2 },
+        { q: "In the few, the target group is…", c: ["one or two", "six to eight", "twelve", "as many as possible"], a: 1 },
+        { q: "Who are the facilitators of mission match-making?", c: ["The small-group members", "The pastor and the pastoral team", "The district office", "The missionaries"], a: 1 },
+        { q: "An affinity group is formed around…", c: ["the same age", "common interests and natural bonding", "the same street", "the same job"], a: 1 },
+        { q: "Faith Promise is…", c: ["a one-time gift", "a set amount given each month for six or twelve months so everyone can have a part in the Great Commission", "the church’s general offering", "a loan to missionaries"], a: 1 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-12-mission-handout.pdf", pages: 3 }
     },
     {
       n: 13, group: "verb", title: "Mabuhay", vimeo: "795020173", minutes: 37,
-      summary: "Welcome, and life: building relationships, nurturing new believers and starting the next person on the EPHOD journey.",
+      commitment: "Mabuhay is a commitment to welcome people and build relationships — the beginning of disciple making.",
+      summary: "Welcome, and life: creating Mabuhay in the church, the small group and in between, the teachable moment, and the ten-step nurturing process for a new believer.",
       body: [
-        "Mabuhay is a Filipino word that means both \"welcome\" and \"life.\" The final seminar is about building the relationships through which disciple making begins — welcoming people in the church, in the small group and in the ordinary meetings in between.",
-        "It covers nurturing new converts from their first days and preparing them, in turn, to take others through the EPHOD process. The course ends where it began: with every person, household and oikos discipled — and now you are the one doing the discipling.",
-        "When you have completed this seminar, your certificate of completion is ready to print from the course page."
+        "Mabuhay is a Tagalog word for welcome, and buhay means life (Psalm 46:4; John 7:38). Mabuhay is a commitment to welcome people, to build relationships, and for EPHODers to begin the disciple-making process. The goal is to create a warm welcome and relationship opportunities for every person, so that the nurturing process can begin. Names matter: Jesus looked up and said, “Zacchaeus, come down immediately. I must stay at your house today” (Luke 19:5). It takes time to build relationships.",
+        "Mabuhay is created in the church, in the small group, and in between meetings. In the church: the pastor is coach and overseer, carrying the vision and the flock, arriving early to pray. The Jethro principle (Exodus 18:21–23) spreads the load — select capable, God-fearing, trustworthy people, as in Acts 6:3, and choose EPHODers. Greeters are caregivers before and after the service; ushers are caregivers during it; the first person to greet determines who you attract, and the last goodbye determines whether they return. The pastoral team debriefs weekly: what happened last week, what needs to change this week. In the small group: Believers Empowered Leadership Training (BELT) meetings and sectional debriefings for leaders; the leader and apprentice form the core of two or three, debriefing weekly in between to meet the needs of the group; and synergy — “where two or three come together in my name, there am I with them” (Matthew 18:20). In between meetings: creative follow-up — special occasions, hospital visits, calls and texts, cards, merienda — and Mabuhay events such as a Holy Week retreat, water baptisms, the church anniversary and Christmas.",
+        "The EPHODer builds the relationship; the Holy Spirit prepares the teachable moment — the readiness to learn, as when Jesus asked at Caesarea Philippi, “Who do people say the Son of Man is?” (Matthew 16:13). Then the EPHODer begins the nurturing process with the new oikos. Like rice, a new believer is first soaked, then grown in a seedbed, then transplanted to the field to mature and be harvested.",
+        "That seedbed is Empowered Living, ten steps for the new convert. Starting a new life (2 Corinthians 5:17): Step 1, I’m saved — empowered living starts with knowing you are saved (Romans 10:9); Step 2, Who am I — realising how God sees you (John 1:12). Leaving the past behind (John 8:32): Step 3, the Great Exchange — how God exchanges my past for a wonderful future (Galatians 5:1); Step 4, I want to break free — letting go of the past (Exodus 20:3–5). Taking hold of the future (Philippians 3:13–14): Step 5, Celebrate God’s wonderful future — water baptism and holy communion; Step 6, Tapping into the power — the Baptism in the Holy Spirit (Acts 2:4); Step 7, Grow and glow — the fruit of the Spirit; Step 8, Empowered to serve — understanding the gifts of the Spirit; Step 9, I have a destiny — embracing God’s purpose for my life (Romans 8:28–29); Step 10, Never alone again — discovering God’s plan for me in the local church (1 Corinthians 12:12–13). Then help them into EPHOD Defined — Purpose, Pattern, Plan, Process, Power — and the convert begins the Noun, and the Noun disciple begins the Verb. The course ends where it began, and now you are the one welcoming the next person in."
       ],
-      scriptures: ["Romans 15:7", "John 13:34–35", "1 Thessalonians 2:7–8", "Luke 19:5–10"],
+      scriptures: ["Psalm 46:4", "John 7:38", "Luke 19:1–10", "Exodus 18:21–23", "Acts 6:3", "Matthew 18:20", "Matthew 16:13", "2 Corinthians 5:17", "Romans 10:9", "Galatians 5:1", "Philippians 3:13–14", "Romans 8:28–29"],
       reflect: [
-        "\"Accept one another, then, just as Christ accepted you.\" How were you welcomed when you first came to Christ or to your church? What did it do for you?",
-        "Jesus invited Himself to Zacchaeus's house. Who could you welcome into your home this month?",
-        "Paul shared \"not only the gospel but our lives as well.\" What would sharing your life, not just your words, look like with a new believer?",
-        "You have finished the thirteen seminars. Who will you take through them next, and when will you start?"
+        "“The first person to greet determines who you attract; the last goodbye determines whether they return.” Who are those two people at your church, and are they EPHODers?",
+        "Jesus called Zacchaeus by name and invited Himself to his house. Who could you call by name and visit this week?",
+        "Think of a teachable moment you have seen the Holy Spirit prepare in someone. How did you know it was the moment?",
+        "You have finished the thirteen seminars. Who is the first person you will take through Empowered Living — and when will you start?"
       ],
       quiz: [
-        { q: "What does \"Mabuhay\" mean?", c: ["Goodbye", "Welcome, and life", "Thank you", "Peace"], a: 1 },
-        { q: "Where does the Mabuhay seminar say welcoming happens?", c: ["Only at the church door", "In the church, in small groups and in meetings in between", "Only in the home", "Only at special events"], a: 1 },
-        { q: "What is a new convert being prepared for, according to Mabuhay?", c: ["Church membership class only", "To take others through the EPHOD process", "Water baptism only", "A leadership title"], a: 1 },
-        { q: "With which seminar does the EPHOD course end?", c: ["Mission", "Monitor", "Mabuhay", "Maturity"], a: 2 }
+        { q: "Mabuhay is a Tagalog word for…", c: ["goodbye", "welcome", "thank you", "peace"], a: 1 },
+        { q: "Mabuhay is a commitment to welcome people, to build relationships, and for EPHODers to…", c: ["plan church events", "begin the disciple-making process", "collect the offering", "lead the singing"], a: 1 },
+        { q: "The goal of Mabuhay is to create a warm welcome and relationship opportunities for every person to begin the ______ process.", c: ["membership", "nurturing", "budget", "building"], a: 1 },
+        { q: "Mabuhay is created in the church, in the small group, and…", c: ["online", "in between meetings", "at conventions", "in Bible school"], a: 1 },
+        { q: "Greeters are caregivers ______ the service; ushers are caregivers ______ the service.", c: ["during; after", "before and after; during", "after; before", "only before; only after"], a: 1 },
+        { q: "The Jethro principle (Exodus 18) is about…", c: ["building a bigger tabernacle", "selecting capable, trustworthy people to share the load", "fasting forty days", "collecting the tithe"], a: 1 },
+        { q: "Who prepares the “teachable moment”?", c: ["The pastor", "The small-group leader", "The Holy Spirit", "The new believer"], a: 2 },
+        { q: "How many steps are in the Empowered Living nurturing process?", c: ["Five", "Eight", "Ten", "Twelve"], a: 2 },
+        { q: "Step 6, “Tapping into the power,” is about…", c: ["water baptism", "the Baptism in the Holy Spirit", "tithing", "church membership"], a: 1 },
+        { q: "After Empowered Living, the new convert is ready to begin…", c: ["leading a church", "the five P’s of EPHOD Defined", "Bible college", "the Verb seminars"], a: 1 }
       ],
-      materials: []
+      handout: { href: "handouts/seminar-13-mabuhay-handout.pdf", pages: 5 }
     }
   ]
 };
