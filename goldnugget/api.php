@@ -405,6 +405,68 @@ switch ($action) {
     out(['success' => true, 'message' => "Imported $n devotions; $w files written. You can delete the import folder now."]);
   }
 
+  // ---------- content for the social-media posting jobs (public data only, never future weeks) ----------
+  case 'social_content': {
+    ensureDevotionsTable($db);
+    $tz = new DateTimeZone('Asia/Manila');   // same clock as the website's Monday switch-over
+    $today = new DateTime('now', $tz); $today->setTime(12, 0);
+    $date = (string)$q('date', '');
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {                 // optional, for testing: a past day
+      $d = DateTime::createFromFormat('Y-m-d H:i', "$date 12:00", $tz);
+      if ($d && $d <= $today) $today = $d;
+    }
+    // this week = Monday..Sunday containing that day
+    $mon = clone $today; $mon->modify('monday this week');   // PHP counts Sunday as the last day of the week, as the website does
+    $sun = clone $mon; $sun->modify('+6 days');
+    $range = $mon->format('M j') . ' – ' . ($mon->format('M') === $sun->format('M') ? $sun->format('j') : $sun->format('M j')) . ', ' . $sun->format('Y');
+    $week = (int)$today->format('W'); if ($week > 53) $week = 1;
+    $out = ['success' => true, 'date' => $today->format('Y-m-d'), 'week' => $week, 'weekStart' => $mon->format('Y-m-d'), 'weekEnd' => $sun->format('Y-m-d'), 'weekRange' => $range, 'site' => 'https://ephod4png.com'];
+
+    $refOf = function (array $r): string {
+      $ref = $r['bookName'] . ' ' . (int)$r['chapter'] . ':' . (int)$r['verse'];
+      return ((int)$r['lastverse'] > (int)$r['verse']) ? $ref . '-' . (int)$r['lastverse'] : $ref;
+    };
+    $textOf = function (string $table, array $r) use ($db): string {
+      if (!preg_match('/^[a-zA-Z0-9_]+$/', $table) || !$db->query("SHOW TABLES LIKE '$table'")->num_rows) return '';
+      $vs = fetchVerses($db, $table, $r['book'], (int)$r['chapter'], (int)$r['verse'], (int)$r['lastverse']);
+      return trim(implode(' ', array_map(fn($v) => trim(strip_tags($v['text'])), $vs)));
+    };
+
+    // memory verse: the English version Zarah chose + Tok Pisin
+    $st = $db->prepare('SELECT m.book, m.chapter, m.verse, m.lastverse, m.version, b.book AS bookName FROM ' . T_MEMORY . ' m LEFT JOIN ' . T_BOOKS . ' b ON b.id = m.book WHERE m.id = ?');
+    $st->bind_param('i', $week); $st->execute(); $mv = $st->get_result()->fetch_assoc();
+    $out['memoryVerse'] = $mv ? [
+      'reference' => $refOf($mv), 'englishVersion' => $mv['version'], 'englishVersionLabel' => $ENTRY_VERSIONS[$mv['version']] ?? $mv['version'],
+      'english' => $textOf($mv['version'], $mv), 'tokPisin' => $textOf('p_tok', $mv),
+    ] : null;
+
+    // this week's devotion: the one whose week (the Monday after its date) starts on $mon
+    $dev = null;
+    $r = $db->query('SELECT slug, title, post_date, reading, image, excerpt FROM ' . T_DEVOTIONS . ' WHERE published = 1 ORDER BY post_date DESC LIMIT 12');
+    while ($row = $r->fetch_assoc()) {
+      $d = new DateTime($row['post_date'] . ' 12:00', $tz); $dow = (int)$d->format('w');   // 0 = Sunday, as in the website
+      $d->modify('+' . (((8 - $dow) % 7) ?: 7) . ' days');
+      if ($d->format('Y-m-d') === $mon->format('Y-m-d')) { $dev = $row; break; }
+    }
+    $out['devotion'] = $dev ? [
+      'title' => $dev['title'], 'reading' => $dev['reading'], 'excerpt' => $dev['excerpt'],
+      'url' => 'https://ephod4png.com/devotion.html?slug=' . $dev['slug'],
+      'image' => $dev['image'] ? 'https://ephod4png.com/' . $dev['image'] : null,
+    ] : null;
+
+    // today's Gold Nugget: day of the year on a non-leap calendar, Feb 29 = day 366 (as the website does it)
+    $m = (int)$today->format('n'); $dm = (int)$today->format('j');
+    $mdays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    $day = ($m === 2 && $dm === 29) ? 366 : array_sum(array_slice($mdays, 0, $m - 1)) + $dm;
+    $st = $db->prepare('SELECT g.book, g.chapter, g.verse, g.lastverse, g.version, b.book AS bookName FROM ' . T_NUGGET . ' g LEFT JOIN ' . T_BOOKS . ' b ON b.id = g.book WHERE g.id = ?');
+    $st->bind_param('i', $day); $st->execute(); $gn = $st->get_result()->fetch_assoc();
+    $out['goldNugget'] = $gn ? [
+      'day' => $day, 'reference' => $refOf($gn), 'englishVersion' => $gn['version'], 'englishVersionLabel' => $ENTRY_VERSIONS[$gn['version']] ?? $gn['version'],
+      'text' => $textOf($gn['version'], $gn), 'tokPisin' => $textOf('p_tok', $gn),
+    ] : null;
+    out($out);
+  }
+
   default:
     fail('Unknown action');
 }
