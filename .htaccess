@@ -31,6 +31,9 @@ ErrorDocument 404 /404.html
 
 RewriteEngine On
 
+# --- the released apps still read the devotion from the old WordPress REST address ---
+RewriteRule ^wp-json/wp/v2/posts/?$ /memoryverse/api.php?action=wp_posts [QSA,L]
+
 # --- old WordPress addresses -> new pages (permanent redirects) ---
 RewriteRule ^am-bible-reading/?$ /am-reading.html [R=301,L]
 RewriteRule ^am-bible-reading-2/?$ /am-reading.html [R=301,L]
