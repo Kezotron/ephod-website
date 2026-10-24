@@ -41,6 +41,9 @@ shutil.copy(os.path.join(SRC,'favicon.svg'),DIST)
 ENTRY={'memoryverse':{'memory-verse.html':'memoryverse196804.php','devotions.html':'devotions196804.php'},
        'goldnugget':{'gold-nugget.html':'golden_nugget_admin.html'}}
 RENAMES={k:v for d in ENTRY.values() for k,v in d.items()}
+# Only ephodlifestyle.com carries the entry pages (both sites share one database). The PNG site keeps just the
+# server scripts it needs (api.php for the devotion pages and social posting, check.php, config.php).
+if SITE!='ph': ENTRY={'memoryverse':{}}
 adm=os.path.join(SRC,'admin')
 for folder,pages in ENTRY.items():
     out=os.path.join(DIST,folder); os.makedirs(out)
@@ -52,7 +55,8 @@ for folder,pages in ENTRY.items():
                 for a,b in RENAMES.items(): h=h.replace('href="%s"'%a,'href="%s"'%b)
                 open(os.path.join(out,pages[f]),'w',encoding='utf-8').write(h)
         elif f=='import':
-            if folder=='memoryverse': shutil.copytree(src,os.path.join(out,'import'))
+            if folder=='memoryverse' and SITE=='ph': shutil.copytree(src,os.path.join(out,'import'))
+        elif f in ('admin.js','admin.css') and SITE!='ph': pass
         elif os.path.isfile(src): shutil.copy(src,out)
 shutil.copy(os.path.join(SRC,'htaccess.txt'),os.path.join(DIST,'.htaccess'))
 year=str(datetime.date.today().year)
