@@ -36,7 +36,7 @@
           <button type="button" data-cmd="clear">Clear formatting</button>
         </div>
         <div id="f-body" class="editor" contenteditable="true" aria-label="Devotion text"></div>
-        <p class="help">Paste the devotion in. The Scripture quotation (the paragraph that ends with its reference, like <em>(Isaiah 36:1–2)</em>) and the <strong>THOUGHT FOR TODAY</strong> line are styled automatically when you publish. The "Read …" line and the Gospel Publishing House copyright are added by the website — don't type them.</p>
+        <p class="help">Paste the devotion in. The Scripture quotation (the paragraph that ends with its reference, like <em>(Isaiah 36:1–2)</em>) and the closing line (<strong>THOUGHT FOR TODAY</strong>, <strong>PRAYER SUGGESTION</strong>, <strong>CHALLENGE FOR THE DAY</strong> and so on) are styled automatically when you publish. The "Read …" line and the Gospel Publishing House copyright are added by the website — don't type them.</p>
       </div>
       <div class="row" style="margin-top:.75rem">
         <div class="field"><label for="f-image">Photo (optional, JPG or PNG)</label><input id="f-image" name="image" type="file" accept="image/jpeg,image/png,image/webp"></div>
@@ -60,8 +60,8 @@
     <ol>
       <li>This page is always for <strong>next week</strong> — the dates at the top. Type the title.</li>
       <li>Type the reading reference, for example <em>Isaiah 36:1 through 38:22</em>.</li>
-      <li>Paste the devotion text. The Scripture quotation and the THOUGHT FOR TODAY line are styled for you.</li>
-      <li>Add a photo if you have one. Press <strong>Preview</strong> to see it on the right exactly as the website will show it, then <strong>Publish</strong>. It appears on the website right away.</li>
+      <li>Paste the devotion text. The Scripture quotation and the closing line (Thought, Prayer, Challenge…) are styled for you.</li>
+      <li>Add a photo if you have one. Press <strong>Preview</strong> to see it on the right exactly as the website will show it, then <strong>Publish</strong>. It is saved now and appears on the website and in the apps when its week begins (Monday, 12:00 am Manila time).</li>
     </ol>
     <p>To fix something after publishing, press <strong>Open the latest devotion</strong> under the form, make the change, and press Publish again.</p>
   </div>

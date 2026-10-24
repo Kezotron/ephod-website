@@ -328,7 +328,8 @@ switch ($action) {
   }
   case 'devo_get': {
     $id = (int)$q('id', 0);
-    $st = $db->prepare('SELECT * FROM ' . T_DEVOTIONS . ' WHERE id = ?'); $st->bind_param('i', $id); $st->execute();
+    // explicit columns: image_data is a binary blob and would make the JSON reply fail (empty response)
+    $st = $db->prepare('SELECT id, slug, title, post_date, reading, image, excerpt, body, published FROM ' . T_DEVOTIONS . ' WHERE id = ?'); $st->bind_param('i', $id); $st->execute();
     $row = $st->get_result()->fetch_assoc(); if (!$row) fail('Not found', 404);
     out(['success' => true, 'devotion' => $row]);
   }
