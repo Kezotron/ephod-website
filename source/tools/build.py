@@ -104,6 +104,18 @@ for f in sorted(os.listdir(os.path.join(SRC,'pages'))):
     s=open(os.path.join(SRC,'pages',f),encoding='utf-8').read()
     m=re.match(r'\s*<!--\s*(\{.*?\})\s*-->\s*',s,flags=re.S)
     meta=json.loads(m.group(1)); body=s[m.end():]
+    # A verse can be swapped without editing the page: <!--verse:name|Reference-->default<!--/verse--> in a page is replaced by
+    # src/verses/<name>.txt when that file exists (line 1 = the verse text, line 2 = the version label, e.g. ESV).
+    # Meant for text that must be typed by a person, not by the build or an assistant.
+    def _verse(mm):
+        name,ref,default=mm.group(1),mm.group(2),mm.group(3)
+        fp=os.path.join(SRC,'verses',name+'.txt')
+        if not os.path.exists(fp): return default
+        ln=[x.strip() for x in open(fp,encoding='utf-8').read().splitlines() if x.strip()]
+        if len(ln)<2: return default
+        import html as _h
+        return '\u201c%s\u201d <cite>%s %s</cite>'%(_h.escape(ln[0].strip('\u201c\u201d"')),ref,_h.escape(ln[1]))
+    body=re.sub(r'<!--verse:([a-z0-9-]+)\|([^>]*?)-->(.*?)<!--/verse-->',_verse,body,flags=re.S)
     meta.update(OVER.get(f,{}))
     if SITE!='ph' and re.search(r'\| EPHOD( Seminars)?$',meta['title']): meta['title']=re.sub(r'\| EPHOD( Seminars)?$','| '+SITE_NAME,meta['title'])
     open(os.path.join(DIST,f),'w',encoding='utf-8').write(render(meta,body,'' if f=='index.html' else f,LD.get(f)))
