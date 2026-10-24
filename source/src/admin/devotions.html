@@ -112,10 +112,14 @@
   function autoFormat() {
     body.querySelectorAll("p, div").forEach((p) => {
       const t = p.textContent.replace(/\s+/g, " ").trim(); if (!t) return;
-      const m = t.match(/^((?:thought|challenge|prayer|action|question)\s+for\s+today)\s*:?\s*/i);
-      if (m) {
+      // closing labels come in many forms: THOUGHT FOR TODAY, PRAYER SUGGESTION, CHALLENGE FOR THE DAY, ACTION STEP ...
+      // = a short ALL-CAPS label ending in a colon, or one of the usual words followed by up to a few more words and a colon
+      const m = t.match(/^((?:thought|challenge|prayer|action|question|reflection|application|suggestion|memory\s+verse)(?:\s+[a-z']+){0,4})\s*:\s*/i)
+             || t.match(/^([A-Z][A-Z'’&\-]*(?:\s+[A-Z][A-Z'’&\-]*){0,4})\s*:\s*/)
+             || t.match(/^((?:thought|challenge|prayer|action|question)\s+for\s+(?:the\s+)?(?:day|today))\s*/i);
+      if (m && m[1].length <= 40) {
         const rest = esc(t.slice(m[0].length).trim());
-        p.innerHTML = "<strong>" + m[1].toUpperCase().replace(/\s+/g, " ") + ":</strong> <strong><em>" + rest + "</em></strong>";
+        p.innerHTML = "<strong>" + esc(m[1].toUpperCase().replace(/\s+/g, " ")) + ":</strong> <strong><em>" + rest + "</em></strong>";
       } else if (REF.test(t) && !p.querySelector("strong > em, em > strong")) {
         p.innerHTML = "<strong><em>" + esc(t) + "</em></strong>";
       }
