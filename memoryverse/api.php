@@ -405,6 +405,37 @@ switch ($action) {
     out(['success' => true, 'message' => "Imported $n devotions; $w files written. You can delete the import folder now."]);
   }
 
+  // ---------- the old WordPress address the apps still call: /wp-json/wp/v2/posts?_embed&per_page=1 ----------
+  // (.htaccess sends it here.) Returns the newest devotion whose week has started (Manila clock) in the
+  // WordPress REST shape the released apps read: title.rendered, content.rendered, _embedded wp:featuredmedia.
+  case 'wp_posts': {
+    ensureDevotionsTable($db);
+    $tz = new DateTimeZone('Asia/Manila');
+    $now = new DateTime('now', $tz); $now->setTime(12, 0);
+    $per = max(1, min(10, (int)$q('per_page', 1)));
+    $base = 'https://' . ($_SERVER['HTTP_HOST'] ?? 'ephodlifestyle.com') . '/';
+    $list = []; $i = 0;
+    $r = $db->query('SELECT id, slug, title, post_date, reading, image, excerpt, body FROM ' . T_DEVOTIONS . ' WHERE published = 1 ORDER BY post_date DESC, id DESC LIMIT 20');
+    while ($row = $r->fetch_assoc()) {
+      $d = new DateTime($row['post_date'] . ' 12:00', $tz); $dow = (int)$d->format('w');
+      $d->modify('+' . (((8 - $dow) % 7) ?: 7) . ' days');          // the Monday its week starts
+      if ($d > $now) continue;                                          // not live yet
+      $img = $row['image'] ? $base . ltrim($row['image'], '/') : '';
+      $post = [
+        'id' => (int)$row['id'], 'date' => $row['post_date'] . 'T00:00:00', 'slug' => $row['slug'], 'status' => 'publish', 'type' => 'post',
+        'link' => $base . 'devotion/' . $row['slug'] . '.html',
+        'title' => ['rendered' => $row['title']],
+        'content' => ['rendered' => (string)$row['body'], 'protected' => false],
+        'excerpt' => ['rendered' => '<p>' . htmlspecialchars((string)$row['excerpt']) . '</p>', 'protected' => false],
+      ];
+      if ($img) $post['_embedded'] = ['wp:featuredmedia' => [['source_url' => $img, 'media_type' => 'image']]];
+      $list[] = $post;
+      if (++$i >= $per) break;
+    }
+    header('Cache-Control: public, max-age=300');
+    echo json_encode($list, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); exit;
+  }
+
   // ---------- content for the social-media posting jobs (public data only, never future weeks) ----------
   case 'social_content': {
     ensureDevotionsTable($db);
