@@ -46,7 +46,7 @@ window.EPHOD_CONFIG = {
   STORES: {
     // ph.link is the OneLink address the printed QR code points to (sends phones to the right store)
     ph:  { play: "https://play.google.com/store/apps/details?id=com.ephodlifestyle.ephod",     apple: "https://apps.apple.com/ph/app/ephod-ph/id6758357838", link: "https://onelink.to/e5rg4h" },
-    png: { play: "https://play.google.com/store/apps/details?id=com.ephodlifestyle.ephod4png", apple: "" }
+    png: { play: "https://play.google.com/store/apps/details?id=com.ephod4png.ephod", apple: "" }
   },
 
   // Where the devotions live (written by the devotions entry page)
