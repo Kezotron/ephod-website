@@ -589,3 +589,5 @@ a.sem-card:hover .sem-title { text-decoration: underline; }
   .app-row-photos .app-people { margin-top: 0; max-width: none; }
   .app-row-photos .footnote { grid-column: 1 / -1; }
 }
+.app-montage { display: block; width: 100%; max-width: 30rem; height: auto; margin-top: 1rem; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+@media (min-width: 56rem) { .app-row-photos .app-montage { margin: 0 auto; } }
