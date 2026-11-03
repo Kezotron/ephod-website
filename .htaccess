@@ -34,6 +34,10 @@ RewriteEngine On
 # --- the released apps still read the devotion from the old WordPress REST address ---
 RewriteRule ^wp-json/wp/v2/posts/?$ /memoryverse/api.php?action=wp_posts [QSA,L]
 
+# --- /app: the printed QR code address (only on sites that have app.php) ---
+RewriteCond %{DOCUMENT_ROOT}/app.php -f
+RewriteRule ^app/?$ /app.php [L]
+
 # --- old WordPress addresses -> new pages (permanent redirects) ---
 RewriteRule ^am-bible-reading/?$ /am-reading.html [R=301,L]
 RewriteRule ^am-bible-reading-2/?$ /am-reading.html [R=301,L]
