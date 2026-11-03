@@ -580,3 +580,12 @@ a.sem-card:hover .sem-title { text-decoration: underline; }
 /* a quoted verse inside running text (About page) */
 .prose blockquote.verse-quote { margin: 1rem 0; padding: .35rem 0 .35rem 1rem; border-left: 3px solid var(--accent); font-family: var(--serif); font-style: italic; color: var(--ink); }
 .prose blockquote.verse-quote cite { display: block; margin-top: .25rem; font-family: var(--sans, inherit); font-style: normal; font-size: .85em; color: var(--ink-2); }
+
+/* apps page: photos of people using the app beside the store card */
+.app-people { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: 1rem; max-width: 30rem; }
+.app-people img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+@media (min-width: 56rem) {
+  .app-row-photos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(1.5rem, 4vw, 3rem); row-gap: 0; align-items: center; }
+  .app-row-photos .app-people { margin-top: 0; max-width: none; }
+  .app-row-photos .footnote { grid-column: 1 / -1; }
+}
