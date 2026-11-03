@@ -35,6 +35,8 @@ os.makedirs(DIST)
 for d in ('css','js','images','handouts'):
     shutil.copytree(os.path.join(SRC,d),os.path.join(DIST,d))
 shutil.copy(os.path.join(SRC,'favicon.svg'),DIST)
+# PNG: /app redirect behind the printed QR code (src/sites/png/app.php)
+if os.path.exists(os.path.join(SRC,'app.php')): shutil.copy(os.path.join(SRC,'app.php'),DIST)
 # Entry pages live at the hidden URLs Zarah and Herb & Karen already use:
 #   /memoryverse/memoryverse196804.php  (Zarah: memory verse)  + /memoryverse/devotions196804.php
 #   /goldnugget/golden_nugget_admin.html (Herb & Karen)
