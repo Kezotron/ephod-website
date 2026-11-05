@@ -45,7 +45,7 @@ window.EPHOD_SEMINARS = {
         "EPHOD is a Hebrew word. It was the priestly garment — color-coded and custom-made — that the priest put on to come into the presence of God. When David had lost everything at Ziklag he said, “Bring me the ephod”. Then David asked the Lord, “Should I chase them? Will I catch them?” God told him he would recover everything that had been taken (1 Samuel 30). This is the picture behind EPHOD Discipleship Seminars.",
         "The five letters spell out the purpose: Every Person, Household, Oikos, Discipled. Oikos is a Greek word for every person in your life — your household oikos, your extended oikos and your church oikos. Each word carries a verse: John 3:16 (every), 2 Peter 3:9 (person), 1 Samuel 30 (household), Acts 10:24 (oikos, where Cornelius gathered his relatives and close friends) and Matthew 28:19–20 with John 8:31 (discipled).",
         "“Disciple” is both a noun and a verb. I am a disciple — the noun, John 8:31: “If ye continue in my word, then are ye my disciples indeed.” I disciple someone — the verb, Matthew 28:19: “Go and make disciples.” The seminars that follow are built on those two sides. And who makes disciples? We do, and Jesus is with us as we do it.",
-        "This first seminar also sets out the five parts of EPHOD Defined — Purpose, Pattern, Plan, Process and Power — which are Seminars 1 to 5 of this course."
+        "This first seminar outlines the five parts of EPHOD Defined — Purpose, Pattern, Plan, Process and Power — which are Seminars 1 to 5 of this course."
       ],
       scriptures: ["John 3:16", "2 Peter 3:9", "1 Samuel 30:1–20", "Acts 10:24", "John 8:31", "Matthew 28:18–20", "Ephesians 4:11–16"],
       reflect: [
