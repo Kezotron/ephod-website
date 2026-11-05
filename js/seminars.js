@@ -49,7 +49,7 @@ window.EPHOD_SEMINARS = {
       ],
       scriptures: ["John 3:16", "2 Peter 3:9", "1 Samuel 30:1–20", "Acts 10:24", "John 8:31", "Matthew 28:18–20", "Ephesians 4:11–16"],
       reflect: [
-        "David asked the Lord before he went after what was lost. Where in your life or church is something lost that needs recovering — and have you asked Him about it?",
+        "David asked the Lord before he went after what was lost. Where in your life or church is something lost that needs recovering — and have you asked God about it?",
         "Write down your household oikos, your extended oikos and your church oikos — the actual names. How many people is that?",
         "“I am a disciple” and “I disciple someone.” Which of the two is stronger in your life right now? Why?",
         "The seminars are for all believers, all ages. Who in your church — young or old — is usually left out of discipleship, and how could they be included?"
