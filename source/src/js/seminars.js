@@ -47,7 +47,7 @@ window.EPHOD_SEMINARS = {
         "“Disciple” is both a noun and a verb. I am a disciple — the noun, John 8:31: “If ye continue in my word, then are ye my disciples indeed.” I disciple someone — the verb, Matthew 28:19: “Go and make disciples.” The seminars that follow are built on those two sides. And who makes disciples? We do, and Jesus is with us as we do it.",
         "This first seminar also sets out the five parts of EPHOD Defined — Purpose, Pattern, Plan, Process and Power — which are Seminars 1 to 5 of this course."
       ],
-      scriptures: ["1 Samuel 30:1–20", "John 3:16", "2 Peter 3:9", "Acts 10:24", "John 8:31", "Matthew 28:18–20", "Ephesians 4:11–16"],
+      scriptures: ["John 3:16", "2 Peter 3:9", "1 Samuel 30:1–20", "Acts 10:24", "John 8:31", "Matthew 28:18–20", "Ephesians 4:11–16"],
       reflect: [
         "David asked the Lord before he went after what was lost. Where in your life or church is something lost that needs recovering — and have you asked Him about it?",
         "Write down your household oikos, your extended oikos and your church oikos — the actual names. How many people is that?",
