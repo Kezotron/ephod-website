@@ -191,7 +191,7 @@
       ${nav}
     </div>`;
 
-    // quiz behaviour
+    // quiz behavior
     const form = $("#quiz-form");
     if (form) {
       // restore a passed quiz's last answers? keep it simple: fresh each visit.
