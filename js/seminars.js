@@ -64,7 +64,7 @@ window.EPHOD_SEMINARS = {
         { q: "“I am a disciple” is the ______; “I disciple someone” is the ______.", c: ["verb; noun", "noun; verb", "pattern; plan", "process; power"], a: 1 },
         { q: "Who makes disciples?", c: ["Only pastors and missionaries", "Only those with a Bible school degree", "We make disciples, and Jesus is with us as we do it", "Jesus alone, without us"], a: 2 }
       ],
-      handout: { href: "handouts/seminar-01-purpose-handout.pdf", pages: 1 }
+      handout: { href: "handouts/seminar-01-purpose-handout.pdf", pages: 2 }
     },
     {
       n: 2, group: "defined", title: "Pattern", vimeo: "794998645", minutes: 16,
