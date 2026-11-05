@@ -30,6 +30,9 @@ AddType image/svg+xml .svg
 ErrorDocument 404 /404.html
 
 RewriteEngine On
+# One address for the site: www.… → bare domain (keeps saved progress and Google on one origin)
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
 # --- the released apps still read the devotion from the old WordPress REST address ---
 RewriteRule ^wp-json/wp/v2/posts/?$ /memoryverse/api.php?action=wp_posts [QSA,L]
