@@ -182,7 +182,7 @@ window.EPHOD_SEMINARS = {
         { q: "Which is one of the guidelines to finish strong?", c: ["Counsel the opposite sex alone when necessary", "Remember the rule of three", "Rest from daily devotions when busy", "Trust that it will not happen to you"], a: 1 },
         { q: "EPHOD Discipleship is a covering, a protection, a prevention and a…", c: ["program", "power", "promise", "plan"], a: 1 }
       ],
-      handout: { href: "handouts/seminar-05-power-handout.pdf", pages: 3 }
+      handout: { href: "handouts/seminar-05-power-handout.pdf", pages: 2 }
     },
 
     /* ───────────────────────── EPHOD THE NOUN ───────────────────────── */
