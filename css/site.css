@@ -591,3 +591,18 @@ a.sem-card:hover .sem-title { text-decoration: underline; }
 }
 .app-montage { display: block; width: 100%; max-width: 30rem; height: auto; margin-top: 1rem; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
 @media (min-width: 56rem) { .app-row-photos .app-montage { margin: 0 auto; } }
+
+/* course: save-your-progress card */
+.ident-card h2 { margin: 0 0 .35rem; font-size: 1.15rem; }
+.ident-card p { margin: 0 0 .6rem; }
+.ident-card.is-set p:first-child { margin-bottom: .25rem; }
+.ident-form { display: grid; gap: .6rem; max-width: 40rem; }
+@media (min-width: 40rem) { .course-status + .ident-card .ident-form { grid-template-columns: 1fr 1fr; } .course-status + .ident-card .ident-form .btn-row, .course-status + .ident-card .ident-form .ident-msg { grid-column: 1 / -1; } }
+.ident-form input { width: 100%; box-sizing: border-box; font: inherit; padding: .5rem .65rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: inherit; }
+.ident-form .btn-row { margin-top: .1rem; }
+.ident-msg { margin: 0; min-height: 1.2em; color: var(--ink-2); }
+.ident-msg.error { color: #c0392b; }
+.sync-state { font-size: .85rem; color: var(--ink-3); margin-left: .35rem; }
+.sync-state.saved { color: var(--accent); }
+.sync-state.error { color: #c0392b; }
+.course-status + .ident-card { margin-bottom: 2rem; }

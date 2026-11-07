@@ -26,6 +26,8 @@ define('SITE_ROOT', dirname(__DIR__));
 define('T_MEMORY', 'memory_verse');
 define('T_NUGGET', 'goldennugget');
 define('T_DEVOTIONS', 'devotions');
+define('T_COURSE', 'course_progress');   // EPHOD Seminars online course: progress by email
+if (!defined('COURSE_LIST_KEY')) define('COURSE_LIST_KEY', '196804');   // key for the learners list (override in ephod-config.local.php)
 define('T_BOOKS', 'biblebooks');
 define('T_VERSIONS', 'bible_version_key');
 

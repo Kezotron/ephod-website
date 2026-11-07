@@ -225,6 +225,62 @@ function isoWeekRange(int $week, ?int $year = null): array {
   return [$d->format('F j'), $e->format('F j, Y')];
 }
 
+// ---------- EPHOD Seminars course: progress saved by email (both sites share this table) ----------
+function ensureCourseTable(mysqli $db): void {
+  static $done = false; if ($done) return; $done = true;
+  $db->query('CREATE TABLE IF NOT EXISTS ' . T_COURSE . ' (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(190) NOT NULL,
+    name VARCHAR(120) NOT NULL DEFAULT "",
+    site VARCHAR(8) NOT NULL DEFAULT "",
+    progress MEDIUMTEXT NOT NULL,
+    done_count TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    completed_at DATETIME NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
+    last_seen DATETIME NOT NULL,
+    reset_at VARCHAR(40) NOT NULL DEFAULT "",
+    UNIQUE KEY email (email)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+}
+// Drop anything recorded before the learner last pressed "Start over" (ISO timestamps compare as strings)
+function courseAfterReset(array $p, string $resetAt): array {
+  if ($resetAt === '') return $p;
+  foreach ($p['done'] as $n => $at) if (strcmp($at, $resetAt) < 0) unset($p['done'][$n]);
+  foreach ($p['quiz'] as $n => $q) if (strcmp((string)$q['at'], $resetAt) < 0) unset($p['quiz'][$n]);
+  return $p;
+}
+function courseEmail($v): string {
+  $e = strtolower(trim((string)$v));
+  if ($e === '' || strlen($e) > 190 || !filter_var($e, FILTER_VALIDATE_EMAIL)) fail('Please enter a valid email address');
+  return $e;
+}
+function courseClean($p): array {
+  // keep only what the course page stores: done {n: iso}, quiz {n: {best, passed, at}}
+  $p = is_array($p) ? $p : (json_decode((string)$p, true) ?: []);
+  $out = ['done' => [], 'quiz' => []];
+  foreach ((array)($p['done'] ?? []) as $n => $at) { $n = (int)$n; if ($n >= 1 && $n <= 13 && is_string($at) && strlen($at) <= 40) $out['done'][(string)$n] = $at; }
+  foreach ((array)($p['quiz'] ?? []) as $n => $q) { $n = (int)$n; if ($n >= 1 && $n <= 13 && is_array($q)) $out['quiz'][(string)$n] = ['best' => (int)($q['best'] ?? 0), 'passed' => !empty($q['passed']), 'at' => substr((string)($q['at'] ?? ''), 0, 40)]; }
+  return $out;
+}
+function courseMerge(array $a, array $b): array {
+  // union: a seminar is done if either side says so (earliest date wins); quiz best = max; passed = either
+  $m = ['done' => $a['done'], 'quiz' => $a['quiz']];
+  foreach ($b['done'] as $n => $at) { if (!isset($m['done'][$n]) || strcmp($at, $m['done'][$n]) < 0) $m['done'][$n] = $at; }
+  foreach ($b['quiz'] as $n => $q) {
+    if (!isset($m['quiz'][$n])) { $m['quiz'][$n] = $q; continue; }
+    $m['quiz'][$n] = ['best' => max((int)$m['quiz'][$n]['best'], (int)$q['best']), 'passed' => $m['quiz'][$n]['passed'] || $q['passed'], 'at' => max((string)$m['quiz'][$n]['at'], (string)$q['at'])];
+  }
+  ksort($m['done'], SORT_NUMERIC); ksort($m['quiz'], SORT_NUMERIC);
+  return $m;
+}
+function courseRow(mysqli $db, string $email): ?array {
+  $st = $db->prepare('SELECT id, email, name, site, progress, done_count, completed_at, created_at, updated_at, last_seen, reset_at FROM ' . T_COURSE . ' WHERE email = ?');
+  $st->bind_param('s', $email); $st->execute(); $row = $st->get_result()->fetch_assoc();
+  if ($row) $row['progress'] = courseClean($row['progress']);
+  return $row ?: null;
+}
+
 switch ($action) {
 
   // ---------- shared lookups ----------
@@ -497,6 +553,56 @@ switch ($action) {
       'text' => $textOf($gn['version'], $gn), 'tokPisin' => $textOf('p_tok', $gn),
     ] : null;
     out($out);
+  }
+
+  // ---------- EPHOD Seminars course ----------
+  case 'course_get': {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') fail('POST only', 405);
+    ensureCourseTable($db);
+    $email = courseEmail($q('email', ''));
+    $row = courseRow($db, $email);
+    if ($row) { $st = $db->prepare('UPDATE ' . T_COURSE . ' SET last_seen = NOW() WHERE id = ?'); $st->bind_param('i', $row['id']); $st->execute(); }
+    out(['success' => true, 'found' => (bool)$row, 'email' => $email, 'name' => $row['name'] ?? '', 'progress' => $row['progress'] ?? ['done' => [], 'quiz' => []], 'reset_at' => $row['reset_at'] ?? '']);
+  }
+  case 'course_save': {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') fail('POST only', 405);
+    ensureCourseTable($db);
+    $email = courseEmail($q('email', ''));
+    $name = trim(mb_substr((string)$q('name', ''), 0, 120));
+    $incoming = courseClean($q('progress', []));
+    $reset = (string)$q('reset', '') === '1';
+    $site = preg_match('/png/i', $_SERVER['HTTP_HOST'] ?? '') ? 'png' : 'ph';
+    $row = courseRow($db, $email);
+    $resetAt = $reset ? gmdate('Y-m-d\TH:i:s.000\Z') : (string)($row['reset_at'] ?? '');
+    $incoming = courseAfterReset($incoming, $resetAt);
+    $merged = ($row && !$reset) ? courseMerge(courseAfterReset($row['progress'], $resetAt), $incoming) : $incoming;
+    $doneCount = count($merged['done']);
+    $completedAt = $doneCount >= 13 ? max(array_values($merged['done'])) : null;
+    if ($completedAt) { $t = strtotime($completedAt); $completedAt = $t ? gmdate('Y-m-d H:i:s', $t) : gmdate('Y-m-d H:i:s'); }
+    $json = json_encode($merged, JSON_UNESCAPED_UNICODE);
+    if ($row) {
+      if ($name === '') $name = $row['name'];
+      $st = $db->prepare('UPDATE ' . T_COURSE . ' SET name = ?, progress = ?, done_count = ?, completed_at = ?, reset_at = ?, updated_at = NOW(), last_seen = NOW() WHERE id = ?');
+      $st->bind_param('ssissi', $name, $json, $doneCount, $completedAt, $resetAt, $row['id']); $st->execute();
+    } else {
+      $st = $db->prepare('INSERT INTO ' . T_COURSE . ' (email, name, site, progress, done_count, completed_at, created_at, updated_at, last_seen, reset_at) VALUES (?,?,?,?,?,?,NOW(),NOW(),NOW(),?)');
+      $st->bind_param('ssssiss', $email, $name, $site, $json, $doneCount, $completedAt, $resetAt); $st->execute();
+    }
+    out(['success' => true, 'email' => $email, 'name' => $name, 'progress' => $merged, 'reset_at' => $resetAt]);
+  }
+  case 'course_list': {
+    // KJ's list of learners (hidden-URL page, same as the entry pages) — needs the list key
+    if (!hash_equals(COURSE_LIST_KEY, (string)$q('key', ''))) fail('Not allowed', 403);
+    ensureCourseTable($db);
+    $r = $db->query('SELECT email, name, site, done_count, completed_at, created_at, updated_at, last_seen FROM ' . T_COURSE . ' ORDER BY last_seen DESC');
+    $rows = []; while ($x = $r->fetch_assoc()) $rows[] = $x;
+    if ((string)$q('format', '') === 'csv') {
+      header('Content-Type: text/csv; charset=utf-8'); header('Content-Disposition: attachment; filename="ephod-course-learners.csv"');
+      $f = fopen('php://output', 'w'); fputcsv($f, ['Name', 'Email', 'Site', 'Seminars done', 'Completed', 'Started', 'Last activity', 'Last seen']);
+      foreach ($rows as $x) fputcsv($f, [$x['name'], $x['email'], $x['site'], $x['done_count'], $x['completed_at'] ?? '', $x['created_at'], $x['updated_at'], $x['last_seen']]);
+      exit;
+    }
+    out(['success' => true, 'learners' => $rows]);
   }
 
   default:

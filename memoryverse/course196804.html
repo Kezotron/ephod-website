@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" data-theme="classic">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+<title>Seminar learners — EPHOD</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/themes.css?v=4b88e193"><link rel="stylesheet" href="../css/site.css?v=c26f1f02"><link rel="stylesheet" href="admin.css?v=805be1d9">
+<style>
+  .learners { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  .learners th, .learners td { text-align: left; padding: .45rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .learners th { font-family: var(--sans); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .learners .done { white-space: nowrap; }
+  .learners .bar { display: inline-block; width: 6rem; height: .5rem; background: var(--surface-2); border-radius: 999px; overflow: hidden; vertical-align: middle; margin-right: .4rem; }
+  .learners .bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+  .learners .finished { color: var(--accent); font-weight: 600; }
+  .stats { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 0 0 1rem; }
+  .stats div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: .6rem 1rem; }
+  .stats strong { font-size: 1.4rem; display: block; }
+</style>
+</head>
+<body>
+<header class="site-header"><a class="banner-wrap" href="../index.html" aria-label="EPHOD — Every Person Household Oikos Discipled"><span class="banner" aria-hidden="true"></span></a></header>
+<div class="admin-wrap">
+  <div class="admin-head">
+    <h1>Seminar learners</h1>
+    <nav><a href="../seminars.html">View the course</a><a href="#" id="csv">Download CSV</a></nav>
+  </div>
+  <p class="muted">Everyone who has saved their progress with an email on ephodlifestyle.com or ephod4png.com, most recent activity first. Progress is shared between the two sites.</p>
+  <div class="stats" id="stats"></div>
+  <div class="panel">
+    <table class="learners" id="table"><thead><tr><th>Name</th><th>Email</th><th>Progress</th><th>Completed</th><th>Started</th><th>Last activity</th><th>Site</th></tr></thead><tbody><tr><td colspan="7" class="muted">Loading…</td></tr></tbody></table>
+  </div>
+</div>
+<script>
+(function () {
+  const KEY = "196804";
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmt = (d) => { if (!d) return ""; const t = new Date(d.replace(" ", "T") + "Z"); return isNaN(t) ? d : t.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); };
+  document.getElementById("csv").href = "api.php?action=course_list&format=csv&key=" + KEY;
+  fetch("api.php?action=course_list&key=" + KEY).then((r) => r.json()).then((j) => {
+    const tb = document.querySelector("#table tbody");
+    if (!j.success) { tb.innerHTML = `<tr><td colspan="7">${esc(j.error || "Could not load")}</td></tr>`; return; }
+    const L = j.learners || [];
+    const finished = L.filter((x) => x.completed_at).length;
+    const active = L.filter((x) => (Date.now() - new Date(x.last_seen.replace(" ", "T") + "Z")) < 30 * 864e5).length;
+    document.getElementById("stats").innerHTML = `<div><strong>${L.length}</strong>learners</div><div><strong>${active}</strong>active in the last 30 days</div><div><strong>${finished}</strong>completed all 13</div>`;
+    if (!L.length) { tb.innerHTML = `<tr><td colspan="7" class="muted">No one has saved progress yet.</td></tr>`; return; }
+    tb.innerHTML = L.map((x) => `<tr>
+      <td>${esc(x.name)}</td>
+      <td><a href="mailto:${esc(x.email)}">${esc(x.email)}</a></td>
+      <td class="done"><span class="bar"><span style="width:${Math.round(100 * x.done_count / 13)}%"></span></span>${x.done_count} of 13</td>
+      <td>${x.completed_at ? `<span class="finished">${esc(fmt(x.completed_at))}</span>` : ""}</td>
+      <td>${esc(fmt(x.created_at))}</td>
+      <td>${esc(fmt(x.updated_at))}</td>
+      <td>${x.site === "png" ? "PNG" : "PH"}</td>
+    </tr>`).join("");
+  }).catch((e) => { document.querySelector("#table tbody").innerHTML = `<tr><td colspan="7">Could not load: ${esc(e.message)}</td></tr>`; });
+})();
+</script>
+</body>
+</html>

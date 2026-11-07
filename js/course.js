@@ -2,8 +2,10 @@
    EPHOD Seminars — the online course.
    Runs on seminars.html (course home), seminar.html?n=N (lesson)
    and certificate.html. Content comes from js/seminars.js.
-   Progress is kept on the visitor's own device (localStorage):
-   there are no accounts on this site.
+   Progress is kept on the visitor's device (localStorage) and,
+   once they give an email address, on the server too (api.php
+   course_get / course_save) so it follows them to any device.
+   No passwords: the email is the identity.
    ============================================================ */
 (function () {
   "use strict";
@@ -21,8 +23,122 @@
   function load() {
     try { const p = JSON.parse(localStorage.getItem(KEY) || "{}"); p.done = p.done || {}; p.quiz = p.quiz || {}; return p; } catch (e) { return { done: {}, quiz: {} }; }
   }
-  function save(p) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* private mode: progress lasts for this visit only */ } }
+  function saveLocal(p) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* private mode: progress lasts for this visit only */ } }
+  function save(p, opts) { saveLocal(p); if (ID) scheduleSync(opts); }
   let P = load();
+
+  /* ---------- identity (email) + server sync ---------- */
+  const ID_KEY = "ephod-course-id";
+  const API = "memoryverse/api.php";
+  function loadId() {
+    try { const j = JSON.parse(localStorage.getItem(ID_KEY) || "null"); if (j && j.email) return j; } catch (e) {}
+    const m = document.cookie.match(/(?:^|; )ephodCourse=([^;]*)/);
+    if (m) { try { const j = JSON.parse(decodeURIComponent(m[1])); if (j && j.email) return j; } catch (e) {} }
+    return null;
+  }
+  function saveId(id) {
+    try { localStorage.setItem(ID_KEY, JSON.stringify(id)); } catch (e) {}
+    try { document.cookie = "ephodCourse=" + encodeURIComponent(JSON.stringify(id)) + "; max-age=31536000; path=/; SameSite=Lax" + (location.protocol === "https:" ? "; Secure" : ""); } catch (e) {}
+  }
+  function clearId() {
+    try { localStorage.removeItem(ID_KEY); } catch (e) {}
+    try { document.cookie = "ephodCourse=; max-age=0; path=/"; } catch (e) {}
+  }
+  let ID = loadId();
+  let syncTimer = null, syncState = "", syncMsg = "";
+  function setSync(state, msg) {
+    syncState = state; syncMsg = msg || "";
+    $$(".sync-state").forEach((el) => { el.textContent = syncText(); el.className = "sync-state " + state; });
+  }
+  function syncText() {
+    return syncState === "saving" ? "Saving\u2026" : syncState === "saved" ? "Saved" : syncState === "error" ? ("Couldn\u2019t save" + (syncMsg ? " \u2014 " + syncMsg : "")) : "";
+  }
+  async function api(action, data) {
+    const r = await fetch(API + "?action=" + action, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data || {}), credentials: "same-origin" });
+    const j = await r.json().catch(() => ({ success: false, error: "the server gave an unexpected reply" }));
+    if (!j.success) throw new Error(j.error || "request failed");
+    return j;
+  }
+  function afterReset(p, resetAt) {
+    if (!resetAt) return p;
+    const r = { done: {}, quiz: {} };
+    for (const n in p.done) if (!(p.done[n] < resetAt)) r.done[n] = p.done[n];
+    for (const n in p.quiz) if (!((p.quiz[n] || {}).at < resetAt)) r.quiz[n] = p.quiz[n];
+    return r;
+  }
+  function mergeProgress(a, b, resetAt) {
+    a = afterReset(a, resetAt); b = afterReset(b, resetAt);
+    const m = { done: Object.assign({}, a.done), quiz: Object.assign({}, a.quiz) };
+    for (const n in b.done) { if (!m.done[n] || b.done[n] < m.done[n]) m.done[n] = b.done[n]; }
+    for (const n in b.quiz) {
+      const q = b.quiz[n] || {}, o = m.quiz[n];
+      m.quiz[n] = o ? { best: Math.max(o.best || 0, q.best || 0), passed: !!(o.passed || q.passed), at: ((o.at || "") > (q.at || "") ? o.at : q.at) || "" } : q;
+    }
+    return m;
+  }
+  function scheduleSync(opts) { clearTimeout(syncTimer); syncTimer = setTimeout(() => pushProgress(opts), 300); }
+  async function pushProgress(opts) {
+    if (!ID) return;
+    setSync("saving");
+    try {
+      const j = await api("course_save", { email: ID.email, name: ID.name || "", progress: { done: P.done, quiz: P.quiz }, reset: opts && opts.reset ? "1" : "" });
+      P.done = j.progress.done || {}; P.quiz = j.progress.quiz || {}; saveLocal(P);
+      if (j.name && j.name !== ID.name) { ID.name = j.name; saveId(ID); }
+      setSync("saved");
+    } catch (e) { setSync("error", e.message); }
+  }
+  // Pull the server copy, merge it with what this device has; returns true if anything changed locally.
+  async function pullProgress() {
+    if (!ID) return false;
+    try {
+      const j = await api("course_get", { email: ID.email });
+      if (!j.found) { pushProgress(); return false; }
+      const before = JSON.stringify({ done: P.done, quiz: P.quiz });
+      const merged = mergeProgress({ done: P.done, quiz: P.quiz }, { done: j.progress.done || {}, quiz: j.progress.quiz || {} }, j.reset_at || "");
+      P.done = merged.done; P.quiz = merged.quiz; saveLocal(P);
+      if (j.name && !ID.name) { ID.name = j.name; saveId(ID); }
+      const changed = JSON.stringify({ done: P.done, quiz: P.quiz }) !== before;
+      if (changed || JSON.stringify(merged) !== JSON.stringify({ done: j.progress.done || {}, quiz: j.progress.quiz || {} })) pushProgress(); else setSync("saved");
+      return changed;
+    } catch (e) { setSync("error", e.message); return false; }
+  }
+  // The "save your progress" card (course page and lesson sidebar)
+  function identCard(compact) {
+    if (ID) {
+      return `<div class="card ident-card is-set">
+        <p><strong>Progress saved</strong> for ${ID.name ? esc(ID.name) + " \u00b7 " : ""}${esc(ID.email)} <span class="sync-state ${syncState}">${esc(syncText())}</span></p>
+        <p class="small muted">Use the same email on any computer or phone to carry on from where you left off. <button type="button" class="linklike ident-change">Not you? Change</button></p>
+      </div>`;
+    }
+    const has = doneCount() > 0 || Object.keys(P.quiz).length > 0;
+    return `<div class="card ident-card">
+      <h2>${has ? "Keep your progress safe" : "Save your progress"}</h2>
+      <p class="muted">${compact ? "Enter your email and your progress is saved \u2014 carry on from any computer or phone." : "Enter your email and your progress is saved as you go \u2014 pick up where you left off on any computer or phone. We use it only for the course and to encourage you along the way."}</p>
+      <form class="ident-form" novalidate>
+        <div class="field"><label>Your name</label><input type="text" name="name" autocomplete="name" maxlength="120" placeholder="Optional"></div>
+        <div class="field"><label>Email</label><input type="email" name="email" autocomplete="email" required maxlength="190" placeholder="you@example.com"></div>
+        <div class="btn-row"><button class="btn btn-primary" type="submit">Save my progress</button></div>
+        <p class="small ident-msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>`;
+  }
+  function wireIdent(rerender) {
+    $$(".ident-form").forEach((form) => form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = (form.email.value || "").trim().toLowerCase(), name = (form.name.value || "").trim();
+      const msg = form.querySelector(".ident-msg");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = "Please enter a valid email address."; msg.className = "small ident-msg error"; form.email.focus(); return; }
+      msg.textContent = "Saving\u2026"; msg.className = "small ident-msg";
+      try {
+        const j = await api("course_get", { email });
+        ID = { email, name: name || j.name || "" }; saveId(ID);
+        if (j.found) { const merged = mergeProgress({ done: P.done, quiz: P.quiz }, { done: j.progress.done || {}, quiz: j.progress.quiz || {} }, j.reset_at || ""); P.done = merged.done; P.quiz = merged.quiz; saveLocal(P); }
+        await pushProgress();
+        rerender();
+      } catch (err) { msg.textContent = "Couldn\u2019t save \u2014 " + err.message + ". Please try again."; msg.className = "small ident-msg error"; }
+    }));
+    $$(".ident-change").forEach((b) => b.addEventListener("click", () => { ID = null; clearId(); rerender(); }));
+  }
   const isDone = (n) => !!P.done[n];
   const isUnlocked = (n) => n === 1 || isDone(n - 1);
   const doneCount = () => S.filter((s) => isDone(s.n)).length;
@@ -86,11 +202,13 @@
         ${progressBar()}
         <div class="btn-row">${cta}</div>
       </div>
+      ${identCard(false)}
       ${groups}
-      <p class="small muted course-reset-row">Your progress is saved on this device only. <button type="button" class="linklike" id="course-reset">Start over</button><span id="course-reset-confirm" hidden> — are you sure? <button type="button" class="linklike" id="course-reset-yes">Yes, clear my progress</button></span></p>`;
+      <p class="small muted course-reset-row">${ID ? "Your progress is saved to your email." : "Without an email, progress is kept on this device only."} <button type="button" class="linklike" id="course-reset">Start over</button><span id="course-reset-confirm" hidden> — are you sure? <button type="button" class="linklike" id="course-reset-yes">Yes, clear my progress</button></span></p>`;
 
     $("#course-reset").addEventListener("click", () => { $("#course-reset-confirm").hidden = false; });
-    $("#course-reset-yes").addEventListener("click", () => { P = { done: {}, quiz: {}, name: P.name }; save(P); renderHome(); });
+    $("#course-reset-yes").addEventListener("click", () => { P = { done: {}, quiz: {}, name: P.name }; save(P, { reset: true }); renderHome(); });
+    wireIdent(renderHome);
   }
 
   /* ---------- lesson page ---------- */
@@ -121,7 +239,9 @@
           <p>The EPHOD seminars are taken in order — each one builds on the last. Finish <strong>Seminar ${prev.n} · ${esc(prev.title)}</strong> and this one will open.</p>
           <div class="btn-row"><a class="btn btn-primary" href="${lessonURL(prev)}">Go to Seminar ${prev.n}</a><a class="btn btn-quiet" href="seminars.html">All seminars</a></div>
         </div>
+        <div class="lesson-locked">${identCard(true)}</div>
       </div>`;
+      wireIdent(renderLesson);
       return;
     }
 
@@ -183,6 +303,7 @@
         </div>
         <aside class="lesson-side">
           ${handout}
+          ${identCard(true)}
           <div class="card">${progressBar()}<a class="small" href="seminars.html">All seminars</a></div>
           ${quiz}
           ${complete}
@@ -227,6 +348,7 @@
       P.done[n] = todayISO(); save(P); renderLesson();
       const card = $("#complete-card"); if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
+    wireIdent(renderLesson);
   }
 
   /* ---------- certificate ---------- */
@@ -245,7 +367,7 @@
     }
     const dates = Object.values(P.done).sort();
     const finished = dates.length ? fmtDate(dates[dates.length - 1]) : fmtDate(todayISO());
-    const name = P.name || "";
+    const name = P.name || (ID && ID.name) || "";
     out.innerHTML = `<div class="wrap cert-wrap">
       <div class="cert-controls card no-print">
         <div class="field"><label for="cert-name">Your name as it should appear</label><input id="cert-name" type="text" autocomplete="name" value="${esc(name)}" placeholder="Type your name"></div>
@@ -270,14 +392,15 @@
       </div>
     </div>`;
     const inp = $("#cert-name"), outName = $("#cert-name-out");
-    inp.addEventListener("input", () => { outName.innerHTML = esc(inp.value) || "&nbsp;"; P.name = inp.value; save(P); });
+    inp.addEventListener("input", () => { outName.innerHTML = esc(inp.value) || "&nbsp;"; P.name = inp.value; saveLocal(P); if (ID) { ID.name = inp.value.trim(); saveId(ID); scheduleSync(); } });
     $("#cert-print").addEventListener("click", () => window.print());
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     const p = document.body.dataset.page;
-    if (p === "seminars") renderHome();
-    else if (p === "seminar") renderLesson();
-    else if (p === "certificate") renderCertificate();
+    const render = p === "seminars" ? renderHome : p === "seminar" ? renderLesson : p === "certificate" ? renderCertificate : null;
+    if (!render) return;
+    render();
+    if (ID && await pullProgress()) render();
   });
 })();
