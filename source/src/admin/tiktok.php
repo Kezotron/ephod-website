@@ -37,7 +37,7 @@ if (!defined('TIKTOK_CLIENT_KEY') || !defined('TIKTOK_ADMIN_KEY')) { http_respon
 foreach (['TIKTOK_CLIENT_SECRET', 'TIKTOK_INBOX_KEY'] as $c) if (!defined($c)) define($c, '');
 if (!defined('TIKTOK_API_BASE')) define('TIKTOK_API_BASE', 'https://open.tiktokapis.com');
 if (!defined('TIKTOK_AUTH_URL')) define('TIKTOK_AUTH_URL', 'https://www.tiktok.com/v2/auth/authorize/');
-define('TT_SCOPES', 'user.info.basic,video.upload,video.publish');
+define('TT_SCOPES', 'user.info.basic,video.publish');   // video.upload (drafts) is not used: TikTok wants every requested scope shown in the demo
 define('TT_DIR', $home . '/tiktok');
 $siteUrl = 'https://ephodlifestyle.com';
 $__sj = @json_decode(@file_get_contents(__DIR__ . '/site.json'), true);
