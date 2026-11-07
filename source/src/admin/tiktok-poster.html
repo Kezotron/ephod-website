@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-theme="classic">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
+<title>EPHOD Poster — TikTok</title>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/themes.css"><link rel="stylesheet" href="../css/site.css"><link rel="stylesheet" href="admin.css">
+<style>
+  .acct { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+  .acct img { width: 3rem; height: 3rem; border-radius: 50%; object-fit: cover; background: var(--surface-2); }
+  .acct .who { font-weight: 600; }
+  .vid { display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); align-items: start; }
+  @media (max-width: 40rem) { .vid { grid-template-columns: minmax(0, 1fr); } }
+  .vid video { width: 100%; max-height: 28rem; border-radius: var(--radius); background: #000; }
+  .vid .meta { font-size: .9rem; color: var(--ink-3); margin: 0 0 .5rem; }
+  .vid label.block { display: block; font-weight: 600; margin: .8rem 0 .25rem; }
+  .vid textarea, .vid select { width: 100%; font: inherit; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); }
+  .vid textarea { min-height: 7rem; resize: vertical; }
+  .count { font-size: .8rem; color: var(--ink-3); text-align: right; }
+  .opts { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+  .opts label { display: flex; align-items: center; gap: .4rem; font-weight: 400; }
+  .opts label.off { color: var(--ink-3); }
+  .disc { border: 1px solid var(--line); border-radius: var(--radius); padding: .6rem .8rem; margin-top: .4rem; background: var(--surface-2); }
+  .disc .sub { margin: .5rem 0 0 1.4rem; display: none; }
+  .disc.on .sub { display: block; }
+  .disc .sub label { display: flex; align-items: center; gap: .4rem; margin: .25rem 0; font-weight: 400; }
+  .note { font-size: .88rem; color: var(--ink-2); margin: .4rem 0 0; }
+  .decl { font-size: .88rem; color: var(--ink-2); margin: 1rem 0 .6rem; }
+  .btn[disabled] { opacity: .5; cursor: not-allowed; }
+  .done-tag { display: inline-block; background: var(--primary-soft); color: var(--primary); border-radius: 999px; padding: .1rem .7rem; font-size: .85rem; }
+  .banner-note { background: var(--accent-soft); border-radius: var(--radius); padding: .7rem 1rem; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+<header class="site-header"><a class="banner-wrap" href="../index.html" aria-label="EPHOD"><span class="banner" aria-hidden="true"></span></a></header>
+<div class="admin-wrap">
+  <div class="admin-head">
+    <h1>EPHOD Poster — TikTok</h1>
+    <nav><a href="#" id="disconnect" hidden>Disconnect TikTok</a><a href="#" id="keychange">Change key</a></nav>
+  </div>
+  <p class="muted">Each day's EPHOD verse videos arrive here. Nothing is posted to TikTok until you review a video and press Post.</p>
+  <div id="msg" class="status" role="status" aria-live="polite"></div>
+
+  <div class="panel" id="connect" hidden>
+    <h2>Connect EPHOD's TikTok account</h2>
+    <p>Press the button, sign in to TikTok as the EPHOD account and allow EPHOD Poster. EPHOD Poster can read the account's name and picture and send videos to it. It can't see anything else.</p>
+    <button class="btn btn-primary" type="button" id="connectBtn">Connect TikTok</button>
+  </div>
+
+  <div class="panel" id="account" hidden>
+    <div class="acct"><img id="avatar" alt=""><div><div class="who" id="nick"></div><div class="muted small" id="acctNote"></div></div></div>
+  </div>
+
+  <div id="list"></div>
+</div>
+<script>
+(function () {
+  const KEY_STORE = "ephod-tiktok-key";
+  let KEY = ""; try { KEY = localStorage.getItem(KEY_STORE) || ""; } catch (e) {}
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const LANG = { tp: "Tok Pisin", tl: "Tagalog", zh: "Chinese", en: "English" };
+  const PRIV = { PUBLIC_TO_EVERYONE: "Everyone", MUTUAL_FOLLOW_FRIENDS: "Friends", FOLLOWER_OF_CREATOR: "Followers", SELF_ONLY: "Only me" };
+  let creator = null;
+
+  function say(text, kind) { const m = $("#msg"); m.textContent = text || ""; m.className = "status " + (text ? (kind || "busy") : ""); }
+  async function api(action, opts) {
+    opts = opts || {};
+    const init = { headers: { "X-Key": KEY } };
+    let url = "tiktok.php?action=" + action + (opts.query ? "&" + opts.query : "");
+    if (opts.form) { init.method = "POST"; init.body = new URLSearchParams(opts.form); }
+    const r = await fetch(url, init);
+    let j; try { j = await r.json(); } catch (e) { throw new Error("The server did not answer properly (HTTP " + r.status + ")"); }
+    if (!j.success) { const err = new Error(j.error || "Failed"); err.status = r.status; throw err; }
+    return j;
+  }
+
+  $("#keychange").addEventListener("click", (e) => { e.preventDefault(); try { localStorage.removeItem(KEY_STORE); } catch (x) {} location.href = location.pathname; });
+  $("#disconnect").addEventListener("click", async (e) => { e.preventDefault(); if (!confirm("Disconnect EPHOD's TikTok account from EPHOD Poster?")) return; try { await api("disconnect", { form: {} }); location.href = location.pathname; } catch (err) { say(err.message, "err"); } });
+  $("#connectBtn").addEventListener("click", async () => { try { const j = await api("login"); location.href = j.url; } catch (err) { say(err.message, "err"); } });
+
+  async function start() {
+    if (!KEY) { KEY = (prompt("Enter the EPHOD Poster key (TIKTOK_ADMIN_KEY from ephod-config.local.php)") || "").trim(); try { localStorage.setItem(KEY_STORE, KEY); } catch (e) {} }
+    const q = new URLSearchParams(location.search);
+    try {
+      if (q.get("error")) { say("TikTok did not connect the account: " + (q.get("error_description") || q.get("error")), "err"); history.replaceState(null, "", location.pathname); }
+      else if (q.get("code")) {
+        say("Connecting to TikTok…");
+        await api("callback", { form: { code: q.get("code"), state: q.get("state") || "" } });
+        history.replaceState(null, "", location.pathname);
+      }
+      const s = await api("status");
+      if (!s.connected) { $("#connect").hidden = false; say(s.configured ? "" : "The TikTok client secret has not been added to the server settings yet.", s.configured ? "" : "err"); return; }
+      $("#disconnect").hidden = false;
+      say("Asking TikTok about the account…");
+      creator = (await api("creator")).creator;
+      showAccount(s.account);
+      await renderList();
+      say("");
+    } catch (err) {
+      if (err.status === 403) { try { localStorage.removeItem(KEY_STORE); } catch (x) {} say("That key was not accepted. Reload the page and enter it again.", "err"); return; }
+      if (err.status === 409) { $("#connect").hidden = false; $("#disconnect").hidden = true; }
+      say(err.message, "err");
+    }
+  }
+
+  function showAccount(a) {
+    $("#account").hidden = false;
+    const av = creator.creator_avatar_url || (a && a.avatar) || ""; $("#avatar").hidden = !av; if (av) $("#avatar").src = av;
+    $("#nick").textContent = (creator.creator_nickname || (a && a.name) || "") + (creator.creator_username ? "  @" + creator.creator_username : "");
+    const opts = creator.privacy_level_options || [];
+    $("#acctNote").textContent = "Posts go to this TikTok account." + (opts.length && opts.every((o) => o === "SELF_ONLY") ? " Until TikTok approves EPHOD Poster, posts can only be set to “Only me”." : "");
+  }
+
+  async function renderList() {
+    const j = await api("list"), L = $("#list");
+    if (!j.items.length) { L.innerHTML = `<div class="panel"><p class="muted">No videos are waiting. The daily videos appear here after they are made.</p></div>`; return; }
+    L.innerHTML = j.items.map(card).join("");
+    j.items.forEach(wire);
+  }
+
+  function card(m) {
+    const id = m.id, posted = m.post;
+    return `<div class="panel" data-id="${esc(id)}">
+      <div class="vid">
+        <div><video controls playsinline preload="metadata" src="tiktok.php?action=video&id=${encodeURIComponent(id)}&key=${encodeURIComponent(KEY)}"></video></div>
+        <div>
+          <h2 style="margin:0">${esc(LANG[m.lang] || m.lang)} · ${esc(m.reference)}</h2>
+          <p class="meta">${esc(m.date)} · EPHOD ${esc(m.page === "ph" ? "Lifestyle" : "PNG")} ${posted ? ` · <span class="done-tag">Sent to TikTok ${esc((posted.at || "").slice(0, 16).replace("T", " "))} UTC</span>` : ""}</p>
+          <div class="form" ${posted ? "hidden" : ""}>
+            <label class="block" for="cap-${esc(id)}">Caption</label>
+            <textarea id="cap-${esc(id)}" maxlength="2200">${esc(m.caption)}</textarea>
+            <div class="count"><span class="n">${(m.caption || "").length}</span> / 2200</div>
+
+            <label class="block" for="priv-${esc(id)}">Who can watch this video</label>
+            <select id="priv-${esc(id)}" class="priv"><option value="" selected disabled>Choose who can watch…</option>
+              ${(creator.privacy_level_options || []).map((o) => `<option value="${esc(o)}">${esc(PRIV[o] || o)}</option>`).join("")}</select>
+
+            <label class="block">Allow people to</label>
+            <div class="opts">
+              <label class="${creator.comment_disabled ? "off" : ""}"><input type="checkbox" class="c-comment" ${creator.comment_disabled ? "disabled" : ""}> Comment</label>
+              <label class="${creator.duet_disabled ? "off" : ""}"><input type="checkbox" class="c-duet" ${creator.duet_disabled ? "disabled" : ""}> Duet</label>
+              <label class="${creator.stitch_disabled ? "off" : ""}"><input type="checkbox" class="c-stitch" ${creator.stitch_disabled ? "disabled" : ""}> Stitch</label>
+            </div>
+
+            <div class="disc">
+              <label style="display:flex;align-items:center;gap:.5rem;font-weight:600"><input type="checkbox" class="c-comm"> Disclose video content</label>
+              <p class="note">Turn this on if the video promotes yourself, a third party, or both.</p>
+              <div class="sub">
+                <label><input type="checkbox" class="c-organic"> Your brand — you are promoting yourself or your own business</label>
+                <label><input type="checkbox" class="c-branded"> Branded content — you are promoting another brand or a third party</label>
+                <p class="note label-note"></p>
+              </div>
+            </div>
+
+            <p class="decl"></p>
+            <p class="note err-note" style="color:var(--accent)"></p>
+            <button class="btn btn-primary postbtn" type="button" disabled>Post to TikTok</button>
+            <p class="note after" hidden>TikTok is processing the video. It can take a few minutes before it shows on the profile.</p>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function wire(m) {
+    const root = document.querySelector(`[data-id="${CSS.escape(m.id)}"]`); if (!root || m.post) return;
+    const g = (s) => root.querySelector(s);
+    const cap = g("textarea"), priv = g(".priv"), comm = g(".c-comm"), org = g(".c-organic"), br = g(".c-branded"), btn = g(".postbtn");
+    const vid = root.querySelector("video"), max = creator.max_video_post_duration_sec || 0;
+    let tooLong = false;
+    vid.addEventListener("loadedmetadata", () => { if (max && vid.duration > max + 0.5) { tooLong = true; g(".err-note").textContent = `This video is ${Math.round(vid.duration)} seconds; this account can post videos up to ${max} seconds.`; refresh(); } });
+    function refresh() {
+      const on = comm.checked; g(".disc").classList.toggle("on", on);
+      const sOnly = priv.querySelector('option[value="SELF_ONLY"]');
+      if (sOnly) { sOnly.disabled = on && br.checked; if (sOnly.disabled && priv.value === "SELF_ONLY") priv.value = ""; }
+      g(".label-note").textContent = !on ? "" : br.checked ? "Your video will be labeled “Paid partnership”. Branded content can’t be set to “Only me”." : org.checked ? "Your video will be labeled “Promotional content”." : "Choose at least one option to continue.";
+      const decl = g(".decl"), mu = "https://www.tiktok.com/legal/page/global/music-usage-confirmation/en", bc = "https://www.tiktok.com/legal/page/global/bc-policy/en";
+      decl.innerHTML = on && br.checked ? `By posting, you agree to TikTok’s <a href="${bc}" target="_blank" rel="noopener">Branded Content Policy</a> and <a href="${mu}" target="_blank" rel="noopener">Music Usage Confirmation</a>.`
+                                         : `By posting, you agree to TikTok’s <a href="${mu}" target="_blank" rel="noopener">Music Usage Confirmation</a>.`;
+      btn.disabled = !(priv.value && (!on || org.checked || br.checked) && !tooLong);
+    }
+    cap.addEventListener("input", () => { g(".n").textContent = cap.value.length; });
+    [priv, comm, org, br].forEach((el) => el.addEventListener("change", refresh));
+    refresh();
+    btn.addEventListener("click", async () => {
+      btn.disabled = true; g(".err-note").textContent = ""; say("Sending the video to TikTok…");
+      try {
+        const j = await api("post", { form: { id: m.id, title: cap.value, privacy_level: priv.value,
+          allow_comment: g(".c-comment").checked ? "1" : "", allow_duet: g(".c-duet").checked ? "1" : "", allow_stitch: g(".c-stitch").checked ? "1" : "",
+          commercial: comm.checked ? "1" : "", brand_organic_toggle: org.checked ? "1" : "", brand_content_toggle: br.checked ? "1" : "" } });
+        g(".after").hidden = false; say("Sent. TikTok is processing it…");
+        for (let i = 0; i < 30; i++) {
+          await new Promise((r) => setTimeout(r, 4000));
+          const s = await api("publish_status", { query: "publish_id=" + encodeURIComponent(j.publish_id) });
+          if (s.status === "PUBLISH_COMPLETE") { say("Posted to TikTok.", "ok"); break; }
+          if (s.status === "FAILED") { say("TikTok could not post it: " + (s.fail_reason || "unknown reason"), "err"); break; }
+          if (s.status === "SEND_TO_USER_INBOX") { say("Sent to the TikTok app inbox for you to finish there.", "ok"); break; }
+        }
+        await renderList();
+      } catch (err) { g(".err-note").textContent = err.message; say(err.message, "err"); btn.disabled = false; }
+    });
+  }
+  start();
+})();
+</script>
+</body>
+</html>

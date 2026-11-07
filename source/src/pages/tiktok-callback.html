@@ -6,3 +6,7 @@
     <p class="meta">This page is where TikTok sends the EPHOD staff member after they connect EPHOD's own TikTok account. It is not used by visitors.</p>
   </div>
 </section>
+<script>
+// TikTok sends the EPHOD staff member here after they allow EPHOD Poster. Pass the answer on to the approval page.
+if (/[?&](code|error)=/.test(location.search)) location.replace("memoryverse/tiktok-poster.html" + location.search);
+</script>

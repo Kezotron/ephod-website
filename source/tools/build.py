@@ -40,7 +40,7 @@ if os.path.exists(os.path.join(SRC,'app.php')): shutil.copy(os.path.join(SRC,'ap
 # Entry pages live at the hidden URLs Zarah and Herb & Karen already use:
 #   /memoryverse/memoryverse196804.php  (Zarah: memory verse)  + /memoryverse/devotions196804.php  + /memoryverse/course196804.html (KJ: seminar learners)
 #   /goldnugget/golden_nugget_admin.html (Herb & Karen)
-ENTRY={'memoryverse':{'memory-verse.html':'memoryverse196804.php','devotions.html':'devotions196804.php','course.html':'course196804.html'},
+ENTRY={'memoryverse':{'memory-verse.html':'memoryverse196804.php','devotions.html':'devotions196804.php','course.html':'course196804.html','tiktok-poster.html':'tiktok-poster.html'},
        'goldnugget':{'gold-nugget.html':'golden_nugget_admin.html'}}
 RENAMES={k:v for d in ENTRY.values() for k,v in d.items()}
 # Only ephodlifestyle.com carries the entry pages (both sites share one database). The PNG site keeps just the
