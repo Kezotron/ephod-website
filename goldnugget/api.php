@@ -511,7 +511,12 @@ switch ($action) {
     $sun = clone $mon; $sun->modify('+6 days');
     $range = $mon->format('M j') . ' – ' . ($mon->format('M') === $sun->format('M') ? $sun->format('j') : $sun->format('M j')) . ', ' . $sun->format('Y');
     $week = (int)$today->format('W'); if ($week > 53) $week = 1;
-    $out = ['success' => true, 'date' => $today->format('Y-m-d'), 'week' => $week, 'weekStart' => $mon->format('Y-m-d'), 'weekEnd' => $sun->format('Y-m-d'), 'weekRange' => $range, 'site' => 'https://ephod4png.com'];
+    $siteCfg = @json_decode(@file_get_contents(__DIR__ . '/site.json'), true);
+    $siteUrl = rtrim($siteCfg['url'] ?? 'https://ephod4png.com', '/');      // this site's own address (PH or PNG)
+    $out = ['success' => true, 'date' => $today->format('Y-m-d'), 'week' => $week, 'weekStart' => $mon->format('Y-m-d'), 'weekEnd' => $sun->format('Y-m-d'), 'weekRange' => $range, 'site' => $siteUrl];
+    // Extra languages, always: tagalog (Ang Dating Biblia) and chinese (t_ncvs, Chinese New Version) alongside tokPisin. Any other version table can be
+    // asked for with &extra=t_frLSG,p_xxx (only tables that exist are returned, under their table name).
+    $extraTables = array_filter(array_map('trim', explode(',', (string)$q('extra', ''))), fn($t) => preg_match('/^[a-zA-Z0-9_]+$/', $t));
 
     $refOf = function (array $r): string {
       $ref = $r['bookName'] . ' ' . (int)$r['chapter'] . ':' . (int)$r['verse'];
@@ -528,8 +533,9 @@ switch ($action) {
     $st->bind_param('i', $week); $st->execute(); $mv = $st->get_result()->fetch_assoc();
     $out['memoryVerse'] = $mv ? [
       'reference' => $refOf($mv), 'englishVersion' => $mv['version'], 'englishVersionLabel' => $ENTRY_VERSIONS[$mv['version']] ?? $mv['version'],
-      'english' => $textOf($mv['version'], $mv), 'tokPisin' => $textOf('p_tok', $mv),
+      'english' => $textOf($mv['version'], $mv), 'tokPisin' => $textOf('p_tok', $mv), 'tagalog' => $textOf('bible_verses_tagab', $mv), 'chinese' => $textOf('t_ncvs', $mv),
     ] : null;
+    foreach ($extraTables as $t) if ($mv && ($x = $textOf($t, $mv)) !== '') $out['memoryVerse'][$t] = $x;
 
     // this week's devotion: the one whose week (the Monday after its date) starts on $mon
     $dev = null;
@@ -541,8 +547,8 @@ switch ($action) {
     }
     $out['devotion'] = $dev ? [
       'title' => $dev['title'], 'reading' => $dev['reading'], 'excerpt' => $dev['excerpt'],
-      'url' => 'https://ephod4png.com/devotion.html?slug=' . $dev['slug'],
-      'image' => $dev['image'] ? 'https://ephod4png.com/' . $dev['image'] : null,
+      'url' => $siteUrl . '/devotion/' . $dev['slug'] . '.html',
+      'image' => $dev['image'] ? $siteUrl . '/' . $dev['image'] : null,
     ] : null;
 
     // today's Gold Nugget: day of the year on a non-leap calendar, Feb 29 = day 366 (as the website does it)
@@ -553,8 +559,9 @@ switch ($action) {
     $st->bind_param('i', $day); $st->execute(); $gn = $st->get_result()->fetch_assoc();
     $out['goldNugget'] = $gn ? [
       'day' => $day, 'reference' => $refOf($gn), 'englishVersion' => $gn['version'], 'englishVersionLabel' => $ENTRY_VERSIONS[$gn['version']] ?? $gn['version'],
-      'text' => $textOf($gn['version'], $gn), 'tokPisin' => $textOf('p_tok', $gn),
+      'text' => $textOf($gn['version'], $gn), 'tokPisin' => $textOf('p_tok', $gn), 'tagalog' => $textOf('bible_verses_tagab', $gn), 'chinese' => $textOf('t_ncvs', $gn),
     ] : null;
+    foreach ($extraTables as $t) if ($gn && ($x = $textOf($t, $gn)) !== '') $out['goldNugget'][$t] = $x;
     out($out);
   }
 
