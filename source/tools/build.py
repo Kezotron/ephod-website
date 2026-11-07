@@ -124,7 +124,9 @@ for f in sorted(os.listdir(os.path.join(SRC,'pages'))):
     body=re.sub(r'<!--verse:([a-z0-9-]+)\|([^>]*?)-->(.*?)<!--/verse-->',_verse,body,flags=re.S)
     meta.update(OVER.get(f,{}))
     if SITE!='ph' and re.search(r'\| EPHOD( Seminars)?$',meta['title']): meta['title']=re.sub(r'\| EPHOD( Seminars)?$','| '+SITE_NAME,meta['title'])
-    open(os.path.join(DIST,f),'w',encoding='utf-8').write(render(meta,body,'' if f=='index.html' else f,LD.get(f)))
+    _html=render(meta,body,'' if f=='index.html' else f,LD.get(f))
+    if f=='tiktok-callback.html': _html=_html.replace('</head>','  <meta name="robots" content="noindex, nofollow">\n</head>',1)   # return page, not for search engines
+    open(os.path.join(DIST,f),'w',encoding='utf-8').write(_html)
 
 # ---- template for the static devotion pages ----
 # The live server writes one real HTML page per published devotion at /devotion/<slug>.html
@@ -177,7 +179,7 @@ for folder in ENTRY:
 # sitemap.xml is an index: sitemap-pages.xml (built here) + sitemap-devotions.xml (written on the
 # server by api.php with the devotion pages, so it is current whenever Zarah publishes one).
 open(os.path.join(DIST,'robots.txt'),'w').write("User-agent: *\nDisallow: /memoryverse/\nDisallow: /goldnugget/\nDisallow: /source/\nAllow: /\nSitemap: %s/sitemap.xml\n"%SITE_URL)
-pages=[f for f in sorted(os.listdir(DIST)) if f.endswith('.html') and f not in ('404.html','devotion.html','certificate.html','seminar.html')]
+pages=[f for f in sorted(os.listdir(DIST)) if f.endswith('.html') and f not in ('404.html','devotion.html','certificate.html','seminar.html','tiktok-callback.html')]
 urls=[SITE_URL+'/']+[SITE_URL+'/'+f for f in pages if f!='index.html']+[SITE_URL+'/seminar.html?n=%d'%n for n in range(1,14)]
 today=datetime.date.today().isoformat()
 open(os.path.join(DIST,'sitemap-pages.xml'),'w',encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join('<url><loc>%s</loc><lastmod>%s</lastmod></url>\n'%(u,today) for u in urls)+'</urlset>\n')
