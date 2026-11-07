@@ -240,8 +240,11 @@ function ensureCourseTable(mysqli $db): void {
     updated_at DATETIME NOT NULL,
     last_seen DATETIME NOT NULL,
     reset_at VARCHAR(40) NOT NULL DEFAULT "",
+    unsubscribed TINYINT(1) NOT NULL DEFAULT 0,
     UNIQUE KEY email (email)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+  $c = $db->query('SHOW COLUMNS FROM ' . T_COURSE . " LIKE 'unsubscribed'");
+  if ($c && $c->num_rows === 0) $db->query('ALTER TABLE ' . T_COURSE . ' ADD COLUMN unsubscribed TINYINT(1) NOT NULL DEFAULT 0');
 }
 // Drop anything recorded before the learner last pressed "Start over" (ISO timestamps compare as strings)
 function courseAfterReset(array $p, string $resetAt): array {
@@ -591,15 +594,17 @@ switch ($action) {
     out(['success' => true, 'email' => $email, 'name' => $name, 'progress' => $merged, 'reset_at' => $resetAt]);
   }
   case 'course_list': {
-    // KJ's list of learners (hidden-URL page, same as the entry pages) — needs the list key
-    if (!hash_equals(COURSE_LIST_KEY, (string)$q('key', ''))) fail('Not allowed', 403);
+    // KJ's list of learners — needs COURSE_KEY from ephod-config.local.php
+    if (COURSE_KEY === '') fail('COURSE_KEY is not set in ephod-config.local.php', 403);
+    if (!hash_equals(COURSE_KEY, (string)$q('key', ''))) fail('Wrong key', 403);
     ensureCourseTable($db);
-    $r = $db->query('SELECT email, name, site, done_count, completed_at, created_at, updated_at, last_seen FROM ' . T_COURSE . ' ORDER BY last_seen DESC');
-    $rows = []; while ($x = $r->fetch_assoc()) $rows[] = $x;
+    $db->query('CREATE TABLE IF NOT EXISTS course_mail_log (id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, email VARCHAR(190) NOT NULL, event VARCHAR(60) NOT NULL, sent_at DATETIME NOT NULL, status VARCHAR(200) NOT NULL DEFAULT "", UNIQUE KEY ev (email, event)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+    $r = $db->query('SELECT c.email, c.name, c.site, c.done_count, c.completed_at, c.created_at, c.updated_at, c.last_seen, c.unsubscribed, (SELECT CONCAT(event, " ", sent_at) FROM course_mail_log l WHERE l.email = c.email AND l.status = "sent" ORDER BY sent_at DESC LIMIT 1) AS last_mail FROM ' . T_COURSE . ' c ORDER BY c.last_seen DESC');
+    $rows = []; while ($x = $r->fetch_assoc()) { $x['unsubscribed'] = (int)$x['unsubscribed']; $x['done_count'] = (int)$x['done_count']; $rows[] = $x; }
     if ((string)$q('format', '') === 'csv') {
       header('Content-Type: text/csv; charset=utf-8'); header('Content-Disposition: attachment; filename="ephod-course-learners.csv"');
-      $f = fopen('php://output', 'w'); fputcsv($f, ['Name', 'Email', 'Site', 'Seminars done', 'Completed', 'Started', 'Last activity', 'Last seen']);
-      foreach ($rows as $x) fputcsv($f, [$x['name'], $x['email'], $x['site'], $x['done_count'], $x['completed_at'] ?? '', $x['created_at'], $x['updated_at'], $x['last_seen']]);
+      $f = fopen('php://output', 'w'); fputcsv($f, ['Name', 'Email', 'Site', 'Seminars done', 'Completed', 'Started', 'Last activity', 'Last seen', 'Unsubscribed', 'Last email']);
+      foreach ($rows as $x) fputcsv($f, [$x['name'], $x['email'], $x['site'], $x['done_count'], $x['completed_at'] ?? '', $x['created_at'], $x['updated_at'], $x['last_seen'], $x['unsubscribed'] ? 'yes' : '', $x['last_mail'] ?? '']);
       exit;
     }
     out(['success' => true, 'learners' => $rows]);
