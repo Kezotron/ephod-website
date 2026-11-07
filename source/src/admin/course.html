@@ -23,7 +23,7 @@
 <div class="admin-wrap">
   <div class="admin-head">
     <h1>Seminar learners</h1>
-    <nav><a href="../seminars.html">View the course</a><a href="#" id="csv">Download CSV</a><a href="#" id="mailplan">Today's emails</a><a href="#" id="mailpreview">Send previews to reviewers</a><a href="#" id="keychange">Change key</a></nav>
+    <nav><a href="../seminars.html">View the course</a><a href="#" id="csv">Download CSV</a><a href="#" id="mailplan">Today's emails</a><a href="#" id="mailpreview">Send today’s emails to reviewers</a><a href="#" id="mailsample">Send all 8 messages to reviewers</a><a href="#" id="keychange">Change key</a></nav>
   </div>
   <p class="muted">Everyone who has saved their progress with an email on ephodlifestyle.com or ephod4png.com, most recent activity first. Progress is shared between the two sites.</p>
   <div class="stats" id="stats"></div>
@@ -45,6 +45,14 @@
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmt = (d) => { if (!d) return ""; const t = new Date(d.replace(" ", "T") + "Z"); return isNaN(t) ? d : t.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); };
   document.getElementById("csv").href = "api.php?action=course_list&format=csv&key=" + encodeURIComponent(KEY);
+  document.getElementById("mailsample").addEventListener("click", (e) => {
+    e.preventDefault(); const panel = document.getElementById("mailpanel"), tb = document.querySelector("#mailtable tbody"); panel.hidden = false; tb.innerHTML = `<tr><td colspan="4" class="muted">Sending all eight messages to the reviewers…</td></tr>`;
+    fetch("course-mail.php?preview=1&sample=1&key=" + encodeURIComponent(KEY)).then((r) => r.json()).then((j) => {
+      if (!j.success) { tb.innerHTML = `<tr><td colspan="4">${esc(j.error || "Could not run")}</td></tr>`; return; }
+      document.getElementById("mailmode").textContent = `All eight messages, filled in for a made-up learner, were sent to the reviewers (COURSE_MAIL_PREVIEW_TO). From: ${j.from}. Brevo key: ${j.brevo_key}.`;
+      tb.innerHTML = j.results.map((x) => `<tr><td>${esc(x.name || "")}<br><span class="muted">${esc(x.email)}</span></td><td>${esc(x.event)}</td><td>${esc(x.subject || "")}</td><td>${esc(x.status)}</td></tr>`).join("");
+    }).catch((err) => { tb.innerHTML = `<tr><td colspan="4">Could not run: ${esc(err.message)}</td></tr>`; });
+  });
   document.getElementById("mailpreview").addEventListener("click", (e) => {
     e.preventDefault(); const panel = document.getElementById("mailpanel"), tb = document.querySelector("#mailtable tbody"); panel.hidden = false; tb.innerHTML = `<tr><td colspan="4" class="muted">Sending preview copies to the reviewers…</td></tr>`;
     fetch("course-mail.php?preview=1&key=" + encodeURIComponent(KEY)).then((r) => r.json()).then((j) => {

@@ -20,6 +20,7 @@
 //   Dry run (nothing sent, just the plan):  add &dry=1   /  php course-mail.php --dry
 //   Preview run: add &preview=1 / --preview — every email that is due today is sent to the
 //     reviewers in COURSE_MAIL_PREVIEW_TO (not to the learner), marked "[Preview — would go to …]".
+//   Sample run: &preview=1&sample=1 — all eight messages once, for a made-up learner, to the reviewers.
 //   Until COURSE_MAIL_LIVE is true in ephod-config.local.php, EVERY run is a dry run.
 //
 // Messages: course-mail-templates.json (next to this file).
@@ -79,12 +80,20 @@ while ($x = $r->fetch_assoc()) $learners[] = $x;
 $sent = []; $r = $db->query('SELECT email, event, sent_at, status FROM course_mail_log');
 while ($x = $r->fetch_assoc()) $sent[$x['email']][$x['event']] = $x;
 
+// ---------- sample run: every message once, with a made-up learner, to the reviewers ----------
+if ($preview && ($cli ? in_array('--sample', $argv ?? [], true) : $q('sample') === '1')) {
+  $learners = []; $sent = [];
+  foreach (['welcome' => 0, 'seminar1' => 1, 'defined' => 5, 'noun' => 9, 'complete' => 13, 'nudge7' => 3, 'nudge21' => 6, 'nudge60' => 2] as $ev => $dc) {
+    $learners[] = ['email' => 'sample@example.com', 'name' => 'Sample Learner', 'done_count' => $dc, 'completed_at' => null, 'created_at' => gmdate('Y-m-d H:i:s'), 'updated_at' => gmdate('Y-m-d H:i:s'), 'last_seen' => gmdate('Y-m-d H:i:s'), 'unsubscribed' => 0, '_force' => $ev];
+  }
+}
 // ---------- decide what each learner is due ----------
 $now = time();
 $days = fn(string $dt) => (int)floor(($now - strtotime($dt . ' UTC')) / 86400);
 $plan = []; $stale = []; $skipped = ['unsubscribed' => 0, 'nothing_due' => 0, 'recent_mail' => 0, 'stale_milestone' => 0];
 foreach ($learners as $L) {
   if ((int)$L['unsubscribed']) { $skipped['unsubscribed']++; continue; }
+  if (isset($L['_force'])) { $plan[] = ['learner' => $L, 'event' => $L['_force'], 'template' => $L['_force']]; continue; }
   $done = (int)$L['done_count']; $log = $sent[$L['email']] ?? [];
   $has = fn(string $ev) => isset($log[$ev]) && in_array($log[$ev]['status'], ['sent', 'stale'], true);
   $lastMailDays = 999; foreach ($log as $ev => $x) if ($x['status'] === 'sent') $lastMailDays = min($lastMailDays, $days($x['sent_at']));
@@ -163,7 +172,7 @@ foreach ($plan as $p) {
   if (BREVO_API_KEY === '') { $results[] = ['email' => $L['email'], 'event' => $p['event'], 'status' => 'BREVO_API_KEY not set']; continue; }
   if ($preview) {
     if (!$reviewers) { $results[] = ['email' => $L['email'], 'event' => $p['event'], 'status' => 'COURSE_MAIL_PREVIEW_TO has no valid address']; continue; }
-    $note = "[Preview \u2014 this email would go to " . ($L['name'] !== '' ? $L['name'] . ' <' . $L['email'] . '>' : $L['email']) . "]";
+    $note = "[Preview — this email would go to " . ($L['name'] !== '' ? $L['name'] . ' <' . $L['email'] . '>' : $L['email']) . "]";
     $pm = $msg; $pm['subject'] = '[Preview] ' . $subject; $pm['textContent'] = $note . "\n\n" . $text; $pm['htmlContent'] = htmlBody($note . "\n\n" . $text, $subject);
     $pm['to'] = array_map(fn($e) => ['email' => $e], $reviewers); $pm['tags'] = ['ephod-seminars', 'preview'];
     [$ok, $status] = brevoSend($pm);
