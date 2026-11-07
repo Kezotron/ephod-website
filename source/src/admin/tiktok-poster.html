@@ -198,7 +198,11 @@
           if (s.status === "SEND_TO_USER_INBOX") { say("Sent to the TikTok app inbox for you to finish there.", "ok"); break; }
         }
         await renderList();
-      } catch (err) { g(".err-note").textContent = err.message; say(err.message, "err"); btn.disabled = false; }
+      } catch (err) {
+        let t = err.message;
+        if (/unaudited_client_can_only_post_to_private_accounts/.test(t)) t = "Until TikTok approves EPHOD Poster, it can only post to a private account. In the TikTok app: Profile → ☰ → Settings and privacy → Privacy → turn on Private account. Then choose “Only me” here and press Post again.";
+        g(".err-note").textContent = t; say(t, "err"); btn.disabled = false;
+      }
     });
   }
   start();

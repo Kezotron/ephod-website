@@ -137,7 +137,7 @@ switch ($action) {
         $max = (int)($cr['max_video_post_duration_sec'] ?? 0); $dur = mp4_seconds($file);
         if ($max && $dur && $dur > $max + 0.5) fail("The video is {$dur}s; this account can post at most {$max}s");
         if ($size > 64 * 1024 * 1024) fail('Video is larger than 64 MB');
-        $post = ['title' => $title, 'privacy_level' => $privacy, 'video_cover_timestamp_ms' => 1000,
+        $post = ['title' => $title, 'privacy_level' => $privacy, 'video_cover_timestamp_ms' => $dur ? (int)round(min(5000, $dur * 0.2 * 1000)) : 4000,   // a frame where the verse is already on screen
                  'disable_comment' => ($_POST['allow_comment'] ?? '') !== '1' || !empty($cr['comment_disabled']),
                  'disable_duet' => ($_POST['allow_duet'] ?? '') !== '1' || !empty($cr['duet_disabled']),
                  'disable_stitch' => ($_POST['allow_stitch'] ?? '') !== '1' || !empty($cr['stitch_disabled'])];
