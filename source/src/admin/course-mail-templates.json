@@ -1,0 +1,43 @@
+{
+  "_about": "Emails sent automatically to people taking the EPHOD Seminars online. Edit the subject and text freely. Placeholders: {first} first name (or 'friend'), {name} full name, {done} seminars completed, {next_n} and {next_title} the next seminar, {next_url} its link, {course_url} the course page, {certificate_url}, {unsubscribe_url} (added automatically at the end of every email if you leave it out). Blank lines separate paragraphs.",
+
+  "welcome": {
+    "subject": "Welcome to the EPHOD Seminars",
+    "text": "Dear {first},\n\nThank you for joining the EPHOD Church Strengthening Seminars. Your progress is now saved to this email address, so you can watch on any computer or phone and carry on where you left off.\n\nThe seminars are taken in order. Print the handout for each one, watch the video, and fill in the blanks as the answers appear. A few questions at the end of each seminar check that the main points stuck.\n\nStart here: {next_url}\n\nMay the Lord bless you as you grow as a disciple and a disciple maker.\n\nHerb and Karen Johnson\nEPHOD Discipleship"
+  },
+
+  "seminar1": {
+    "subject": "You have finished Seminar 1 — Purpose",
+    "text": "Dear {first},\n\nWell done. You have completed Seminar 1, Purpose: Every Person, Household, Oikos, Discipled. That is the heart of everything that follows.\n\nSeminar 2, Pattern, is open for you now: {next_url}\n\nKeep going — the seminars build on each other, and the best way to get the most from them is to watch one, fill in the handout, and talk it through with someone.\n\nHerb and Karen Johnson\nEPHOD Discipleship"
+  },
+
+  "defined": {
+    "subject": "EPHOD Defined complete — five seminars done",
+    "text": "Dear {first},\n\nYou have completed all five seminars of EPHOD Defined — Purpose, Pattern, Plan, Process and Power. You now know what EPHOD is, where it comes from in God's Word, and the power behind it.\n\nNext is EPHOD the Noun: four seminars on being a disciple — Magnify, Membership, Maturity and Ministry. Begin with Seminar 6, Magnify: {next_url}\n\nWe are praying for you.\n\nHerb and Karen Johnson\nEPHOD Discipleship"
+  },
+
+  "noun": {
+    "subject": "EPHOD the Noun complete — nine seminars done",
+    "text": "Dear {first},\n\nNine seminars complete. You have finished EPHOD the Noun — Magnify, Membership, Maturity and Ministry — the four commitments that make a disciple.\n\nOnly the Verb remains: Monitor, Management, Mission and Mabuhay — becoming a disciple maker. Begin with Seminar 10, Monitor: {next_url}\n\n\"Not how we start, but how we finish\" — you are nearly there.\n\nHerb and Karen Johnson\nEPHOD Discipleship"
+  },
+
+  "complete": {
+    "subject": "You have completed the EPHOD Seminars",
+    "text": "Dear {first},\n\nCongratulations! You have completed all thirteen EPHOD Church Strengthening Seminars. Your certificate is ready to print here: {certificate_url}\n\nNow the real work begins: take someone else around the bases. Choose your few, print the handouts, and start with Seminar 1 together. That is how disciples are multiplied.\n\nWe would love to hear how the seminars have helped you and your church — just reply to this email.\n\nWith joy,\n\nHerb and Karen Johnson\nEPHOD Discipleship"
+  },
+
+  "nudge7": {
+    "subject": "Your next seminar is waiting",
+    "text": "Dear {first},\n\nIt has been a week since you were last in the EPHOD Seminars. You have completed {done} of 13, and Seminar {next_n}, {next_title}, is open and waiting for you: {next_url}\n\nA single seminar takes less than an hour. Print the handout, press play, and you are back on track.\n\nHerb and Karen Johnson\nEPHOD Discipleship"
+  },
+
+  "nudge21": {
+    "subject": "Shall we pick up where you left off?",
+    "text": "Dear {first},\n\nWe noticed it has been a few weeks since you worked on the EPHOD Seminars. Life gets busy — we understand. Your progress is safe: {done} of 13 complete, and Seminar {next_n}, {next_title}, is ready whenever you are.\n\nContinue here: {next_url}\n\nIf something is in the way, reply and tell us — we would be glad to pray with you.\n\nHerb and Karen Johnson\nEPHOD Discipleship"
+  },
+
+  "nudge60": {
+    "subject": "The door is still open",
+    "text": "Dear {first},\n\nIt has been a while since you were last in the EPHOD Seminars. We will not keep writing, but we wanted you to know the door is still open: {done} of 13 complete, and Seminar {next_n}, {next_title}, is waiting for you at {next_url}\n\n\"If you continue in my word, then are you my disciples indeed\" (John 8:31).\n\nHerb and Karen Johnson\nEPHOD Discipleship"
+  }
+}

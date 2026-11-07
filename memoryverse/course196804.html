@@ -23,28 +23,52 @@
 <div class="admin-wrap">
   <div class="admin-head">
     <h1>Seminar learners</h1>
-    <nav><a href="../seminars.html">View the course</a><a href="#" id="csv">Download CSV</a></nav>
+    <nav><a href="../seminars.html">View the course</a><a href="#" id="csv">Download CSV</a><a href="#" id="mailplan">Today's emails</a><a href="#" id="mailpreview">Send previews to reviewers</a><a href="#" id="keychange">Change key</a></nav>
   </div>
   <p class="muted">Everyone who has saved their progress with an email on ephodlifestyle.com or ephod4png.com, most recent activity first. Progress is shared between the two sites.</p>
   <div class="stats" id="stats"></div>
   <div class="panel">
-    <table class="learners" id="table"><thead><tr><th>Name</th><th>Email</th><th>Progress</th><th>Completed</th><th>Started</th><th>Last activity</th><th>Site</th></tr></thead><tbody><tr><td colspan="7" class="muted">Loading…</td></tr></tbody></table>
+    <table class="learners" id="table"><thead><tr><th>Name</th><th>Email</th><th>Progress</th><th>Completed</th><th>Started</th><th>Last activity</th><th>Last email</th><th>Site</th></tr></thead><tbody><tr><td colspan="8" class="muted">Loading…</td></tr></tbody></table>
+  </div>
+  <div class="panel" id="mailpanel" hidden>
+    <h2 style="margin-top:0">Today's emails</h2>
+    <p class="muted" id="mailmode"></p>
+    <table class="learners" id="mailtable"><thead><tr><th>To</th><th>Message</th><th>Subject</th><th>Status</th></tr></thead><tbody></tbody></table>
   </div>
 </div>
 <script>
 (function () {
-  const KEY = "196804";
+  const KEY_STORE = "ephod-course-key";
+  let KEY = ""; try { KEY = localStorage.getItem(KEY_STORE) || ""; } catch (e) {}
+  if (!KEY) { KEY = (prompt("Enter the course key (COURSE_KEY from ephod-config.local.php)") || "").trim(); try { localStorage.setItem(KEY_STORE, KEY); } catch (e) {} }
+  document.getElementById("keychange").addEventListener("click", (e) => { e.preventDefault(); try { localStorage.removeItem(KEY_STORE); } catch (x) {} location.reload(); });
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmt = (d) => { if (!d) return ""; const t = new Date(d.replace(" ", "T") + "Z"); return isNaN(t) ? d : t.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); };
-  document.getElementById("csv").href = "api.php?action=course_list&format=csv&key=" + KEY;
-  fetch("api.php?action=course_list&key=" + KEY).then((r) => r.json()).then((j) => {
+  document.getElementById("csv").href = "api.php?action=course_list&format=csv&key=" + encodeURIComponent(KEY);
+  document.getElementById("mailpreview").addEventListener("click", (e) => {
+    e.preventDefault(); const panel = document.getElementById("mailpanel"), tb = document.querySelector("#mailtable tbody"); panel.hidden = false; tb.innerHTML = `<tr><td colspan="4" class="muted">Sending preview copies to the reviewers…</td></tr>`;
+    fetch("course-mail.php?preview=1&key=" + encodeURIComponent(KEY)).then((r) => r.json()).then((j) => {
+      if (!j.success) { tb.innerHTML = `<tr><td colspan="4">${esc(j.error || "Could not run")}</td></tr>`; return; }
+      document.getElementById("mailmode").textContent = `Mode: ${j.mode}. From: ${j.from}. Brevo key: ${j.brevo_key}. ${j.due} email(s) due today were sent as previews to the reviewers (COURSE_MAIL_PREVIEW_TO), not to the learners.`;
+      tb.innerHTML = j.results.length ? j.results.map((x) => `<tr><td>${esc(x.name || "")}<br><span class="muted">${esc(x.email)}</span></td><td>${esc(x.event)}</td><td>${esc(x.subject || "")}</td><td>${esc(x.status)}</td></tr>`).join("") : `<tr><td colspan="4" class="muted">No one is due an email today, so nothing to preview.</td></tr>`;
+    }).catch((err) => { tb.innerHTML = `<tr><td colspan="4">Could not run: ${esc(err.message)}</td></tr>`; });
+  });
+  document.getElementById("mailplan").addEventListener("click", (e) => {
+    e.preventDefault(); const panel = document.getElementById("mailpanel"), tb = document.querySelector("#mailtable tbody"); panel.hidden = false; tb.innerHTML = `<tr><td colspan="4" class="muted">Working out who is due an email…</td></tr>`;
+    fetch("course-mail.php?dry=1&key=" + encodeURIComponent(KEY)).then((r) => r.json()).then((j) => {
+      if (!j.success) { tb.innerHTML = `<tr><td colspan="4">${esc(j.error || "Could not run")}</td></tr>`; return; }
+      document.getElementById("mailmode").textContent = `Mode: ${j.mode}. From: ${j.from}. Brevo key: ${j.brevo_key}. ${j.learners} learners, ${j.due} due today; skipped — nothing due ${j.skipped.nothing_due}, emailed in the last 3 days ${j.skipped.recent_mail}, unsubscribed ${j.skipped.unsubscribed}. Nothing is sent from this page; the daily job sends when COURSE_MAIL_LIVE is true.`;
+      tb.innerHTML = j.results.length ? j.results.map((x) => `<tr><td>${esc(x.name || "")}<br><span class="muted">${esc(x.email)}</span></td><td>${esc(x.event)}</td><td>${esc(x.subject || "")}<br><span class="muted">${esc(x.preview || "")}</span></td><td>${esc(x.status)}</td></tr>`).join("") : `<tr><td colspan="4" class="muted">No one is due an email today.</td></tr>`;
+    }).catch((err) => { tb.innerHTML = `<tr><td colspan="4">Could not run: ${esc(err.message)}</td></tr>`; });
+  });
+  fetch("api.php?action=course_list&key=" + encodeURIComponent(KEY)).then((r) => r.json()).then((j) => {
     const tb = document.querySelector("#table tbody");
-    if (!j.success) { tb.innerHTML = `<tr><td colspan="7">${esc(j.error || "Could not load")}</td></tr>`; return; }
+    if (!j.success) { tb.innerHTML = `<tr><td colspan="8">${esc(j.error || "Could not load")}${/key/i.test(j.error || "") ? ' — <a href="#" onclick="localStorage.removeItem(\'ephod-course-key\');location.reload();return false">try another key</a>' : ""}</td></tr>`; return; }
     const L = j.learners || [];
     const finished = L.filter((x) => x.completed_at).length;
     const active = L.filter((x) => (Date.now() - new Date(x.last_seen.replace(" ", "T") + "Z")) < 30 * 864e5).length;
     document.getElementById("stats").innerHTML = `<div><strong>${L.length}</strong>learners</div><div><strong>${active}</strong>active in the last 30 days</div><div><strong>${finished}</strong>completed all 13</div>`;
-    if (!L.length) { tb.innerHTML = `<tr><td colspan="7" class="muted">No one has saved progress yet.</td></tr>`; return; }
+    if (!L.length) { tb.innerHTML = `<tr><td colspan="8" class="muted">No one has saved progress yet.</td></tr>`; return; }
     tb.innerHTML = L.map((x) => `<tr>
       <td>${esc(x.name)}</td>
       <td><a href="mailto:${esc(x.email)}">${esc(x.email)}</a></td>
@@ -52,9 +76,10 @@
       <td>${x.completed_at ? `<span class="finished">${esc(fmt(x.completed_at))}</span>` : ""}</td>
       <td>${esc(fmt(x.created_at))}</td>
       <td>${esc(fmt(x.updated_at))}</td>
+      <td>${x.unsubscribed ? '<span class="muted">unsubscribed</span>' : esc((x.last_mail || "").replace(/:\d{4}-\d{2}-\d{2}/, "").replace(/ \d{2}:\d{2}:\d{2}$/, ""))}</td>
       <td>${x.site === "png" ? "PNG" : "PH"}</td>
     </tr>`).join("");
-  }).catch((e) => { document.querySelector("#table tbody").innerHTML = `<tr><td colspan="7">Could not load: ${esc(e.message)}</td></tr>`; });
+  }).catch((e) => { document.querySelector("#table tbody").innerHTML = `<tr><td colspan="8">Could not load: ${esc(e.message)}</td></tr>`; });
 })();
 </script>
 </body>

@@ -27,7 +27,20 @@ define('T_MEMORY', 'memory_verse');
 define('T_NUGGET', 'goldennugget');
 define('T_DEVOTIONS', 'devotions');
 define('T_COURSE', 'course_progress');   // EPHOD Seminars online course: progress by email
-if (!defined('COURSE_LIST_KEY')) define('COURSE_LIST_KEY', '196804');   // key for the learners list (override in ephod-config.local.php)
+// EPHOD Seminars course — set these in ephod-config.local.php (never here; this file is public on GitHub):
+//   define('COURSE_KEY', 'a-password-you-choose');   // opens the learners page and lets the cron job run the mail
+//   define('BREVO_API_KEY', 'xkeysib-…');            // Brevo → SMTP & API → API keys
+//   define('COURSE_MAIL_LIVE', true);                // until this is true the mail job only reports what it WOULD send
+//   define('MAIL_FROM_EMAIL', 'seminars@ephodlifestyle.com');  define('MAIL_FROM_NAME', 'Herb and Karen Johnson');  define('MAIL_REPLY_TO', 'kevin@ephodlifestyle.com');
+//   define('COURSE_MAIL_PREVIEW_TO', 'kevin@…, herb@…, karen@…');   // who receives preview copies
+if (!defined('COURSE_KEY')) define('COURSE_KEY', '');
+if (!defined('BREVO_API_KEY')) define('BREVO_API_KEY', '');
+if (!defined('BREVO_API_URL')) define('BREVO_API_URL', 'https://api.brevo.com/v3/smtp/email');
+if (!defined('COURSE_MAIL_LIVE')) define('COURSE_MAIL_LIVE', false);
+if (!defined('MAIL_FROM_EMAIL')) define('MAIL_FROM_EMAIL', 'seminars@ephodlifestyle.com');
+if (!defined('MAIL_FROM_NAME')) define('MAIL_FROM_NAME', 'Herb and Karen Johnson');
+if (!defined('MAIL_REPLY_TO')) define('MAIL_REPLY_TO', 'kevin@ephodlifestyle.com');
+if (!defined('COURSE_MAIL_PREVIEW_TO')) define('COURSE_MAIL_PREVIEW_TO', MAIL_REPLY_TO);   // comma-separated reviewers who get preview copies (course-mail.php?preview=1)
 define('T_BOOKS', 'biblebooks');
 define('T_VERSIONS', 'bible_version_key');
 
