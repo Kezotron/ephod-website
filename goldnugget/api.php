@@ -603,8 +603,8 @@ switch ($action) {
     $rows = []; while ($x = $r->fetch_assoc()) { $x['unsubscribed'] = (int)$x['unsubscribed']; $x['done_count'] = (int)$x['done_count']; $rows[] = $x; }
     if ((string)$q('format', '') === 'csv') {
       header('Content-Type: text/csv; charset=utf-8'); header('Content-Disposition: attachment; filename="ephod-course-learners.csv"');
-      $f = fopen('php://output', 'w'); fputcsv($f, ['Name', 'Email', 'Site', 'Seminars done', 'Completed', 'Started', 'Last activity', 'Last seen', 'Unsubscribed', 'Last email']);
-      foreach ($rows as $x) fputcsv($f, [$x['name'], $x['email'], $x['site'], $x['done_count'], $x['completed_at'] ?? '', $x['created_at'], $x['updated_at'], $x['last_seen'], $x['unsubscribed'] ? 'yes' : '', $x['last_mail'] ?? '']);
+      $f = fopen('php://output', 'w'); fputcsv($f, ['Name', 'Email', 'Website', 'Seminars done', 'Completed', 'Started', 'Last activity', 'Last seen', 'Unsubscribed', 'Last email']);
+      foreach ($rows as $x) fputcsv($f, [$x['name'], $x['email'], $x['site'] === 'png' ? 'ephod4png.com' : 'ephodlifestyle.com', $x['done_count'], $x['completed_at'] ?? '', $x['created_at'], $x['updated_at'], $x['last_seen'], $x['unsubscribed'] ? 'yes' : '', $x['last_mail'] ?? '']);
       exit;
     }
     out(['success' => true, 'learners' => $rows]);

@@ -28,7 +28,7 @@
   <p class="muted">Everyone who has saved their progress with an email on ephodlifestyle.com or ephod4png.com, most recent activity first. Progress is shared between the two sites.</p>
   <div class="stats" id="stats"></div>
   <div class="panel">
-    <table class="learners" id="table"><thead><tr><th>Name</th><th>Email</th><th>Progress</th><th>Completed</th><th>Started</th><th>Last activity</th><th>Last email</th><th>Site</th></tr></thead><tbody><tr><td colspan="8" class="muted">Loading…</td></tr></tbody></table>
+    <table class="learners" id="table"><thead><tr><th>Name</th><th>Email</th><th>Progress</th><th>Completed</th><th>Started</th><th>Last activity</th><th>Last email</th><th>Website</th></tr></thead><tbody><tr><td colspan="8" class="muted">Loading…</td></tr></tbody></table>
   </div>
   <div class="panel" id="mailpanel" hidden>
     <h2 style="margin-top:0">Today's emails</h2>
@@ -85,7 +85,7 @@
       <td>${esc(fmt(x.created_at))}</td>
       <td>${esc(fmt(x.updated_at))}</td>
       <td>${x.unsubscribed ? '<span class="muted">unsubscribed</span>' : esc((x.last_mail || "").replace(/:\d{4}-\d{2}-\d{2}/, "").replace(/ \d{2}:\d{2}:\d{2}$/, ""))}</td>
-      <td>${x.site === "png" ? "PNG" : "PH"}</td>
+      <td>${x.site === "png" ? "ephod4png.com" : "ephodlifestyle.com"}</td>
     </tr>`).join("");
   }).catch((e) => { document.querySelector("#table tbody").innerHTML = `<tr><td colspan="8">Could not load: ${esc(e.message)}</td></tr>`; });
 })();
