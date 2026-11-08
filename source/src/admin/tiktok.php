@@ -105,6 +105,7 @@ switch ($action) {
         save_token($t);
         out(['success' => true, 'account' => $t['account']]);
     }
+    case 'reset_posts': need_post(); @unlink(TT_DIR . '/posts.json'); out(['success' => true]);
     case 'disconnect': need_post(); @unlink(TT_DIR . '/token.json'); out(['success' => true]);
     case 'creator': {
         $r = tt_json('/v2/post/publish/creator_info/query/', [], access_token());

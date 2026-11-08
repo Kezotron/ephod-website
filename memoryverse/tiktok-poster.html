@@ -36,7 +36,7 @@
 <div class="admin-wrap">
   <div class="admin-head">
     <h1>EPHOD Poster — TikTok</h1>
-    <nav><a href="#" id="disconnect" hidden>Disconnect TikTok</a><a href="#" id="keychange">Change key</a></nav>
+    <nav><a href="#" id="disconnect" hidden>Disconnect TikTok</a><a href="#" id="resetsent" hidden>Reset sent marks</a><a href="#" id="keychange">Change key</a></nav>
   </div>
   <p class="muted">Each day's EPHOD verse videos arrive here. Nothing is posted to TikTok until you review a video and press Post.</p>
   <div id="msg" class="status" role="status" aria-live="polite"></div>
@@ -76,6 +76,7 @@
   }
 
   $("#keychange").addEventListener("click", (e) => { e.preventDefault(); try { localStorage.removeItem(KEY_STORE); } catch (x) {} location.href = location.pathname; });
+  $("#resetsent").addEventListener("click", async (e) => { e.preventDefault(); if (!confirm("Clear the Sent marks so every video can be sent again? Nothing is deleted from TikTok.")) return; try { await api("reset_posts", { form: {} }); location.href = location.pathname; } catch (err) { say(err.message, "err"); } });
   $("#disconnect").addEventListener("click", async (e) => { e.preventDefault(); if (!confirm("Disconnect EPHOD's TikTok account from EPHOD Poster?")) return; try { await api("disconnect", { form: {} }); location.href = location.pathname; } catch (err) { say(err.message, "err"); } });
   $("#connectBtn").addEventListener("click", async () => { try { const j = await api("login"); location.href = j.url; } catch (err) { say(err.message, "err"); } });
 
@@ -91,7 +92,7 @@
       }
       const s = await api("status");
       if (!s.connected) { $("#connect").hidden = false; say(s.configured ? "" : "The TikTok client secret has not been added to the server settings yet.", s.configured ? "" : "err"); return; }
-      $("#disconnect").hidden = false;
+      $("#disconnect").hidden = false; $("#resetsent").hidden = false;
       say("Asking TikTok about the account…");
       creator = (await api("creator")).creator;
       showAccount(s.account);
