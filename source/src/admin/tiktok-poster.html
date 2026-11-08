@@ -126,7 +126,7 @@
         <div><video controls playsinline preload="metadata" src="tiktok.php?action=video&id=${encodeURIComponent(id)}&key=${encodeURIComponent(KEY)}"></video></div>
         <div>
           <h2 style="margin:0">${esc(LANG[m.lang] || m.lang)} · ${esc(m.reference)}</h2>
-          <p class="meta">${esc(m.date)} · EPHOD ${esc(m.page === "ph" ? "Lifestyle" : "PNG")} ${posted ? ` · <span class="done-tag">Sent to TikTok ${esc((posted.at || "").slice(0, 16).replace("T", " "))} UTC</span>` : ""}</p>
+          <p class="meta">${esc(m.date)} · EPHOD ${esc(m.page === "ph" ? "Lifestyle" : "PNG")} ${posted ? ` · <span class="done-tag">${posted.privacy === "DRAFT" ? "Sent to TikTok drafts" : "Sent to TikTok"} ${esc((posted.at || "").slice(0, 16).replace("T", " "))} UTC</span>` : ""}</p>
           <div class="form" ${posted ? "hidden" : ""}>
             <label class="block" for="cap-${esc(id)}">Caption</label>
             <textarea id="cap-${esc(id)}" maxlength="2200">${esc(m.caption)}</textarea>
@@ -156,6 +156,7 @@
             <p class="decl"></p>
             <p class="note err-note" style="color:var(--accent)"></p>
             <button class="btn btn-primary postbtn" type="button" disabled>Post to TikTok</button>
+            <button class="btn draftbtn" type="button" title="Sends the video to your TikTok drafts so you can finish and post it in the TikTok app">Send to TikTok drafts instead</button>
             <p class="note after" hidden>TikTok is processing the video. It can take a few minutes before it shows on the profile.</p>
           </div>
         </div>
@@ -183,6 +184,19 @@
     cap.addEventListener("input", () => { g(".n").textContent = cap.value.length; });
     [priv, comm, org, br].forEach((el) => el.addEventListener("change", refresh));
     refresh();
+    g(".draftbtn").addEventListener("click", async () => {
+      const d = g(".draftbtn"); d.disabled = true; btn.disabled = true; g(".err-note").textContent = ""; say("Sending the video to your TikTok drafts…");
+      try {
+        const j = await api("draft", { form: { id: m.id } });
+        for (let i = 0; i < 30; i++) {
+          await new Promise((r) => setTimeout(r, 4000));
+          const s = await api("publish_status", { query: "publish_id=" + encodeURIComponent(j.publish_id) });
+          if (s.status === "SEND_TO_USER_INBOX" || s.status === "PUBLISH_COMPLETE") { say("Sent to your TikTok drafts. Open the TikTok app, check your inbox notification or drafts, then finish and post it there.", "ok"); break; }
+          if (s.status === "FAILED") { say("TikTok could not take the draft: " + (s.fail_reason || "unknown reason"), "err"); break; }
+        }
+        await renderList();
+      } catch (err) { g(".err-note").textContent = err.message; say(err.message, "err"); d.disabled = false; refresh(); }
+    });
     btn.addEventListener("click", async () => {
       btn.disabled = true; g(".err-note").textContent = ""; say("Sending the video to TikTok…");
       try {

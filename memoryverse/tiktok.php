@@ -23,6 +23,7 @@
  *   list           GET   videos waiting / posted
  *   video          GET   streams one video for the preview player
  *   post           POST  sends one video to TikTok with the choices made on the page
+ *   draft          POST  sends one video to the account's TikTok drafts (inbox) to finish in the TikTok app
  *   publish_status GET   what TikTok says about a post in progress
  * Everything except inbox_put needs the admin key (header X-Key, or ?key= for the video player).
  */
@@ -37,7 +38,7 @@ if (!defined('TIKTOK_CLIENT_KEY') || !defined('TIKTOK_ADMIN_KEY')) { http_respon
 foreach (['TIKTOK_CLIENT_SECRET', 'TIKTOK_INBOX_KEY'] as $c) if (!defined($c)) define($c, '');
 if (!defined('TIKTOK_API_BASE')) define('TIKTOK_API_BASE', 'https://open.tiktokapis.com');
 if (!defined('TIKTOK_AUTH_URL')) define('TIKTOK_AUTH_URL', 'https://www.tiktok.com/v2/auth/authorize/');
-define('TT_SCOPES', 'user.info.basic,video.publish');   // video.upload (drafts) is not used: TikTok wants every requested scope shown in the demo
+define('TT_SCOPES', 'user.info.basic,video.upload,video.publish');   // upload = send to drafts, publish = direct post; the page uses both
 define('TT_DIR', $home . '/tiktok');
 $siteUrl = 'https://ephodlifestyle.com';
 $__sj = @json_decode(@file_get_contents(__DIR__ . '/site.json'), true);
@@ -146,12 +147,22 @@ switch ($action) {
         tt_check($init);
         $pid = $init['data']['publish_id'] ?? ''; $up = $init['data']['upload_url'] ?? '';
         if ($pid === '' || $up === '') fail('TikTok did not give an upload address');
-        $ch = curl_init($up); $fh = fopen($file, 'rb');
-        curl_setopt_array($ch, [CURLOPT_PUT => true, CURLOPT_INFILE => $fh, CURLOPT_INFILESIZE => $size, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 600,
-            CURLOPT_HTTPHEADER => ['Content-Type: video/mp4', 'Content-Length: ' . $size, 'Content-Range: bytes 0-' . ($size - 1) . '/' . $size]]);
-        $resp = curl_exec($ch); $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE); $err = curl_error($ch); fclose($fh);
-        if ($resp === false || $code < 200 || $code >= 300) fail("Uploading to TikTok failed (HTTP $code) $err " . substr((string)$resp, 0, 200), 502);
+        put_video($up, $file, $size);
         $log = posts_log(); $log[$id] = ['publish_id' => $pid, 'at' => gmdate('c'), 'privacy' => $privacy, 'title' => $title]; file_put_contents(TT_DIR . '/posts.json', json_encode($log));
+        out(['success' => true, 'publish_id' => $pid]);
+    }
+    case 'draft': {
+        need_post();
+        $id = (string)($_POST['id'] ?? ''); $file = TT_DIR . "/inbox/$id.mp4";
+        if (!preg_match('/^[0-9a-z-]{3,60}$/', $id) || !is_file($file)) fail('No such video');
+        $size = filesize($file); if ($size > 64 * 1024 * 1024) fail('Video is larger than 64 MB');
+        $tok = access_token();
+        $init = tt_json('/v2/post/publish/inbox/video/init/', ['source_info' => ['source' => 'FILE_UPLOAD', 'video_size' => $size, 'chunk_size' => $size, 'total_chunk_count' => 1]], $tok);
+        tt_check($init);
+        $pid = $init['data']['publish_id'] ?? ''; $up = $init['data']['upload_url'] ?? '';
+        if ($pid === '' || $up === '') fail('TikTok did not give an upload address');
+        put_video($up, $file, $size);
+        $log = posts_log(); $log[$id] = ['publish_id' => $pid, 'at' => gmdate('c'), 'privacy' => 'DRAFT', 'title' => '']; file_put_contents(TT_DIR . '/posts.json', json_encode($log));
         out(['success' => true, 'publish_id' => $pid]);
     }
     case 'publish_status': {
@@ -193,6 +204,14 @@ function access_token() {
     if (empty($r['access_token'])) fail('Could not renew the TikTok connection: ' . ($r['error_description'] ?? $r['error'] ?? json_encode($r)) . '. Press Connect TikTok again.', 409);
     $n = token_from($r); $n['account'] = $t['account'] ?? null; save_token($n);
     return $n['access_token'];
+}
+
+function put_video($up, $file, $size) {
+    $ch = curl_init($up); $fh = fopen($file, 'rb');
+    curl_setopt_array($ch, [CURLOPT_PUT => true, CURLOPT_INFILE => $fh, CURLOPT_INFILESIZE => $size, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 600,
+        CURLOPT_HTTPHEADER => ['Content-Type: video/mp4', 'Content-Length: ' . $size, 'Content-Range: bytes 0-' . ($size - 1) . '/' . $size]]);
+    $resp = curl_exec($ch); $code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE); $err = curl_error($ch); fclose($fh);
+    if ($resp === false || $code < 200 || $code >= 300) fail("Uploading to TikTok failed (HTTP $code) $err " . substr((string)$resp, 0, 200), 502);
 }
 
 function inbox_items() {
