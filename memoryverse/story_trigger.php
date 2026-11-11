@@ -26,7 +26,7 @@ define('SITE', rtrim($__site['url'] ?? 'https://ephod4png.com', '/'));
 // Per site: Facebook page key for the workflow, time zone, and story => earliest hour (local time)
 const SITES = [
     'ephod4png.com'      => ['page' => 'png', 'tz' => 'Pacific/Port_Moresby', 'windows' => ['tp' => 7, 'en' => 18]],
-    'ephodlifestyle.com' => ['page' => 'ph',  'tz' => 'Asia/Manila',          'windows' => ['tl' => 6, 'en' => 20]],
+    'ephodlifestyle.com' => ['page' => 'ph',  'tz' => 'Asia/Manila',          'windows' => ['tl' => 6, 'zh' => 12, 'en' => 18]],
 ];
 $__host = parse_url(SITE, PHP_URL_HOST);
 if (!isset(SITES[$__host])) fail("no story windows configured for $__host");
