@@ -606,3 +606,6 @@ a.sem-card:hover .sem-title { text-decoration: underline; }
 .sync-state.saved { color: var(--accent); }
 .sync-state.error { color: #c0392b; }
 .course-status + .ident-card { margin-bottom: 2rem; }
+
+/* NIV trademark after the last NIV verse: half the verse size */
+.niv-mark { font-size: .5em; letter-spacing: .02em; white-space: nowrap; vertical-align: .15em; }
