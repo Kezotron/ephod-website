@@ -290,7 +290,7 @@
     // shown in the version Herb & Karen chose when they entered it (the API uses the stored version when none is sent)
     api("get_golden_nugget.php", { day }).then((j) => {
       gn.innerHTML = `<div class="verse-card nugget-card">
-        <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(j.reference)}</span></div>
+        <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget2.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(j.reference)}</span></div>
         <div class="nugget-body">
         <h3>Today's Gold Nugget</h3>
         <div class="verse-text">${supVerses(j.verses, "<br>")}</div>
@@ -461,7 +461,7 @@
       const list = j.goldenNuggets;
       const cur = Object.assign({}, list[0], { verses: today.verses || list[0].verses, version: today.version || ver, reference: today.reference || list[0].reference });
       top.innerHTML = `<div class="verse-card nugget-card">
-        <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(cur.reference)}</span></div>
+        <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget2.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(cur.reference)}</span></div>
         <div class="nugget-body">
         <h3>Today's Gold Nugget</h3>
         <div class="verse-text">${supVerses(cur.verses, "<br>")}</div>
