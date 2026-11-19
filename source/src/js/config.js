@@ -13,8 +13,8 @@ window.EPHOD_CONFIG = {
   // Bible version shown when a visitor hasn't chosen one
   DEFAULT_VERSION: "bibledb_kjv",
 
-  // Versions offered on the website (table name -> label). Only public-domain
-  // and Creative-Commons versions are listed here on purpose.
+  // Versions offered on the website (table name -> label). Only versions EPHOD is
+  // cleared to publish in full (public domain, Creative Commons, or permission).
   VERSIONS: [
     { table: "bibledb_kjv",        label: "King James Version",            abbr: "KJV", lang: "English" },
     { table: "t_asv",              label: "American Standard Version",     abbr: "ASV", lang: "English" },
@@ -23,7 +23,9 @@ window.EPHOD_CONFIG = {
     { table: "t_dby",              label: "Darby Translation",             abbr: "DBY", lang: "English" },
     { table: "bible_verses_tagab", label: "Ang Dating Biblia (Tagalog)",   abbr: "ADB", lang: "Tagalog" },
     { table: "p_tok",              label: "Buk Baibel long Tok Pisin",     abbr: "TPI", lang: "Tok Pisin" },
-    { table: "t_frLSG",            label: "Louis Segond 1910 (Français)",  abbr: "LSG", lang: "French" }
+    { table: "t_frLSG",            label: "Louis Segond 1910 (Français)",  abbr: "LSG", lang: "French" },
+    { table: "t_ncvs",             label: "新译本 (简体中文)",              abbr: "CNVS", lang: "Chinese" },
+    { table: "t_ncvt",             label: "新譯本 (繁體中文)",              abbr: "CNVT", lang: "Chinese" }
   ],
 
   // Copyright lines, used when the API doesn't return versionInfo
@@ -36,6 +38,8 @@ window.EPHOD_CONFIG = {
     t_frLSG: "Louis Segond 1910. Domaine public.",
     bible_verses_tagab: "Ang Dating Biblia (1905). Public domain.",
     p_tok: "Buk Baibel long Tok Pisin. Copyright © 1969–2008 The Bible Society of Papua New Guinea. Released under CC BY-NC-ND 4.0 via png.bible.",
+    t_ncvs: "Chinese New Version (新译本). Copyright © 1976, 1992, 1999, 2001, 2005, 2010 The Worldwide Bible Society Limited. Text via eBible.org.",
+    t_ncvt: "Chinese New Version (新譯本). Copyright © 1976, 1992, 1999, 2001, 2005, 2010 The Worldwide Bible Society Limited. Text via eBible.org.",
     t_niv: "Scripture taken from the Holy Bible, NEW INTERNATIONAL VERSION®, NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.® Used by permission. All rights reserved worldwide."
   },
 
