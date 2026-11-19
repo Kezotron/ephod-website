@@ -138,7 +138,7 @@
       ${img ? `<div class="article-hero"><img src="${img}" alt=""></div>` : ""}
       <p class="meta">Week of ${m(a)} to ${m(b)}, ${b.getFullYear()}</p>
       <h1>${esc($("#f-title").value || "(no title yet)")}</h1>
-      ${$("#f-reading").value ? `<p class="read-line">Read ${esc($("#f-reading").value)}</p>` : ""}
+      ${$("#f-reading").value ? `<p class="read-line">Read ${esc($("#f-reading").value.replace(/^\s*read\b[\s:.\-\u2013\u2014]*/i, "").trim())}</p>` : ""}
       <div class="article-body">${html}</div>
       <p class="copyright-note">© Gospel Publishing House, 1445 N. Boonville Ave., Springfield, Missouri 65802. Used by permission.</p>`;
   }

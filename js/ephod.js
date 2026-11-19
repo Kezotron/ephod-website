@@ -154,6 +154,8 @@
     });
     return { verses: out, mark: found ? ' <span class="niv-mark">NIV®</span>' : "" };
   }
+  // the reading line already says "Read", so drop one typed at the start of the reference
+  const cleanReading = (r) => String(r || "").replace(/^\s*read\b[\s:.\-\u2013\u2014]*/i, "").trim();
   function versesHTML(verses) {
     // one line per verse (no paragraph gap between them)
     const n = nivMark(verses);
@@ -189,7 +191,7 @@
       <div class="body">
         <span class="meta">${esc(devoWeekRange(d.date))}</span>
         <h3>${esc(d.title)}</h3>
-        ${d.reading ? `<span class="reading">Read ${esc(d.reading)}</span>` : ""}
+        ${d.reading ? `<span class="reading">Read ${esc(cleanReading(d.reading))}</span>` : ""}
         <p>${esc(d.excerpt || "")}</p>
       </div></a>`;
   }
@@ -306,7 +308,7 @@
           <span>
             <span class="meta">${esc(devoWeekRange(d.date))}</span>
             <span class="devo-title">${esc(d.title)}</span>
-            ${d.reading ? `<span class="reading">Read ${esc(d.reading)}</span>` : ""}
+            ${d.reading ? `<span class="reading">Read ${esc(cleanReading(d.reading))}</span>` : ""}
           </span>
         </a>
         <p class="excerpt">${esc((d.excerpt || "").replace(/[…\.]+$/, ""))}… <a class="read-more" href="${devoURL(d)}">Read more</a></p>`;
@@ -552,7 +554,7 @@
     if (!panel || !parts.length) return;
     panel.hidden = false;
     const ver = initVersionSelects(() => loadPassage(reading));
-    $("#passage-title").textContent = "Read " + reading;
+    $("#passage-title").textContent = "Read " + cleanReading(reading);
     out.innerHTML = `<p class="loading">Loading the passage…</p>`;
     try {
       const [plan, books] = await Promise.all([readingPlan(), bookNames()]);
@@ -602,7 +604,7 @@
         <p class="meta">Week of ${esc(devoWeekRange(d.date))}</p>
         ${upcoming ? `<p class="notice">Scheduled: this devotion goes on the site on Monday, when its week begins.</p>` : ""}
         <h1>${esc(d.title)}</h1>
-        ${d.reading ? `<p class="read-line">Read ${esc(d.reading)}</p>` : ""}
+        ${d.reading ? `<p class="read-line">Read ${esc(cleanReading(d.reading))}</p>` : ""}
         <div class="article-body">${d.body}</div>
         <p class="copyright-note">© Gospel Publishing House, 1445 N. Boonville Ave., Springfield, Missouri 65802. Used by permission.</p>
         <nav class="article-nav" aria-label="More devotions">
