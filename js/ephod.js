@@ -143,9 +143,26 @@
   }
 
   /* ---------- rendering helpers ---------- */
+  // The API adds " NIV®" to every NIV verse. Show it once, small, after the last verse.
+  const NIV_MARK = /\s*NIV\s*®\s*$/;
+  function nivMark(verses) {
+    let found = false;
+    const out = verses.map((v) => {
+      const t = String(v.text || "");
+      if (NIV_MARK.test(t)) { found = true; return Object.assign({}, v, { text: t.replace(NIV_MARK, "") }); }
+      return v;
+    });
+    return { verses: out, mark: found ? ' <span class="niv-mark">NIV®</span>' : "" };
+  }
   function versesHTML(verses) {
     // one line per verse (no paragraph gap between them)
-    return '<div class="verses">' + verses.map((v) => `<p class="vl"><span class="v">${v.number ?? v.verseNumber}</span>${esc(v.text).trim()}</p>`).join("") + "</div>";
+    const n = nivMark(verses);
+    return '<div class="verses">' + n.verses.map((v, i) => `<p class="vl"><span class="v">${v.number ?? v.verseNumber}</span>${esc(v.text).trim()}${i === n.verses.length - 1 ? n.mark : ""}</p>`).join("") + "</div>";
+  }
+  // superscript verse numbers, verses joined by sep, NIV mark once after the last verse
+  function supVerses(verses, sep) {
+    const n = nivMark(verses || []);
+    return n.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join(sep) + n.mark;
   }
   function verseCard(opts) {
     // opts: kicker, title, verses, reference, versionTable, versionInfo, foot
@@ -153,7 +170,7 @@
       <div class="verse-card ${opts.cls || ""}">
         ${opts.kicker ? `<p class="verse-kicker">${esc(opts.kicker)}</p>` : ""}
         ${opts.title ? `<h2>${esc(opts.title)}</h2>` : ""}
-        <div class="verse-text">${opts.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
+        <div class="verse-text">${supVerses(opts.verses, "<br>")}</div>
         <p class="verse-ref">${esc(opts.reference)}</p>
         <p class="verse-foot">${copyrightLine(opts.versionTable, opts.versionInfo)}${opts.foot ? " " + opts.foot : ""}</p>
       </div>`;
@@ -262,7 +279,7 @@
     api(C.MEMORY_VERSE_ENDPOINT || "get_memory_verse.php", {}).then((j) => {
       const md = $("#memory-date"); if (md) md.textContent = j.dateRange;
       mv.innerHTML = `<p class="verse-ref">${esc(j.reference.replace(/\s*\(.*\)$/, ""))}</p>
-        <div class="verse-text small-verse">${j.verses.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
+        <div class="verse-text small-verse">${supVerses(j.verses, "<br>")}</div>
         <p class="verse-foot">${esc(versionLabel(j.version))}</p>`;
     }).catch(() => fail(mv, "The memory verse couldn't be loaded."));
 
@@ -274,7 +291,7 @@
         <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(j.reference)}</span></div>
         <div class="nugget-body">
         <h3>Today's Gold Nugget</h3>
-        <div class="verse-text">${j.verses.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
+        <div class="verse-text">${supVerses(j.verses, "<br>")}</div>
         <div class="verse-footrow"><a class="more" href="gold-nugget.html">Past Gold Nuggets</a><span class="verse-foot">${copyrightLine(j.version, j.versionInfo)}</span></div>
         </div>
       </div>`;
@@ -409,7 +426,7 @@
     const mo = (x) => x.toLocaleDateString(undefined, { month: "short" });
     return a.getMonth() === b.getMonth() ? `${mo(a)} ${a.getDate()}–${b.getDate()}` : `${mo(a)} ${a.getDate()}–${mo(b)} ${b.getDate()}`;
   }
-  const verseLine = (vs) => vs.map((v) => `<sup>${v.number ?? v.verseNumber}</sup>${esc(v.text).trim()}`).join(" ");
+  const verseLine = (vs) => supVerses(vs, " ");
 
   pages.memory = async function () {
     const ver = initVersionSelects(() => pages.memory());
@@ -445,7 +462,7 @@
         <div class="nugget-media"><img class="nugget-photo" src="images/card-gold-nugget.webp" width="1200" height="684" alt=""><span class="nugget-ref">${esc(cur.reference)}</span></div>
         <div class="nugget-body">
         <h3>Today's Gold Nugget</h3>
-        <div class="verse-text">${cur.verses.map((v) => `<sup>${v.number}</sup>${esc(v.text).trim()}`).join("<br>")}</div>
+        <div class="verse-text">${supVerses(cur.verses, "<br>")}</div>
         <div class="verse-footrow"><span class="muted small">${esc(cur.date)}</span><span class="verse-foot">${copyrightLine(cur.version, today.versionInfo && !Array.isArray(today.versionInfo) ? today.versionInfo : null)}</span></div>
         </div>
       </div>`;
