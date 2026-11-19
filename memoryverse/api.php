@@ -86,6 +86,8 @@ function fetchVerses(mysqli $db, string $table, string $book, int $ch, int $v1, 
   while ($row = $r->fetch_assoc()) $o[] = ['number' => (int)$row['VERSENO'], 'text' => $row['VERSETEXT']];
   return $o;
 }
+// The website adds "Read" before the reading line, so drop one typed at the start ("Read Ezra 4:1…" -> "Ezra 4:1…")
+function cleanReading($s): string { return trim(preg_replace('/^\s*read\b[\s:.\-\x{2013}\x{2014}]*/iu', '', (string)$s)); }
 function slugify(string $s): string {
   $s = strtolower(trim($s)); $s = str_replace(["\u{2019}", "\u{2018}", "'", "\u{201C}", "\u{201D}", '"'], '', $s);   // apostrophes vanish, as WordPress does
   $s = preg_replace('/[^a-z0-9]+/', '-', $s); return trim($s, '-') ?: 'devotion';
@@ -115,7 +117,7 @@ function rebuildDevotionFiles(mysqli $db, ?string $changedSlug = null): int {
       $st = $db->prepare('SELECT image_data FROM ' . T_DEVOTIONS . ' WHERE slug = ?'); $st->bind_param('s', $row['slug']); $st->execute(); $blob = $st->get_result()->fetch_assoc()['image_data'] ?? null;
       if ($blob) { $idir = dirname(SITE_ROOT . '/' . $row['image']); if (!is_dir($idir)) mkdir($idir, 0755, true); file_put_contents(SITE_ROOT . '/' . $row['image'], $blob); $restored++; }
     }
-    $rec = ['slug' => $row['slug'], 'title' => $row['title'], 'date' => $row['post_date'], 'reading' => $row['reading'], 'image' => $row['image'] ?: null, 'excerpt' => $row['excerpt'], 'body' => $row['body']];
+    $rec = ['slug' => $row['slug'], 'title' => $row['title'], 'date' => $row['post_date'], 'reading' => cleanReading($row['reading']), 'image' => $row['image'] ?: null, 'excerpt' => $row['excerpt'], 'body' => $row['body']];
     $index[] = array_diff_key($rec, ['body' => 1]); $all[] = $rec;
     file_put_contents("$dir/{$row['slug']}.json", json_encode($rec, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     $keep[$row['slug'] . '.json'] = 1;
@@ -394,7 +396,7 @@ switch ($action) {
   }
   case 'devo_save': {
     ensureDevotionsTable($db);
-    $id = (int)$q('id', 0); $title = trim((string)$q('title', '')); $date = (string)$q('date', ''); $reading = trim((string)$q('reading', ''));
+    $id = (int)$q('id', 0); $title = trim((string)$q('title', '')); $date = (string)$q('date', ''); $reading = cleanReading($q('reading', ''));
     $body = sanitizeHtml((string)$q('body', '')); $published = (int)((string)$q('published', '1') === '1');
     if ($title === '' || $body === '') fail('Title and text are required');
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) fail('Date must be YYYY-MM-DD');
@@ -546,7 +548,7 @@ switch ($action) {
       if ($d->format('Y-m-d') === $mon->format('Y-m-d')) { $dev = $row; break; }
     }
     $out['devotion'] = $dev ? [
-      'title' => $dev['title'], 'reading' => $dev['reading'], 'excerpt' => $dev['excerpt'],
+      'title' => $dev['title'], 'reading' => cleanReading($dev['reading']), 'excerpt' => $dev['excerpt'],
       'url' => $siteUrl . '/devotion/' . $dev['slug'] . '.html',
       'image' => $dev['image'] ? $siteUrl . '/' . $dev['image'] : null,
     ] : null;
